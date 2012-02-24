@@ -1,0 +1,18 @@
+{
+    "0": {
+        "Type": 0,
+        "BaseScore": 100,
+        "Title": "Welcher Gipfel der Schweiz wird hier gesucht?",
+        "CorrectOption": 1,
+        "Options": ["Finsteraarhorn", "Matterhorn", "Dufourspitze", "Zinalrothorn"],
+        "Views": []
+    },
+    "1": {
+        "Type": 0,
+        "BaseScore": 25,
+        "Title": "Welche schweizer Stadt ist hier zu sehen?",
+        "CorrectOption": 0,
+        "Options": ["Basel", "Solothurn", "Schaffhausen", "Bern"],
+        "Views": []
+    }
+}

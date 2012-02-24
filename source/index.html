@@ -26,16 +26,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="../../WebViewer/compiled/owg-optimized.js"></script>
     <script type="text/javascript" src="kineticjs.js"></script>
     <script type="text/javascript" src="fx.js"></script>
     <script type="text/javascript" src="ui.js"></script>
+    <script type="text/javascript" src="main.js"></script>
     <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body style="overflow:hidden;" onload="Init()">
 <div id="main_div" class="main_div">
-    <!--<canvas  id="canvas2d" class="canvas2d">
-    </canvas>-->
 </div>
 <div id="owg_div" class="owg_div">
     <canvas id="canvas" class="canvas">
@@ -44,7 +44,7 @@
 </div>
 
 <script type="text/javascript">
-    ogSetArtworkDirectory("../../../art/");
+    ogSetArtworkDirectory("../../WebViewer/art/");
 
     /* Members */
     var m_images = {};
@@ -55,15 +55,15 @@
     var m_stage = new Kinetic.Stage("main_div", window.innerWidth, window.innerHeight);
     var m_ui = new Kinetic.Layer();
     var m_static = new Kinetic.Layer();
+    var m_centerX = window.innerWidth/2;
+    var m_centerY = window.innerHeight/2;
+    var m_lang = "de";
+    var m_locale = [];
+    var m_game = null;
+    var m_player = null;
 
-    /* Garbage Collection */
-    function TerminateShape(shape, layer)
-    {
-        layer.remove(shape);
-    }
 
-
-    /* Preload functions */
+    /* preload functions */
     function LoadImages(sources){
         // get num of sources
         for (var src in sources) {
@@ -79,8 +79,14 @@
             m_images[src].src = sources[src];
         }
     }
+    function LoadLanguage()
+    {
+        jQuery.getJSON('../data/lang_'+m_lang+'.json', function(data) {
+            m_locale = data;
+        });
+    }
 
-    /* Preload data */
+    /* init game */
     function Init() {
         // Preload images
         var sources = {
@@ -91,6 +97,7 @@
             dial: "../art/dial.png"
         };
         LoadImages(sources);
+        LoadLanguage();
 
         // Add OWG Data
       /*  ogAddImageLayer(m_globe, {
@@ -113,25 +120,31 @@
 
         myClock = new Clock(m_ui, 50, 50, 60);
 
-        myButton = new Button01(m_ui, 500, 300, 300, 69, "Start", 15);
+        /*myButton = new Button01(m_ui, 500, 300, 300, 69, "Start", 15);
         myButton1 = new Button01(m_ui, 500, 380, 300, 69, "Reset", 15);
         myButton2 = new Button01(m_ui, 500, 460, 300, 69, "Testdialog", 15);
         myButton.onClickEvent = MyButtonClick;
         myButton1.onClickEvent = MyButton1Click;
-        myButton2.onClickEvent = MyButton2Click;
+        myButton2.onClickEvent = MyButton2Click;*/
 
         m_stage.add(m_static);
         m_stage.add(m_ui);
+        m_ui.setAlpha(0.0);
         m_stage.onFrame(function(frame){
             OnCanvasRender(frame);
         });
         m_stage.start();
+
+        var myGameData = new GameData();
+        m_game = new GlobeGame(myGameData);
+
+        m_stage.on("mouseup", function(){
+            if(m_game.state == 0)
+            {
+                m_game.Init();
+            }
+        });
     }
-
-
-
-
-
 
     /* Render Callback */
     function OnCanvasRender(frame)
@@ -147,6 +160,8 @@
     function OnResize(context)
     {
         m_stage.setSize(window.innerWidth, window.innerHeight);
+        m_centerX = window.innerWidth/2;
+        m_centerY = window.innerHeight/2;
     }
 
     /* event callbacks */
@@ -162,10 +177,12 @@
 
     function MyButton2Click()
     {
-        var myDialog = new MessageDialog(m_ui, "This is a test message", 550, 250);
+        FadeOut();
+        //var myDialog = new MessageDialog(m_ui, "This is a test message", 550, 250);
     }
 
-    
+
+
 </script>
 </body>
 </html>

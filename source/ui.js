@@ -21,7 +21,7 @@
 *     Licensed under MIT License. Read the file LICENSE for more information   *
 *******************************************************************************/
 /* GUI Elements */
-
+//-----------------------------------------------------------------------------
 /** @constructor */
 function Button01(layer, x, y, width, height, caption, fontsize)
 {
@@ -88,6 +88,7 @@ function Button01(layer, x, y, width, height, caption, fontsize)
     layer.add(this.shape);
 }
 
+//-----------------------------------------------------------------------------
 /** @constructor */
 function Clock(layer, x, y, seconds)
 {
@@ -140,7 +141,8 @@ Clock.prototype.reset = function(seconds)
     this.seconds = seconds;
 }
 
-
+//-----------------------------------------------------------------------------
+/** @constructor */
 function MessageDialog(layer, message, width, height)
 {
     this.message = message;

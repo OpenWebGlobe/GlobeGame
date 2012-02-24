@@ -21,7 +21,7 @@
  *     Licensed under MIT License. Read the file LICENSE for more information   *
  *******************************************************************************/
 /* Effects */
-
+//-----------------------------------------------------------------------------
 /** @constructor */
 function FlyingText(layer, text, fontcolor)
 {
@@ -55,5 +55,23 @@ function FlyingText(layer, text, fontcolor)
         }
     });
     layer.add(this.shape);
-}
 
+}
+//-----------------------------------------------------------------------------
+function FadeOut(callback)
+{
+    setTimeout(function(){
+        m_ui.setAlpha(m_ui.getAlpha()-0.1);
+        if(m_ui.getAlpha() > 0.0)
+        { FadeOut();} else { m_ui.setAlpha(0.0); callback();}
+    }, 1);
+}
+//-----------------------------------------------------------------------------
+function FadeIn()
+{
+    setTimeout(function(callback){
+        m_ui.setAlpha(m_ui.getAlpha()+0.1);
+        if(m_ui.getAlpha() < 1.0)
+        { FadeIn();} else { m_ui.setAlpha(1.0); callback();}
+    }, 1);
+}
