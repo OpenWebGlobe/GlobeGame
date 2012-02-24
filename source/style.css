@@ -1,0 +1,114 @@
+/*
+/*******************************************************************************
+#      ____               __          __  _      _____ _       _               #
+#     / __ \              \ \        / / | |    / ____| |     | |              #
+#    | |  | |_ __   ___ _ __ \  /\  / /__| |__ | |  __| | ___ | |__   ___      #
+#    | |  | | '_ \ / _ \ '_ \ \/  \/ / _ \ '_ \| | |_ | |/ _ \| '_ \ / _ \     #
+#    | |__| | |_) |  __/ | | \  /\  /  __/ |_) | |__| | | (_) | |_) |  __/     #
+#     \____/| .__/ \___|_| |_|\/  \/ \___|_.__/ \_____|_|\___/|_.__/ \___|     #
+#           | |                                                                #
+#           |_|                 _____ _____  _  __                             #
+#                              / ____|  __ \| |/ /                             #
+#                             | (___ | |  | | ' /                              #
+#                              \___ \| |  | |  <                               #
+#                              ____) | |__| | . \                              #
+#                             |_____/|_____/|_|\_\                             #
+#                                                                              #
+#                              (c) 2010-2011 by                                #
+#           University of Applied Sciences Northwestern Switzerland            #
+#                     Institute of Geomatics Engineering                       #
+#                           martin.christen@fhnw.ch                            #
+********************************************************************************
+*     Licensed under MIT License. Read the file LICENSE for more information   *
+*******************************************************************************/
+
+/* fonts */
+
+
+@font-face {
+    font-family: Bangers;
+    src: url(../art/fonts/Bangers.ttf);
+}
+
+@font-face {
+    font-family: BowlbyOne;
+    src: url(../art/fonts/BowlbyOne.ttf);
+}
+
+@font-face {
+    font-family: EricaOne;
+    src: url(../art/fonts/EricaOne.ttf);
+}
+
+@font-face {
+    font-family: LuckiestGuy;
+    src: url(../art/fonts/LuckiestGuy.ttf);
+}
+
+@font-face {
+    font-family: PollerOne;
+    src: url(../art/fonts/PollerOne.ttf);
+}
+
+@font-face {
+    font-family: RammettoOne;
+    src: url(../art/fonts/RammettoOne.ttf);
+}
+
+@font-face {
+    font-family: TitanOne;
+    src: url(../art/fonts/TitanOne.ttf);
+}
+
+/* elements */
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+.main_div
+{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+.owg_div
+{
+    width: 100%;
+    height: 100%;
+}
+
+.canvas
+{
+    width: 100%;
+    height: 100%;
+}
+
+.canvas2d
+{
+
+}
+
+/* Buttons */
+.button_01
+{
+ background-image:url('../art/btn_01.png');
+ width: 300px;
+ height: 69px;
+}
+
+.button_01:hover
+{
+    background-image:url('../art/btn_01_h.png');
+    width: 300px;
+    height: 69px;
+}
+
+.button_01:active
+{
+    background-image:url('../art/btn_01_c.png');
+    width: 300px;
+    height: 69px;
+}
