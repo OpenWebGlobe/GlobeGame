@@ -37,6 +37,7 @@ function FlyingText(layer, text, fontcolor)
         ctx.beginPath(); // !!!
         ctx.font = "40pt LuckiestGuy";
         ctx.fillStyle = that.fontcolor;
+
         var tX = (window.innerWidth/2)/that.scalefactor;
         var tY = (window.innerHeight/2)/that.scalefactor;
         ctx.textAlign = "center";

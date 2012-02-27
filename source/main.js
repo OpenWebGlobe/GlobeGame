@@ -70,6 +70,12 @@ function Player(name)
     this.playerScore = 0;
 }
 
+Player.prototype.ScorePoints = function(amount, description)
+{
+    var text = new FlyingText(m_static, "+120 "+m_locale.points+" "+ description, "#00FF00");
+    this.playerScore += amount;
+}
+
 //-----------------------------------------------------------------------------
 /** @constructor */
 function GameData()
@@ -109,7 +115,6 @@ function Challenge(type)
      1: Positioning question
      */
     this.type = type;
-   // this.player = null;
     this.baseScore = 0;
     this.Activate = function() {};
     this.Destroy = function() {};
@@ -129,7 +134,6 @@ function LandmarkChallenge(baseScore, options, correctOption, views)
     var btn4 = null;
     var that = this;
     this.onOption1 = function(){
-        alert("bla");
         that.PickOption(that.options[0], 60);
     }
     this.onOption2 = function(){
@@ -143,7 +147,6 @@ function LandmarkChallenge(baseScore, options, correctOption, views)
     }
     this.Activate = function()
     {
-
         btn1 = new Button01(m_ui, m_centerX-310, window.innerHeight-239, 300, 69, this.options[0], 15);
         btn1.onClickEvent = that.onOption1;
         btn2 = new Button01(m_ui, m_centerX+10, window.innerHeight-239, 300, 69, this.options[1], 15);
@@ -152,7 +155,13 @@ function LandmarkChallenge(baseScore, options, correctOption, views)
         btn3.onClickEvent = that.onOption3;
         btn4 = new Button01(m_ui, m_centerX+10, window.innerHeight-150, 300, 69, this.options[3], 15);
         btn4.onClickEvent = that.onOption4;
+        m_clock.setVisible(true);
+        m_clock.countdown();
         FadeIn();
+        var flightduration = Math.floor(40/views.length)*1000;
+        var scene = ogGetScene(m_context);
+        ogSetFlightDuration(scene,flightduration);
+        that.FlightCallback(0, flightduration, views);
     }
     this.Destroy = function()
     {
@@ -161,6 +170,8 @@ function LandmarkChallenge(baseScore, options, correctOption, views)
             m_ui.remove(btn2);
             m_ui.remove(btn3);
             m_ui.remove(btn4);
+            m_clock.setVisible(false);
+            m_clock.reset();
         });
     };
     this.PickOption = function(option, timeleft)
@@ -174,6 +185,18 @@ function LandmarkChallenge(baseScore, options, correctOption, views)
                 m_player.playerScore += 20;
             }
         }
+    };
+    this.FlightCallback = function(state, duration,views)
+    {
+        setTimeout(function(){
+            if(state-1 < views.length)
+            {
+                that.FlightCallback(state+1,duration,views);
+            }
+        }, duration);
+        var oView = views[state];
+        var scene = ogGetScene(m_context);
+        ogFlyTo(scene,oView.longitude,oView.latitude, oView.elevation,oView.yaw,oView.pitch,oView.roll);
     };
 }
 LandmarkChallenge.prototype = new Challenge(0);

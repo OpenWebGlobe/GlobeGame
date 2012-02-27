@@ -29,21 +29,24 @@
     <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="../../WebViewer/compiled/owg-optimized.js"></script>
     <script type="text/javascript" src="kineticjs.js"></script>
-    <script type="text/javascript" src="fx.js"></script>
-    <script type="text/javascript" src="ui.js"></script>
-    <script type="text/javascript" src="main.js"></script>
     <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body style="overflow:hidden;" onload="Init()">
-<div id="main_div" class="main_div">
-</div>
-<div id="owg_div" class="owg_div">
-    <canvas id="canvas" class="canvas">
+<div id="owg_div" >
+    <div style="background-color:#FFF;position:absolute; width: 100%;height: 200px; bottom: 0px">
+        <input type="button" style="width:100px; height: 25px" value="Add View" onclick="AddView()"/><br/>
+        Current:<br/>
+        <span id="current"></span><br/>
+        Output:<br/>
+        <textarea id="output" style="width: 100%; height: 90px"></textarea>
+    </div>
+            <canvas id="canvas">
 
-    </canvas>
-</div>
-
+            </canvas>
+        </div>
 <script type="text/javascript">
+
+
     ogSetArtworkDirectory("../../WebViewer/art/");
 
     /* Members */
@@ -52,16 +55,6 @@
     var m_numImages = 0;
     var m_context = ogCreateContextFromCanvas("canvas", true);
     var m_globe = ogCreateGlobe(m_context);
-    var m_stage = new Kinetic.Stage("main_div", window.innerWidth, window.innerHeight);
-    var m_ui = new Kinetic.Layer();
-    var m_static = new Kinetic.Layer();
-    var m_centerX = window.innerWidth/2;
-    var m_centerY = window.innerHeight/2;
-    var m_lang = "de";
-    var m_locale = [];
-    var m_game = null;
-    var m_player = null;
-    var m_clock = null;
 
 
     /* preload functions */
@@ -73,116 +66,89 @@
         for (var src in sources) {
             m_images[src] = new Image();
             /*m_images[src].onload = function(){
-                if (++m_loadedImages >= m_numImages) {
-                    callback(images);
-                }
-            };*/
+             if (++m_loadedImages >= m_numImages) {
+             callback(images);
+             }
+             };*/
             m_images[src].src = sources[src];
         }
     }
-    function LoadLanguage()
-    {
-        jQuery.getJSON('../data/lang_'+m_lang+'.json', function(data) {
-            m_locale = data;
-        });
-    }
+
 
     /* init game */
     function Init() {
         // Preload images
         var sources = {
-            btn_01: "../art/btn_01.png",
-            btn_01_c: "../art/btn_01_c.png",
-            btn_01_h: "../art/btn_01_h.png",
-            clock: "../art/clock.png",
-            dial: "../art/dial.png"
+
         };
         LoadImages(sources);
-        LoadLanguage();
 
         // Add OWG Data
-        ogAddImageLayer(m_globe, {
-            url: ["http://www.openwebglobe.org/data/img"],
-            layer: "World500",
-            service: "i3d"
-        });
-        ogAddImageLayer(m_globe, {
-            url: ["http://10.42.2.37"],
-            layer: "swissimage",
-            service: "owg"
-        });
-        ogAddElevationLayer(m_globe, {
-            url: ["http://10.42.2.37"],
-            layer: "DHM25",
-            service: "owg"
-        });
+         ogAddImageLayer(m_globe, {
+         url: ["http://www.openwebglobe.org/data/img"],
+         layer: "World500",
+         service: "i3d"
+         });
+         ogAddImageLayer(m_globe, {
+         url: ["http://10.42.2.37"],
+         layer: "swissimage",
+         service: "owg"
+         });
+         ogAddElevationLayer(m_globe, {
+         url: ["http://10.42.2.37"],
+         layer: "DHM25",
+         service: "owg"
+         });
         ogSetRenderFunction(m_context, OnRender);
         ogSetResizeFunction(m_context, OnResize);
-
-
-
-        /*myButton = new Button01(m_ui, 500, 300, 300, 69, "Start", 15);
-        myButton1 = new Button01(m_ui, 500, 380, 300, 69, "Reset", 15);
-        myButton2 = new Button01(m_ui, 500, 460, 300, 69, "Testdialog", 15);
-        myButton.onClickEvent = MyButtonClick;
-        myButton1.onClickEvent = MyButton1Click;
-        myButton2.onClickEvent = MyButton2Click;*/
-
-        m_stage.add(m_static);
-        m_stage.add(m_ui);
-        m_ui.setAlpha(0.0);
-        m_stage.onFrame(function(frame){
-            OnCanvasRender(frame);
-        });
-        m_stage.start();
-
-        var myGameData = new GameData();
-        m_game = new GlobeGame(myGameData);
-        var myClock = new Clock(m_ui, 50, 50, 60);
-        m_clock = myClock;
-        m_clock.setVisible(false);
-
-        m_stage.on("mouseup", function(){
-            if(m_game.state == 0)
-            {
-                m_game.Init();
-            }
-        });
     }
 
-    /* Render Callback */
-    function OnCanvasRender(frame)
+    function ViewObj(long,lat,elev,yaw,pitch,roll){
+        this.longitude = long;
+        this.latitude = lat;
+        this.elevation = elev;
+        this.yaw = yaw;
+        this.pitch = pitch;
+        this.roll = roll;
+    }
+
+    var m_views = [];
+
+    function AddView()
     {
-        m_stage.draw();
+        var scene = ogGetScene(m_context);
+        var ori = ogGetOrientation(scene);
+        var pos = ogGetPosition(scene);
+        var view = new ViewObj(pos["longitude"],pos["latitude"],pos["elevation"],ori["yaw"],ori["pitch"],ori["roll"]);
+        m_views.push(view);
+
     }
+
 
     function OnRender(context)
     {
+        var scene = ogGetScene(m_context);
+        var ori = ogGetOrientation(scene);
+        var pos = ogGetPosition(scene);
+        document.getElementById('current').innerText = "yaw="+ori["yaw"]+" pitch="+ori["pitch"]+" roll="+ori["roll"]+"\n" +
+                "lng="+pos["longitude"]+" lat="+pos["latitude"]+" elev="+pos["elevation"];
+        var out = "";
+        for(var i = 0; i<m_views.length; i++){
+            out = out + "{ \"longitude\": "+m_views[i].longitude+",\n \"latitude\": "+m_views[i].latitude+",\n \"elevation\": "+m_views[i].elevation+",\n " +
+                    "\"yaw\": "+m_views[i].yaw+",\n \"pitch\": "+m_views[i].pitch+",\n \"roll\": "+m_views[i].roll+"\n }";
+            if(i < m_views.length -1)
+            {
+                out = out + ",\n";
+            }
+        }
 
+        document.getElementById('output').innerHTML = "[\n"+out+"\n]";
     }
 
     function OnResize(context)
     {
-        m_stage.setSize(window.innerWidth, window.innerHeight);
         m_centerX = window.innerWidth/2;
         m_centerY = window.innerHeight/2;
-    }
-
-    /* event callbacks */
-    function MyButtonClick()
-    {
-        //myText = new FlyingText(m_static, "+120 Punkte", "#00DD00");
-        myClock.countdown();
-    }
-    function MyButton1Click()
-    {
-        myClock.reset(60);
-    }
-
-    function MyButton2Click()
-    {
-        FadeOut();
-        //var myDialog = new MessageDialog(m_ui, "This is a test message", 550, 250);
     }
 
 

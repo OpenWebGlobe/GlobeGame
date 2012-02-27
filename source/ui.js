@@ -96,30 +96,34 @@ function Clock(layer, x, y, seconds)
     this.x = x;
     this.y = y;
     this.seconds = seconds;
+    this.visible = true;
     var unit = 2.0/60;
     var that = this;
     this.onTimeoutEvent = function() {};
 
     this.shape = new Kinetic.Shape(function(){
-        var ctx = this.getContext();
-        var pos = unit*that.seconds-0.5;
-        ctx.drawImage(m_images.clock, x, y, 220, 260);
-        ctx.beginPath();
-        ctx.arc(x+110, y+153, 84, pos*Math.PI, 1.5*Math.PI, false);
-        ctx.lineTo(x+110, y+153);
-        ctx.closePath();
-        var pattern = ctx.createPattern(m_images.dial, "no-repeat");
-        ctx.fillStyle = pattern;
-        ctx.translate(75, 115);
-        ctx.fill();
-        if(that.seconds > 10) {ctx.fillStyle = "#FFF";} else {ctx.fillStyle = "#F00";}
-        ctx.font = "40pt TitanOne";
-        ctx.textAlign = "center";
-        var secs = "" +that.seconds;
-        ctx.fillText(secs, x+37, y+53);
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = "#000"; // stroke color
-        ctx.strokeText(secs, x+37, y+53);
+        if(that.visible == true)
+        {
+            var ctx = this.getContext();
+            var pos = unit*that.seconds-0.5;
+            ctx.drawImage(m_images.clock, x, y, 220, 260);
+            ctx.beginPath();
+            ctx.arc(x+110, y+153, 84, pos*Math.PI, 1.5*Math.PI, false);
+            ctx.lineTo(x+110, y+153);
+            ctx.closePath();
+            var pattern = ctx.createPattern(m_images.dial, "no-repeat");
+            ctx.fillStyle = pattern;
+            ctx.translate(75, 115);
+            ctx.fill();
+            if(that.seconds > 10) {ctx.fillStyle = "#FFF";} else {ctx.fillStyle = "#F00";}
+            ctx.font = "40pt TitanOne";
+            ctx.textAlign = "center";
+            var secs = "" +that.seconds;
+            ctx.fillText(secs, x+37, y+53);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "#000"; // stroke color
+            ctx.strokeText(secs, x+37, y+53);
+        }
     });
     layer.add(this.shape);
 }
@@ -139,6 +143,11 @@ Clock.prototype.countdown = function()
 Clock.prototype.reset = function(seconds)
 {
     this.seconds = seconds;
+}
+
+Clock.prototype.setVisible = function(visible)
+{
+    this.visible = visible;
 }
 
 //-----------------------------------------------------------------------------
