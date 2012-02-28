@@ -1,4 +1,8 @@
 {
-    "entername":"Please enter your name!"
-    "points": "Points"
+    "entername":"Please enter your name!",
+    "points": "Points",
+    "timebonus": "Timebonus",
+    "speedbonus": "Speedbonus",
+    "start": "Press OK to begin!",
+    "score": "Score"
 }

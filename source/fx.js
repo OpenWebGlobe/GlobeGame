@@ -21,6 +21,7 @@
  *     Licensed under MIT License. Read the file LICENSE for more information   *
  *******************************************************************************/
 /* Effects */
+var m_ftinternal = 0;
 //-----------------------------------------------------------------------------
 /** @constructor */
 function FlyingText(layer, text, fontcolor)
@@ -31,22 +32,28 @@ function FlyingText(layer, text, fontcolor)
     this.alpha = 1.0;
     this.layer = layer;
     var that = this;
+    var rY = m_ftinternal*45;
+    m_ftinternal +=1;
+    if(m_ftinternal > 3)
+    {
+        m_ftinternal = 0;
+    }
+
 
     this.shape = new Kinetic.Shape(function(){
         var ctx = this.getContext();
         ctx.beginPath(); // !!!
-        ctx.font = "40pt LuckiestGuy";
+        ctx.font = "28pt LuckiestGuy";
         ctx.fillStyle = that.fontcolor;
-
         var tX = (window.innerWidth/2)/that.scalefactor;
-        var tY = (window.innerHeight/2)/that.scalefactor;
+        var tY = (window.innerHeight/2-200+rY)/that.scalefactor;
         ctx.textAlign = "center";
         ctx.fillText(that.text, tX, tY);
         ctx.lineWidth = 3;
         ctx.strokeStyle = "#000"; // stroke color
         ctx.strokeText(that.text, tX, tY);
         this.setScale(that.scalefactor,that.scalefactor);
-        that.scalefactor = that.scalefactor + 0.15;
+        that.scalefactor = that.scalefactor + 0.05;
         this.setAlpha(that.alpha);
         that.alpha = that.alpha -0.05;
 
@@ -64,15 +71,15 @@ function FadeOut(callback)
     setTimeout(function(){
         m_ui.setAlpha(m_ui.getAlpha()-0.1);
         if(m_ui.getAlpha() > 0.0)
-        { FadeOut();} else { m_ui.setAlpha(0.0); callback();}
+        { FadeOut(callback);} else { m_ui.setAlpha(0.0); callback();}
     }, 1);
 }
 //-----------------------------------------------------------------------------
-function FadeIn()
+function FadeIn(callback)
 {
-    setTimeout(function(callback){
+    setTimeout(function(){
         m_ui.setAlpha(m_ui.getAlpha()+0.1);
         if(m_ui.getAlpha() < 1.0)
-        { FadeIn();} else { m_ui.setAlpha(1.0); callback();}
+        { FadeIn(callback);} else { m_ui.setAlpha(1.0); callback();}
     }, 1);
 }

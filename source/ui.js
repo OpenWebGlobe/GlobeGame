@@ -23,7 +23,7 @@
 /* GUI Elements */
 //-----------------------------------------------------------------------------
 /** @constructor */
-function Button01(layer, x, y, width, height, caption, fontsize)
+function Button01(layer, name, x, y, width, height, caption, fontsize)
 {
     this.x = x;
     this.y = y;
@@ -32,6 +32,9 @@ function Button01(layer, x, y, width, height, caption, fontsize)
     this.state = 0;
     this.caption = caption;
     this.fontsize = fontsize;
+    this.name = name;
+    this.enabled = true;
+    this.layer = layer;
 
     this.onClickEvent = function() {};
     var that = this;
@@ -39,7 +42,11 @@ function Button01(layer, x, y, width, height, caption, fontsize)
     this.shape = new Kinetic.Shape(function(){
         var ctx = this.getContext();
         var clickOffset = 0;
-        if(that.state == 0)
+        if(that.enabled == false)
+        {
+            ctx.drawImage(m_images.btn_01_d, x, y, width, height);
+        }
+        else if(that.state == 0)
         {
             ctx.drawImage(m_images.btn_01, x, y, width, height);
         }
@@ -51,6 +58,18 @@ function Button01(layer, x, y, width, height, caption, fontsize)
         {
             ctx.drawImage(m_images.btn_01_c, x, y, width, height);
             clickOffset = 2;
+        }
+        else if(that.state == 3)
+        {
+            ctx.drawImage(m_images.btn_01_t, x, y, width, height);
+        }
+        else if(that.state == 4)
+        {
+            ctx.drawImage(m_images.btn_01_f, x, y, width, height);
+        }
+        else if(that.state == 5)
+        {
+            ctx.drawImage(m_images.btn_01_o, x, y, width, height);
         }
         ctx.beginPath();
         ctx.rect(x, y, width, height);
@@ -72,20 +91,41 @@ function Button01(layer, x, y, width, height, caption, fontsize)
     });
 
     this.shape.on("mouseout", function(){
-        that.state = 0;
+        if(that.state < 3)
+        {that.state = 0;}
     });
     this.shape.on("mouseover", function(){
-        that.state = 1;
+        if(that.state < 3)
+        {that.state = 1;}
     });
     this.shape.on("mousedown", function(){
-        that.state = 2;
+        if(that.state < 3)
+        {that.state = 2;}
 
     });
     this.shape.on("mouseup", function(){
-        that.state = 1;
+        if(that.state < 3)
+        {that.state = 1;
         that.onClickEvent();
+        }
     });
+    this.shape.name = name;
     layer.add(this.shape);
+}
+
+Button01.prototype.setEnabled = function(enabled)
+{
+    this.enabled = enabled;
+}
+
+Button01.prototype.setState = function(state)
+{
+    this.state = state;
+}
+
+Button01.prototype.Destroy = function()
+{
+    this.layer.remove(this.shape);
 }
 
 //-----------------------------------------------------------------------------
@@ -97,11 +137,14 @@ function Clock(layer, x, y, seconds)
     this.y = y;
     this.seconds = seconds;
     this.visible = true;
+    this.obsolete = false;
     var unit = 2.0/60;
     var that = this;
+    this.running = false;
     this.onTimeoutEvent = function() {};
 
     this.shape = new Kinetic.Shape(function(){
+
         if(that.visible == true)
         {
             var ctx = this.getContext();
@@ -113,41 +156,107 @@ function Clock(layer, x, y, seconds)
             ctx.closePath();
             var pattern = ctx.createPattern(m_images.dial, "no-repeat");
             ctx.fillStyle = pattern;
-            ctx.translate(75, 115);
+            ctx.translate(x+25, y+65);
             ctx.fill();
             if(that.seconds > 10) {ctx.fillStyle = "#FFF";} else {ctx.fillStyle = "#F00";}
             ctx.font = "40pt TitanOne";
             ctx.textAlign = "center";
             var secs = "" +that.seconds;
-            ctx.fillText(secs, x+37, y+53);
+            ctx.fillText(secs, 85, 110);
             ctx.lineWidth = 3;
             ctx.strokeStyle = "#000"; // stroke color
-            ctx.strokeText(secs, x+37, y+53);
+            ctx.strokeText(secs, 85, 110);
         }
     });
     layer.add(this.shape);
 }
 
-Clock.prototype.countdown = function()
+Clock.prototype.Start = function()
+{
+    this.running = true;
+    this.Countdown();
+}
+
+Clock.prototype.Pause = function()
+{
+    this.running = false;
+}
+
+Clock.prototype.Resume = function()
+{
+    this.running = true;
+}
+
+Clock.prototype.Countdown = function()
 {
     var that = this;
     setTimeout(function(){
-        if(that.seconds > 0)
-        {that.countdown();}
+        if(that.obsolete == true)
+        {
+            that.OnDestroy();
+        }
+        else if(that.seconds > 0)
+        {that.Countdown();}
         else
-        { that.onTimeoutEvent(); }
+        {
+            that.running = false;
+            that.onTimeoutEvent(); }
     }, 1000);
-    this.seconds = this.seconds -1;
+    if(this.running)
+    {
+        this.seconds = this.seconds -1;
+    }
 };
 
-Clock.prototype.reset = function(seconds)
+Clock.prototype.Destroy = function()
 {
-    this.seconds = seconds;
+    this.obsolete = true;
+    if(this.running == false)
+    {
+        this.OnDestroy();
+    }
 }
 
-Clock.prototype.setVisible = function(visible)
+Clock.prototype.OnDestroy = function()
+{
+    this.layer.remove(this.shape);
+}
+
+Clock.prototype.SetVisible = function(visible)
 {
     this.visible = visible;
+}
+
+
+//-----------------------------------------------------------------------------
+/** @constructor */
+function ScreenText(layer, text, x, y, size, align)
+{
+    this.text = text;
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.align = align;
+    this.layer = layer;
+    var that = this;
+
+    this.shape = new Kinetic.Shape(function(){
+        var ctx = this.getContext();
+        ctx.textAlign = that.align;
+        ctx.fillStyle = "#FFF";
+        ctx.font = that.size+"pt TitanOne";
+        ctx.textAlign = that.align;
+        ctx.fillText(that.text, that.x, that.y);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#000"; // stroke color
+        ctx.strokeText(that.text,  that.x, that.y);
+    });
+    layer.add(this.shape);
+}
+
+ScreenText.prototype.Destroy = function()
+{
+    this.layer.remove(this.shape);
 }
 
 //-----------------------------------------------------------------------------
@@ -157,6 +266,7 @@ function MessageDialog(layer, message, width, height)
     this.message = message;
     this.layer = layer;
     var that = this;
+    this.callback = function(){};
 
     this.shape = new Kinetic.Shape(function(){
         var ctx = this.getContext();
@@ -187,8 +297,46 @@ function MessageDialog(layer, message, width, height)
     {
         that.layer.remove(that.shape);
         that.layer.remove(okayButton.shape);
+        that.callback();
     }
     layer.add(this.shape);
-    okayButton = new Button01(m_ui, window.innerWidth/2-150, window.innerHeight/2+(height/2)-100, 300, 69, "OK", 15);
+    okayButton = new Button01(m_ui, "dialog", window.innerWidth/2-150, window.innerHeight/2+(height/2)-100, 300, 69, "OK", 15);
     okayButton.onClickEvent = OnOkay;
+}
+
+MessageDialog.prototype.RegisterCallback = function(callback)
+{
+    this.callback = callback;
+}
+
+//-----------------------------------------------------------------------------
+/** @constructor */
+function ScoreCount(layer)
+{
+    this.layer = layer;
+    var that = this;
+
+    this.shape = new Kinetic.Shape(function(){
+        var ctx = this.getContext();
+        ctx.beginPath();
+        ctx.rect(10, 10, 225, 50);
+        var grad = ctx.createLinearGradient(10, 10, 10, 50);
+        grad.addColorStop(0, "#555");
+        grad.addColorStop(1, "#CCC");
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#FFF";
+        ctx.stroke();
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#FFF";
+        ctx.font = "16pt TitanOne";
+        ctx.textAlign = "left";
+        ctx.fillText(m_locale.score+": "+m_player.playerScore, 25, 45);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#000"; // stroke color
+        ctx.strokeText(m_locale.score+": "+m_player.playerScore, 25, 45);
+
+    });
+    layer.add(this.shape);
 }

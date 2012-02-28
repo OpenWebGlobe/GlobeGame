@@ -1,4 +1,8 @@
 {
     "entername":"Geben sie ihren Namen ein!",
-    "points": "Punkte"
+    "points": "Punkte",
+    "timebonus": "Zeitbonus",
+    "speedbonus": "Geschwindigkeit",
+    "start": "Um zu beginnen drücke OK!",
+    "score": "Punkte"
 }

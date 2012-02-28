@@ -62,6 +62,7 @@
     var m_game = null;
     var m_player = null;
     var m_clock = null;
+    var m_score = null;
 
 
     /* preload functions */
@@ -80,10 +81,11 @@
             m_images[src].src = sources[src];
         }
     }
-    function LoadLanguage()
+    function LoadLanguage(callback)
     {
         jQuery.getJSON('../data/lang_'+m_lang+'.json', function(data) {
             m_locale = data;
+            callback();
         });
     }
 
@@ -94,11 +96,22 @@
             btn_01: "../art/btn_01.png",
             btn_01_c: "../art/btn_01_c.png",
             btn_01_h: "../art/btn_01_h.png",
+            btn_01_d: "../art/btn_01_d.png",
+            btn_01_f: "../art/btn_01_f.png",
+            btn_01_t: "../art/btn_01_t.png",
+            btn_01_o: "../art/btn_01_o.png",
             clock: "../art/clock.png",
             dial: "../art/dial.png"
         };
         LoadImages(sources);
-        LoadLanguage();
+        LoadLanguage(function()
+        {
+            var startMessage = new MessageDialog(m_ui, m_locale.start, 500, 250);
+            startMessage.RegisterCallback(function(){
+                m_ui.setAlpha(0.0);
+                m_game.Init();
+            });
+        });
 
         // Add OWG Data
         ogAddImageLayer(m_globe, {
@@ -119,18 +132,8 @@
         ogSetRenderFunction(m_context, OnRender);
         ogSetResizeFunction(m_context, OnResize);
 
-
-
-        /*myButton = new Button01(m_ui, 500, 300, 300, 69, "Start", 15);
-        myButton1 = new Button01(m_ui, 500, 380, 300, 69, "Reset", 15);
-        myButton2 = new Button01(m_ui, 500, 460, 300, 69, "Testdialog", 15);
-        myButton.onClickEvent = MyButtonClick;
-        myButton1.onClickEvent = MyButton1Click;
-        myButton2.onClickEvent = MyButton2Click;*/
-
         m_stage.add(m_static);
         m_stage.add(m_ui);
-        m_ui.setAlpha(0.0);
         m_stage.onFrame(function(frame){
             OnCanvasRender(frame);
         });
@@ -138,16 +141,7 @@
 
         var myGameData = new GameData();
         m_game = new GlobeGame(myGameData);
-        var myClock = new Clock(m_ui, 50, 50, 60);
-        m_clock = myClock;
-        m_clock.setVisible(false);
 
-        m_stage.on("mouseup", function(){
-            if(m_game.state == 0)
-            {
-                m_game.Init();
-            }
-        });
     }
 
     /* Render Callback */
@@ -169,24 +163,6 @@
     }
 
     /* event callbacks */
-    function MyButtonClick()
-    {
-        //myText = new FlyingText(m_static, "+120 Punkte", "#00DD00");
-        myClock.countdown();
-    }
-    function MyButton1Click()
-    {
-        myClock.reset(60);
-    }
-
-    function MyButton2Click()
-    {
-        FadeOut();
-        //var myDialog = new MessageDialog(m_ui, "This is a test message", 550, 250);
-    }
-
-
-
 </script>
 </body>
 </html>
