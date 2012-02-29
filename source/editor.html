@@ -29,24 +29,53 @@
     <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="../../WebViewer/compiled/owg-optimized.js"></script>
     <script type="text/javascript" src="kineticjs.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript" src="fx.js"></script>
+    <script type="text/javascript" src="ui.js"></script>
     <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
 <body style="overflow:hidden;" onload="Init()">
-<div id="owg_div" >
-    <div style="background-color:#FFF;position:absolute; width: 100%;height: 200px; bottom: 0px">
-        <input type="button" style="width:100px; height: 25px" value="Add View" onclick="AddView()"/><br/>
-        Current:<br/>
-        <span id="current"></span><br/>
-        Output:<br/>
-        <textarea id="output" style="width: 100%; height: 90px"></textarea>
-    </div>
-            <canvas id="canvas">
+<div id="owg_div" style="float:left">
+    <div id="main_ui" style="position: absolute;  width: 100%;height: 100%; z-index: 100; visibility: hidden"></div>
+    <canvas id="canvas">
 
-            </canvas>
-        </div>
+    </canvas>
+</div>
+<div style="background-color:#FFF;position:absolute; width: 350px; padding:5px; z-index: 101; float:right; right:0px">
+    <h1>Challenge Editor</h1><br/>
+    <input type="button" style="width:100px; height: 25px" value="Show" onclick="ShowChallenge()"/>
+    <input type="button" style="width:100px; height: 25px" value="Hide" onclick="HideChallenge()"/>
+    <table>
+        <tr>
+            <td>Option 1: </td><td><input id="option1" type="text" value="Option1"/></td>
+        </tr>
+        <tr>
+            <td>Option 2: </td><td><input id="option2" type="text" value="Option2"/></td>
+        </tr>
+        <tr>
+            <td>Option 3: </td><td><input id="option3" type="text" value="Option3"/></td>
+        </tr>
+        <tr>
+            <td>Option 4: </td><td><input id="option4" type="text" value="Option4"/></td>
+        </tr>
+        <tr>
+            <td>Corrent Option: </td><td><input id="correctoption" type="number" value="1"/></td>
+        </tr>
+        <tr>
+            <td>Base Score: </td><td><input id="basescore" type="number" value="100"/></td>
+        </tr>
+        <tr>
+            <td>Title: </td><td><input id="title" type="text" value="Test Title" /></td>
+        </tr>
+    </table>
+    <input type="button" style="width:100px; height: 25px" value="Add Views" onclick="AddView()"/><input type="button" style="width:100px; height: 25px" value="Clear Views" onclick="ClearViews()"/>
+    <br/>Current:<span id="current"></span><br/>
+    Output:<br/>
+    <textarea id="output" style="height:400px; width: 350px"></textarea>
+</div>
+
+
 <script type="text/javascript">
-
-
     ogSetArtworkDirectory("../../WebViewer/art/");
 
     /* Members */
@@ -55,7 +84,11 @@
     var m_numImages = 0;
     var m_context = ogCreateContextFromCanvas("canvas", true);
     var m_globe = ogCreateGlobe(m_context);
-
+    var m_stage = new Kinetic.Stage("main_ui", window.innerWidth, window.innerHeight);
+    var m_ui = new Kinetic.Layer();
+    var m_centerX = (window.innerWidth-350)/2;
+    var m_centerY = window.innerHeight/2;
+    var challenge = null;
 
     /* preload functions */
     function LoadImages(sources){
@@ -79,7 +112,15 @@
     function Init() {
         // Preload images
         var sources = {
-
+            btn_01: "../art/btn_01.png",
+            btn_01_c: "../art/btn_01_c.png",
+            btn_01_h: "../art/btn_01_h.png",
+            btn_01_d: "../art/btn_01_d.png",
+            btn_01_f: "../art/btn_01_f.png",
+            btn_01_t: "../art/btn_01_t.png",
+            btn_01_o: "../art/btn_01_o.png",
+            clock: "../art/clock.png",
+            dial: "../art/dial.png"
         };
         LoadImages(sources);
 
@@ -101,6 +142,13 @@
          });
         ogSetRenderFunction(m_context, OnRender);
         ogSetResizeFunction(m_context, OnResize);
+        var scene = ogGetScene(m_context);
+        ogSetCanvasSizeOffset(scene, 360, 1);
+        m_stage.add(m_ui);
+        m_stage.onFrame(function(frame){
+            OnCanvasRender(frame);
+        });
+        m_stage.start();
     }
 
     function ViewObj(long,lat,elev,yaw,pitch,roll){
@@ -124,31 +172,81 @@
 
     }
 
+    function Update()
+    {
+        var val = jQuery.parseJSON(document.getElementById('output').innerHTML);
+        if(challenge)
+        {
+            challenge.Destroy();
+        }
+        challenge = new LandmarkChallenge(val.BaseScore, val.Options, val.CorrectOption, val.Views, val.Title);
+        challenge.Activate();
+        /*if(btn1)
+        {
+            btn1.Destroy();
+            btn2.Destroy();
+            btn3.Destroy();
+            btn4.Destroy();
+            screenText.Destroy();
+        }
+        btn1 = new Button01(m_ui, "btn1", m_centerX-310, window.innerHeight-239, 300, 69, document.getElementById('option1').value, 15);
+        btn2 = new Button01(m_ui, "btn2", m_centerX+10, window.innerHeight-239, 300, 69, document.getElementById('option2').value, 15);
+        btn3 = new Button01(m_ui, "btn3", m_centerX-310, window.innerHeight-150, 300, 69,document.getElementById('option3').value, 15);
+        btn4 = new Button01(m_ui, "btn4", m_centerX+10, window.innerHeight-150, 300, 69,document.getElementById('option4').value, 15);
+        screenText = new ScreenText(m_ui, document.getElementById('title').value,m_centerX, window.innerHeight-255, 20, "center");*/
+    }
+
+    function ShowChallenge()
+    {
+        jQuery('#main_ui').css("visibility", "visible");
+        Update();
+    }
+
+    function HideChallenge()
+    {
+        jQuery('#main_ui').css("visibility", "hidden");
+    }
+
+    /* Render Callback */
+    function OnCanvasRender(frame)
+    {
+        m_stage.draw();
+    }
 
     function OnRender(context)
     {
         var scene = ogGetScene(m_context);
         var ori = ogGetOrientation(scene);
         var pos = ogGetPosition(scene);
-        document.getElementById('current').innerText = "yaw="+ori["yaw"]+" pitch="+ori["pitch"]+" roll="+ori["roll"]+"\n" +
+        document.getElementById('current').innerText = "yaw="+ori["yaw"]+" pitch="+ori["pitch"]+" roll="+ori["roll"] +
                 "lng="+pos["longitude"]+" lat="+pos["latitude"]+" elev="+pos["elevation"];
-        var out = "";
+        var out = "{\n"+
+                "   \"Type\": 0,\n"+
+                "   \"BaseScore\": " + document.getElementById('basescore').value + ",\n"+
+                "   \"Title\": \"" + document.getElementById('title').value + "\",\n"+
+                "   \"CorrectOption\": " + document.getElementById('correctoption').value + ",\n"+
+                "   \"Options\": [\"" + document.getElementById('option1').value + "\", \""+document.getElementById('option2').value + "\", \""+document.getElementById('option3').value + "\", \""+document.getElementById('option4').value + "\"],\n"+
+                "   \"Views\": [\n";
         for(var i = 0; i<m_views.length; i++){
-            out = out + "{ \"longitude\": "+m_views[i].longitude+",\n \"latitude\": "+m_views[i].latitude+",\n \"elevation\": "+m_views[i].elevation+",\n " +
-                    "\"yaw\": "+m_views[i].yaw+",\n \"pitch\": "+m_views[i].pitch+",\n \"roll\": "+m_views[i].roll+"\n }";
+            out = out + "       { \"longitude\": "+m_views[i].longitude+",\n        \"latitude\": "+m_views[i].latitude+",\n        \"elevation\": "+m_views[i].elevation+",\n " +
+                    "       \"yaw\": "+m_views[i].yaw+",\n        \"pitch\": "+m_views[i].pitch+",\n        \"roll\": "+m_views[i].roll+"\n       }";
             if(i < m_views.length -1)
             {
                 out = out + ",\n";
             }
         }
+        out = out + "   \n]\n}";
 
-        document.getElementById('output').innerHTML = "[\n"+out+"\n]";
+        document.getElementById('output').innerHTML = out;
     }
 
     function OnResize(context)
     {
-        m_centerX = window.innerWidth/2;
+        //var scene = ogGetScene(context);
+        //ogSetSize(scene, window.innerWidth/2,window.innerHeight);
+        m_centerX = (window.innerWidth-350)/2;
         m_centerY = window.innerHeight/2;
+        m_stage.setSize(window.innerWidth-350, window.innerHeight);
     }
 
 

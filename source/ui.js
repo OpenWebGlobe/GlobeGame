@@ -193,7 +193,7 @@ Clock.prototype.Countdown = function()
     setTimeout(function(){
         if(that.obsolete == true)
         {
-            that.OnDestroy();
+
         }
         else if(that.seconds > 0)
         {that.Countdown();}
@@ -211,10 +211,7 @@ Clock.prototype.Countdown = function()
 Clock.prototype.Destroy = function()
 {
     this.obsolete = true;
-    if(this.running == false)
-    {
-        this.OnDestroy();
-    }
+    this.OnDestroy();
 }
 
 Clock.prototype.OnDestroy = function()
