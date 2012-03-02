@@ -63,6 +63,7 @@
     var m_player = null;
     var m_clock = null;
     var m_score = null;
+    var m_poilayer = null;
 
 
     /* preload functions */
@@ -101,7 +102,11 @@
             btn_01_t: "../art/btn_01_t.png",
             btn_01_o: "../art/btn_01_o.png",
             clock: "../art/clock.png",
-            dial: "../art/dial.png"
+            dial: "../art/dial.png",
+            pin_blue: "../art/pin_blue.png",
+            pin_red: "../art/pin_red.png",
+            pin_green: "../art/pin_green.png",
+            pin_yellow: "../art/pin_yellow.png"
         };
         LoadImages(sources);
         LoadLanguage(function()
@@ -112,7 +117,6 @@
                 m_game.Init();
             });
         });
-
         // Add OWG Data
         ogAddImageLayer(m_globe, {
             url: ["http://www.openwebglobe.org/data/img"],
@@ -124,11 +128,19 @@
             layer: "swissimage",
             service: "owg"
         });
+        /*ogAddImageLayer(m_globe, {
+            url: ["http://10.42.2.37"],
+            layer: "ch_boundaries",
+            service: "owg"
+        });*/
         ogAddElevationLayer(m_globe, {
             url: ["http://10.42.2.37"],
             layer: "DHM25",
             service: "owg"
         });
+
+        m_poilayer = ogCreatePOILayer(m_globe,"misc");
+
         ogSetRenderFunction(m_context, OnRender);
         ogSetResizeFunction(m_context, OnResize);
 
@@ -148,6 +160,10 @@
     function OnCanvasRender(frame)
     {
         m_stage.draw();
+        if(m_game)
+        {
+            m_game.CycleCallback();
+        }
     }
 
     function OnRender(context)

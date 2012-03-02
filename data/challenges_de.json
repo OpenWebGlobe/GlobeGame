@@ -65,5 +65,10 @@
                 "roll": 0
             }
         ]
+    },
+    "2": {
+        "Type": 1,
+        "BaseScore": 80,
+        "Title": "Finden sie Basel!"
     }
 }

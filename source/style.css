@@ -112,3 +112,43 @@
     width: 300px;
     height: 69px;
 }
+
+
+/* Editor */
+body{
+    font-family: Verdana;
+    font-size: 11px;
+}
+.edbutton{
+    margin: 5px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #ffffff;
+    cursor:pointer;
+    padding: 3px 10px;
+    background: -moz-linear-gradient(
+        top,
+        #f0f0f0 0%,
+        #b8b8b8 25%,
+        #6b6b6b 75%,
+        #424242);
+    background: -webkit-gradient(
+        linear, left top, left bottom,
+        from(#f0f0f0),
+        color-stop(0.25, #b8b8b8),
+        color-stop(0.75, #6b6b6b),
+        to(#424242));
+    border-radius: 15px;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border: 1px solid #171717;
+    -moz-box-shadow:
+        0px 1px 3px rgba(000,000,000,0.5),
+        inset 0px 0px 10px rgba(087,087,087,0.7);
+    -webkit-box-shadow:
+        0px 1px 3px rgba(000,000,000,0.5),
+        inset 0px 0px 10px rgba(087,087,087,0.7);
+    text-shadow:
+        0px -1px 0px rgba(000,000,000,0.4),
+        0px 1px 0px rgba(255,255,255,0.3);
+}

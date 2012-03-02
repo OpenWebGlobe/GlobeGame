@@ -337,3 +337,42 @@ function ScoreCount(layer)
     });
     layer.add(this.shape);
 }
+
+//-----------------------------------------------------------------------------
+/** @constructor */
+function Pin(layer, image, x, y)
+{
+    this.layer = layer;
+    var that = this;
+    this.x = x;
+    this.y = y;
+    this.visible = true;
+
+    this.shape = new Kinetic.Shape(function(){
+        if(that.visible == true)
+        {
+            var ctx = this.getContext();
+            ctx.beginPath();
+            ctx.drawImage(image, that.x, that.y, 86, 144);
+        }
+
+    });
+    layer.add(this.shape);
+}
+
+Pin.prototype.SetPos = function(x,y)
+{
+    this.x = x;
+    this.y = y;
+}
+
+Pin.prototype.SetVisible = function(visible)
+{
+    this.visible = visible;
+}
+
+
+Pin.prototype.Destroy = function()
+{
+    this.layer.remove(this.shape);
+}
