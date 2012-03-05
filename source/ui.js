@@ -37,6 +37,10 @@ function Button01(layer, name, x, y, width, height, caption, fontsize)
     this.layer = layer;
 
     this.onClickEvent = function() {};
+    this.onMouseOverEvent = function() {};
+    this.onMouseOutEvent = function() {};
+    this.onMouseDownEvent = function() {};
+    this.onMouseUpEvent = function() {};
     var that = this;
 
     this.shape = new Kinetic.Shape(function(){
@@ -91,19 +95,23 @@ function Button01(layer, name, x, y, width, height, caption, fontsize)
     });
 
     this.shape.on("mouseout", function(){
+        that.onMouseOutEvent();
         if(that.state < 3)
         {that.state = 0;}
     });
     this.shape.on("mouseover", function(){
+        that.onMouseOverEvent();
         if(that.state < 3)
         {that.state = 1;}
     });
     this.shape.on("mousedown", function(){
+        that.onMouseDownEvent();
         if(that.state < 3)
         {that.state = 2;}
 
     });
     this.shape.on("mouseup", function(){
+        that.onMouseUpEvent();
         if(that.state < 3)
         {that.state = 1;
         that.onClickEvent();
@@ -353,7 +361,7 @@ function Pin(layer, image, x, y)
         {
             var ctx = this.getContext();
             ctx.beginPath();
-            ctx.drawImage(image, that.x, that.y, 86, 144);
+            ctx.drawImage(image, that.x-74, that.y-132, 86, 144);
         }
 
     });

@@ -63,7 +63,6 @@
     var m_player = null;
     var m_clock = null;
     var m_score = null;
-    var m_poilayer = null;
 
 
     /* preload functions */
@@ -128,21 +127,17 @@
             layer: "swissimage",
             service: "owg"
         });
-        /*ogAddImageLayer(m_globe, {
-            url: ["http://10.42.2.37"],
-            layer: "ch_boundaries",
-            service: "owg"
-        });*/
+
         ogAddElevationLayer(m_globe, {
             url: ["http://10.42.2.37"],
             layer: "DHM25",
             service: "owg"
         });
 
-        m_poilayer = ogCreatePOILayer(m_globe,"misc");
 
         ogSetRenderFunction(m_context, OnRender);
         ogSetResizeFunction(m_context, OnResize);
+        ogSetMouseMoveFunction(m_context, OnMouseMove);
 
         m_stage.add(m_static);
         m_stage.add(m_ui);
@@ -169,6 +164,12 @@
     function OnRender(context)
     {
 
+    }
+
+    function OnMouseMove(context, mx, my)
+    {
+        console.log("owg_x: "+ mx + " owg_y: " + my);
+        console.log("W: " + ogGetWidth(m_context) + " H: "+ ogGetHeight(m_context));
     }
 
     function OnResize(context)

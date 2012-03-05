@@ -69,6 +69,9 @@
     "2": {
         "Type": 1,
         "BaseScore": 80,
-        "Title": "Finden sie Basel!"
+        "Title": "Finden sie Basel!",
+        "Longitude":  7.594113,
+        "Latitude": 47.554982,
+        "Elevation": 400.0
     }
 }

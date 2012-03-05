@@ -129,7 +129,8 @@ function GameData()
             }else
             if(val.Type == 1)
             {
-                var challenge = new PickingChallenge(val.BaseScore, val.Title);
+                var pos = [ val.Longitude, val.Latitude, val.Elevation];
+                var challenge = new PickingChallenge(val.BaseScore, val.Title, pos);
                 items.push(challenge);
             }
 
@@ -250,7 +251,7 @@ function LandmarkChallenge(baseScore, options, correctOption, views, title)
         if(that.correctOption == option)
         {
             m_player.ScorePoints(that.baseScore,"");
-            m_player.ScorePoints(timeleft, m_locale.timebonus);
+            m_player.ScorePoints(Math.floor(timeleft/5), m_locale.timebonus);
             if(timeleft > 50)
             {
                 m_player.ScorePoints(20, m_locale.speedbonus);
@@ -283,49 +284,69 @@ LandmarkChallenge.prototype.constructor=LandmarkChallenge;
 
 //-----------------------------------------------------------------------------
 /** @constructor */
-function PickingChallenge(baseScore, title)
+function PickingChallenge(baseScore, title, pos)
 {
     this.screenText = null;
+    this.baseScore = baseScore;
     this.text = title;
     var that = this;
     this.flystate = false;
     this.zoomState = false;
     this.pickPos = [];
+    this.solutionPos = pos;
     this.posPin = null;
     this.resultPin = null;
     this.line = null;
     this.distancText = null;
+    this.okayBtn = null;
+    this.mouseLock = false;
+    this.layerId;
+    var clock;
 
     this.Activate = function()
     {
-        screenText = new ScreenText(m_ui, this.text,m_centerX, window.innerHeight-255, 20, "center");
+        that.screenText = new ScreenText(m_ui, this.text,m_centerX, window.innerHeight-255, 20, "center");
+        that.okayBtn = new Button01(m_ui, "okbtn1", m_centerX-150, window.innerHeight-180, 300, 69, "OK", 15);
+        that.okayBtn.onClickEvent = that.OnOkay;
+        that.okayBtn.onMouseOverEvent = that.MouseOverOkBtn;
+        that.okayBtn.onMouseOutEvent = that.MouseOutOkBtn;
         clock = new Clock(m_ui, 50, 75, 60);
         clock.Start();
         FadeIn(function() {});
         var scene = ogGetScene(m_context);
         var camId = ogGetActiveCamera(scene);
-        ogSetPosition(camId,8.135578,46.948707, 326059.0);
+        ogSetPosition(camId,8.225578,46.8248707, 280000.0);
         ogSetOrientation(camId,0.0,-90.0, 0.0);
 
         ogSetInPositionFunction(m_context,that.FlightCallback);
         m_stage.on("mousedown", this.OnMouseDown);
         m_stage.on("mouseup", this.OnMouseUp);
         m_stage.on("mousemove", this.OnMouseMove);
+        that.layerId = ogAddImageLayer(m_globe, {
+            url: ["http://10.42.2.37"],
+            layer: "ch_boundaries",
+            service: "owg"
+        });
     };
 
     this.Destroy = function()
     {
         clock.Pause();
         var scene = ogGetScene(m_context);
-        m_stage.on("mousedown", null);
-        m_stage.on("mouseup", null);
+        m_stage.on("mousedown", function() {});
+        m_stage.on("mouseup",  function() {});
+        m_stage.on("mousemove",  function() {});
         that.OnDestroy();
     };
 
     this.OnDestroy = function()
     {   clock.Destroy();
         FadeOut(function(){
-            screenText.Destroy();
+            that.screenText.Destroy();
+            that.resultPin.Destroy();
+            that.posPin.Destroy();
+            that.okayBtn.Destroy();
+            ogRemoveImageLayer(that.layerId);
             if(m_game)
                 m_game.NextChallenge();
         });
@@ -333,61 +354,46 @@ function PickingChallenge(baseScore, title)
 
     this.OnMouseDown = function()
     {
-        var pos = m_stage.getMousePosition();
-        var scene = ogGetScene(m_context);
-        if(that.posPin)
-        that.posPin.SetPos(pos.x-74, pos.y-132);
-        if(that.flystate == true)
+        if(that.mouseLock == false)
         {
-            ogStopFlyTo(scene);
+            var pos = m_stage.getMousePosition();
+            var scene = ogGetScene(m_context);
+            if(that.posPin)
+            that.posPin.SetPos(pos.x, pos.y);
+            if(that.flystate == true)
+            {
+                ogStopFlyTo(scene);
+            }
+            var ori = ogGetOrientation(scene);
+            var result = ogPickGlobe(scene, pos.x, pos.y);
+            that.ZoomIn(result, ori);
+            if(that.posPin == null)
+            {
+                that.posPin = new Pin(m_ui, m_images.pin_blue, pos.x, pos.y);
+            }
+            that.zoomState = true;
         }
-        var ori = ogGetOrientation(scene);
-        var result = ogPickGlobe(scene, pos.x-10, pos.y-10);
-        that.ZoomIn(result, ori);
-        if(that.posPin == null)
-        {
-            that.posPin = new Pin(m_ui, m_images.pin_blue, pos.x-74, pos.y-132);
-        }
-        that.zoomState = true;
     };
 
     this.OnMouseUp = function()
     {
-        var scene = ogGetScene(m_context);
-        that.zoomState = false;
-        var pos = m_stage.getMousePosition();
-        var mx = pos.x-10;
-        var my = pos.y-10;
-        that.pickPos = ogPickGlobe(scene, pos.x-10, pos.y-10);
-
-        var NewPoiDefinition =
+        if(that.mouseLock == false)
         {
-            icon     : "http://www.openwebglobe.org/data/media/cycling.png",
-            text 		: 	"",
-            position :  [that.pickPos[1], that.pickPos[2], that.pickPos[3]+2000],
-            size 		: 	200,
-            flagpole : true
-        };
+            var scene = ogGetScene(m_context);
+            that.zoomState = false;
+            var pos = m_stage.getMousePosition();
+            var mx = pos.x-10;
+            var my = pos.y-10;
+            that.pickPos = ogPickGlobe(scene, pos.x, pos.y);
 
-        var poi = ogCreatePOI(m_poilayer,NewPoiDefinition);
+            that.posPin.SetVisible(false);
+            if(that.flystate == true)
+            {
+                ogStopFlyTo(scene);
+            }
 
-        var result = ogPickGlobe(scene, mx, my);
-        if (result[0])
-        {
-            //alert("pick result: lng=" + result[1] + ", lat=" + result[2] + ", elv=" + result[3]);
-            console.log("picked at: [" + mx + ", " + my + "]");
-             console.log("pick result: x=" + result[4] + ", y=" + result[5] + ", z=" + result[6]);
-             var mouse = ogWorldToWindow(scene, result[4],result[5],result[6]);
-             console.log("world to window = [" + mouse[0] + ", " + mouse[1] + ", " + mouse[2] + "]");
-
+            that.ZoomOut();
         }
-        that.posPin.SetVisible(false);
-        if(that.flystate == true)
-        {
-            ogStopFlyTo(scene);
-        }
-
-        that.ZoomOut();
     };
 
     this.OnMouseMove = function()
@@ -395,7 +401,7 @@ function PickingChallenge(baseScore, title)
         if(that.zoomState == true)
         {
             var pos = m_stage.getMousePosition();
-            that.posPin.SetPos(pos.x-74, pos.y-132);
+            that.posPin.SetPos(pos.x, pos.y);
         }
     };
 
@@ -404,7 +410,7 @@ function PickingChallenge(baseScore, title)
         that.flystate = true;
         var scene = ogGetScene(m_context);
         ogSetFlightDuration(scene,1000);
-        ogFlyToLookAtPosition(scene,pos[1],pos[2], pos[3],70000,0.00,-90.0, 0.0);
+        ogFlyToLookAtPosition(scene,pos[1],pos[2], pos[3],20000,0.00,-90.0, 0.0);
     };
 
     this.ZoomOut = function(ori)
@@ -412,7 +418,7 @@ function PickingChallenge(baseScore, title)
         that.flystate = true;
         var scene = ogGetScene(m_context);
         ogSetFlightDuration(scene,800);
-        ogFlyTo(scene,8.135578,46.948707, 326059.0,0.00,-90.0, 0.0);
+        ogFlyTo(scene,8.225578,46.8248707, 280000.0,0.00,-90.0, 0.0);
     };
 
     this.FlightCallback = function()
@@ -421,8 +427,54 @@ function PickingChallenge(baseScore, title)
         var scene = ogGetScene(m_context);
         var pos = ogWorldToWindow(scene,that.pickPos[4],that.pickPos[5],that.pickPos[6]);
         that.posPin.SetVisible(true);
-        that.posPin.SetPos(pos[0]-74+10, pos[1]-132+10);
-    }
+        that.posPin.SetPos(pos[0], pos[1]);
+    };
+
+    this.OnOkay = function()
+    {
+        var scene = ogGetScene(m_context);
+        var cartesian = ogToCartesian(scene, that.solutionPos[0],that.solutionPos[1],that.solutionPos[2]);
+        var screenPos = ogWorldToWindow(scene,cartesian[0],cartesian[1],cartesian[2]);
+        var distance = ogCalcDistanceWGS84(that.solutionPos[0], that.solutionPos[1], that.pickPos[1], that.pickPos[2]);
+        distance = Math.round((distance/1000)*Math.pow(10,1))/Math.pow(10,1);
+        that.resultPin = new Pin(m_ui, m_images.pin_green, screenPos[0], screenPos[1]);
+        var line = new Kinetic.Shape(function(){
+            var ctx = this.getContext();
+            ctx.moveTo(screenPos[0], screenPos[1]);
+            ctx.lineTo(that.posPin.x, that.posPin.y);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "#DD6600";
+            ctx.stroke();
+            ctx.textAlign = "center";
+            ctx.fillStyle = "#FF0";
+            ctx.font = "16pt TitanOne";
+            ctx.textAlign = "left";
+            ctx.fillText(distance+"km", screenPos[0], screenPos[1]);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#000"; // stroke color
+            ctx.strokeText(distance+"km", screenPos[0], screenPos[1]);
+
+        });
+        m_ui.add(line);
+        m_player.ScorePoints(Math.floor(that.baseScore/distance),m_locale.estimation);
+        m_player.ScorePoints(Math.floor(clock.seconds/5), m_locale.timebonus);
+        if(clock.seconds > 50)
+        {
+            m_player.ScorePoints(20, m_locale.speedbonus);
+        }
+        setTimeout(function(){
+            m_ui.remove(line);
+            that.Destroy();
+        }, 2500);
+    };
+    this.MouseOverOkBtn = function()
+    {
+        that.mouseLock = true;
+    };
+    this.MouseOutOkBtn = function()
+    {
+        that.mouseLock = false;
+    };
 }
 PickingChallenge.prototype = new Challenge(1);
 PickingChallenge.prototype.constructor=PickingChallenge;
