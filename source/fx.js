@@ -21,9 +21,21 @@
  *     Licensed under MIT License. Read the file LICENSE for more information   *
  *******************************************************************************/
 /* Effects */
+goog.provide('owg.gg.FlyingText');
 var m_ftinternal = 0;
 //-----------------------------------------------------------------------------
-/** @constructor */
+/**
+ * @class FlyingText
+ * @constructor
+ *
+ * @description splash text flying around
+ *
+ * @author Robert Wüest robert.wst@gmail.ch
+ *
+ * @param {Object} layer
+ * @param {string} text
+ * @param {string} fontcolor
+ */
 function FlyingText(layer, text, fontcolor)
 {
     this.text = text;
@@ -38,7 +50,6 @@ function FlyingText(layer, text, fontcolor)
     {
         m_ftinternal = 0;
     }
-
 
     this.shape = new Kinetic.Shape(function(){
         var ctx = this.getContext();
@@ -65,7 +76,12 @@ function FlyingText(layer, text, fontcolor)
     layer.add(this.shape);
 
 }
+goog.exportSymbol('FlyingText', FlyingText);
 //-----------------------------------------------------------------------------
+/**
+ * @description screen fade out return with callback
+ * @param {function()} callback
+ */
 function FadeOut(callback)
 {
     setTimeout(function(){
@@ -74,7 +90,12 @@ function FadeOut(callback)
         { FadeOut(callback);} else { m_ui.setAlpha(0.0); callback();}
     }, 1);
 }
+goog.exportSymbol('FadeOut', FadeOut);
 //-----------------------------------------------------------------------------
+/**
+ * @description screen fade in return with callback
+ * @param {function()} callback
+ */
 function FadeIn(callback)
 {
     setTimeout(function(){
@@ -83,3 +104,4 @@ function FadeIn(callback)
         { FadeIn(callback);} else { m_ui.setAlpha(1.0); callback();}
     }, 1);
 }
+goog.exportSymbol('FadeIn', FadeIn);
