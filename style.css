@@ -27,37 +27,37 @@
 
 @font-face {
     font-family: Bangers;
-    src: url(../art/fonts/Bangers.ttf);
+    src: url(art/fonts/Bangers.ttf);
 }
 
 @font-face {
     font-family: BowlbyOne;
-    src: url(../art/fonts/BowlbyOne.ttf);
+    src: url(art/fonts/BowlbyOne.ttf);
 }
 
 @font-face {
     font-family: EricaOne;
-    src: url(../art/fonts/EricaOne.ttf);
+    src: url(art/fonts/EricaOne.ttf);
 }
 
 @font-face {
     font-family: LuckiestGuy;
-    src: url(../art/fonts/LuckiestGuy.ttf);
+    src: url(art/fonts/LuckiestGuy.ttf);
 }
 
 @font-face {
     font-family: PollerOne;
-    src: url(../art/fonts/PollerOne.ttf);
+    src: url(art/fonts/PollerOne.ttf);
 }
 
 @font-face {
     font-family: RammettoOne;
-    src: url(../art/fonts/RammettoOne.ttf);
+    src: url(art/fonts/RammettoOne.ttf);
 }
 
 @font-face {
     font-family: TitanOne;
-    src: url(../art/fonts/TitanOne.ttf);
+    src: url(art/fonts/TitanOne.ttf);
 }
 
 /* elements */
@@ -95,21 +95,21 @@
 /* Buttons */
 .button_01
 {
- background-image:url('../art/btn_01.png');
+ background-image:url('art/btn_01.png');
  width: 300px;
  height: 69px;
 }
 
 .button_01:hover
 {
-    background-image:url('../art/btn_01_h.png');
+    background-image:url('art/btn_01_h.png');
     width: 300px;
     height: 69px;
 }
 
 .button_01:active
 {
-    background-image:url('../art/btn_01_c.png');
+    background-image:url('art/btn_01_c.png');
     width: 300px;
     height: 69px;
 }
