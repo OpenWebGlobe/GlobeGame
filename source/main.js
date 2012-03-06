@@ -299,19 +299,31 @@ function PickingChallenge(baseScore, title, pos)
     this.line = null;
     this.distancText = null;
     this.okayBtn = null;
+    this.overlay = null;
     this.mouseLock = false;
     this.layerId;
-    var clock;
+    this.clock;
 
     this.Activate = function()
     {
         that.screenText = new ScreenText(m_ui, this.text,m_centerX, window.innerHeight-255, 20, "center");
+        that.overlay = new Kinetic.Rect({
+            x: 0,
+            y: 0,
+            width: window.innerWidth,
+            height: window.innerHeight
+        });
+        that.overlay.on("mousedown", this.OnMouseDown);
+        that.overlay.on("mouseup", this.OnMouseUp);
+        that.overlay.on("mousemove", this.OnMouseMove);
+        m_ui.add(that.overlay);
         that.okayBtn = new Button01(m_ui, "okbtn1", m_centerX-150, window.innerHeight-180, 300, 69, "OK", 15);
         that.okayBtn.onClickEvent = that.OnOkay;
         that.okayBtn.onMouseOverEvent = that.MouseOverOkBtn;
         that.okayBtn.onMouseOutEvent = that.MouseOutOkBtn;
-        clock = new Clock(m_ui, 50, 75, 60);
-        clock.Start();
+
+        that.clock = new Clock(m_ui, 50, 75, 60);
+        that.clock.Start();
         FadeIn(function() {});
         var scene = ogGetScene(m_context);
         var camId = ogGetActiveCamera(scene);
@@ -319,9 +331,6 @@ function PickingChallenge(baseScore, title, pos)
         ogSetOrientation(camId,0.0,-90.0, 0.0);
 
         ogSetInPositionFunction(m_context,that.FlightCallback);
-        m_stage.on("mousedown", this.OnMouseDown);
-        m_stage.on("mouseup", this.OnMouseUp);
-        m_stage.on("mousemove", this.OnMouseMove);
         that.layerId = ogAddImageLayer(m_globe, {
             url: ["http://10.42.2.37"],
             layer: "ch_boundaries",
@@ -331,21 +340,19 @@ function PickingChallenge(baseScore, title, pos)
 
     this.Destroy = function()
     {
-        clock.Pause();
+        that.clock.Pause();
         var scene = ogGetScene(m_context);
-        m_stage.on("mousedown", function() {});
-        m_stage.on("mouseup",  function() {});
-        m_stage.on("mousemove",  function() {});
         that.OnDestroy();
     };
 
     this.OnDestroy = function()
-    {   clock.Destroy();
+    {   that.clock.Destroy();
         FadeOut(function(){
             that.screenText.Destroy();
             that.resultPin.Destroy();
             that.posPin.Destroy();
             that.okayBtn.Destroy();
+            m_ui.remove(that.overlay);
             ogRemoveImageLayer(that.layerId);
             if(m_game)
                 m_game.NextChallenge();
