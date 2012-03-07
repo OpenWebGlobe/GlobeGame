@@ -39,6 +39,8 @@ function Challenge(type)
      */
     this.type = type;
     this.baseScore = 0;
+    this.destroyed = false;
+    this.editormode = false;
     this.Activate = function() {};
     this.Destroy = function() {};
     this.OnDestroy = function() {};

@@ -717,6 +717,7 @@ owg.gg.Challenge = {};
 function Challenge(a) {
   this.type = a;
   this.baseScore = 0;
+  this.editormode = this.destroyed = !1;
   this.Activate = function() {
   };
   this.Destroy = function() {
@@ -788,16 +789,19 @@ LandmarkChallenge.prototype.Activate = function() {
   this.FlightCallback()
 };
 LandmarkChallenge.prototype.Destroy = function() {
-  this.clock.Pause();
-  this.stop = !0;
-  var a = ogGetScene(m_context);
-  ogStopFlyTo(a);
-  this.OnDestroy()
+  if(!this.destroyed) {
+    this.clock.Pause();
+    this.stop = !0;
+    var a = ogGetScene(m_context);
+    ogStopFlyTo(a);
+    this.OnDestroy();
+    this.destroyed = !0
+  }
 };
 LandmarkChallenge.prototype.OnDestroy = function() {
   this.clock.Destroy();
   var a = this;
-  FadeOut(function() {
+  this.editormode ? (a.buttonArray[0].Destroy(), a.buttonArray[1].Destroy(), a.buttonArray[2].Destroy(), a.buttonArray[3].Destroy(), a.screenText.Destroy()) : FadeOut(function() {
     a.buttonArray[0].Destroy();
     a.buttonArray[1].Destroy();
     a.buttonArray[2].Destroy();
@@ -812,9 +816,9 @@ LandmarkChallenge.prototype.PickOption = function(a, b) {
   this.buttonArray[2].SetEnabled(!1);
   this.buttonArray[3].SetEnabled(!1);
   var d = this;
-  this.correctOption == a ? (m_player.ScorePoints(this.baseScore, ""), m_player.ScorePoints(Math.floor(b / 5), m_locale.timebonus), b > 50 && m_player.ScorePoints(20, m_locale.speedbonus), this.buttonArray[a - 1].SetEnabled(!0), this.buttonArray[a - 1].SetState(3)) : (this.buttonArray[a - 1].SetEnabled(!0), this.buttonArray[this.correctOption - 1].SetEnabled(!0), this.buttonArray[a - 1].SetState(4), this.buttonArray[this.correctOption - 1].SetState(5));
+  this.correctOption == a ? (m_player && (m_player.ScorePoints(this.baseScore, ""), m_player.ScorePoints(Math.floor(b / 5), m_locale.timebonus), b > 50 && m_player.ScorePoints(20, m_locale.speedbonus)), this.buttonArray[a - 1].SetEnabled(!0), this.buttonArray[a - 1].SetState(3)) : (this.buttonArray[a - 1].SetEnabled(!0), this.buttonArray[this.correctOption - 1].SetEnabled(!0), this.buttonArray[a - 1].SetState(4), this.buttonArray[this.correctOption - 1].SetState(5));
   setTimeout(function() {
-    d.Destroy()
+    d.editormode || d.Destroy()
   }, 2E3)
 };
 goog.exportSymbol("LandmarkChallenge", LandmarkChallenge);
@@ -833,7 +837,7 @@ function PickingChallenge(a, b, d) {
   this.solutionPos = d;
   this.overlay = this.okayBtn = this.distancText = this.line = this.resultPin = this.posPin = null;
   this.mouseLock = !1;
-  this.clock = null;
+  this.layerId = this.clock = null;
   this.OnOkay = function() {
     var a = ogGetScene(m_context), b = ogToCartesian(a, c.solutionPos[0], c.solutionPos[1], c.solutionPos[2]), d = ogWorldToWindow(a, b[0], b[1], b[2]), i = ogCalcDistanceWGS84(c.solutionPos[0], c.solutionPos[1], c.pickPos[1], c.pickPos[2]), i = Math.round(i / 1E3 * Math.pow(10, 1)) / Math.pow(10, 1);
     c.resultPin = new Pin(m_ui, m_images.pin_green, d[0], d[1]);
@@ -854,12 +858,10 @@ function PickingChallenge(a, b, d) {
       a.strokeText(i + "km", d[0], d[1])
     }});
     m_ui.add(g);
-    m_player.ScorePoints(Math.floor(c.baseScore / i), m_locale.estimation);
-    m_player.ScorePoints(Math.floor(c.clock.seconds / 5), m_locale.timebonus);
-    c.clock.seconds > 50 && m_player.ScorePoints(20, m_locale.speedbonus);
+    m_player && (m_player.ScorePoints(Math.floor(c.baseScore / i), m_locale.estimation), m_player.ScorePoints(Math.floor(c.clock.seconds / 5), m_locale.timebonus), c.clock.seconds > 50 && m_player.ScorePoints(20, m_locale.speedbonus));
     setTimeout(function() {
       m_ui.remove(g);
-      c.Destroy()
+      c.editormode || c.Destroy()
     }, 2500)
   };
   this.MouseOverOkBtn = function() {
@@ -929,14 +931,14 @@ PickingChallenge.prototype.Activate = function() {
   this.layerId = ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"ch_boundaries", service:"owg"})
 };
 PickingChallenge.prototype.Destroy = function() {
-  this.clock.Pause();
-  ogGetScene(m_context);
-  this.OnDestroy()
+  if(!this.destroyed) {
+    this.clock.Pause(), this.OnDestroy(), this.destroyed = !0
+  }
 };
 PickingChallenge.prototype.OnDestroy = function() {
   this.clock.Destroy();
   var a = this;
-  FadeOut(function() {
+  this.editormode ? (a.screenText.Destroy(), a.resultPin.Destroy(), a.posPin.Destroy(), a.okayBtn.Destroy(), m_ui.remove(a.overlay)) : FadeOut(function() {
     a.screenText.Destroy();
     a.resultPin.Destroy();
     a.posPin.Destroy();
@@ -1020,7 +1022,7 @@ GlobeGame.prototype.InitQuiz = function() {
   this.state = 2
 };
 GlobeGame.prototype.NextChallenge = function() {
-  if(m_gameData.questions.length > 0) {
+  if(m_globeGame && m_gameData.questions.length > 0) {
     this.currentChallenge = m_gameData.PickChallenge(), this.InitQuiz()
   }
 };

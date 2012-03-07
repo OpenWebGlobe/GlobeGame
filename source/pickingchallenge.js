@@ -60,6 +60,7 @@ function PickingChallenge(baseScore, title, pos)
     this.overlay = null;
     this.mouseLock = false;
     this.clock = null;
+    this.layerId = null;
 
     /* Inline functions */
     //-----------------------------------------------------------------------------
@@ -92,15 +93,19 @@ function PickingChallenge(baseScore, title, pos)
 
         }});
         m_ui.add(line);
-        m_player.ScorePoints(Math.floor(that.baseScore/distance),m_locale["estimation"]);
-        m_player.ScorePoints(Math.floor(that.clock.seconds/5), m_locale["timebonus"]);
-        if(that.clock.seconds > 50)
+        if(m_player)
         {
-            m_player.ScorePoints(20, m_locale["speedbonus"]);
+            m_player.ScorePoints(Math.floor(that.baseScore/distance),m_locale["estimation"]);
+            m_player.ScorePoints(Math.floor(that.clock.seconds/5), m_locale["timebonus"]);
+            if(that.clock.seconds > 50)
+            {
+                m_player.ScorePoints(20, m_locale["speedbonus"]);
+            }
         }
         setTimeout(function(){
             m_ui.remove(line);
-            that.Destroy();
+            if(!that.editormode)
+                that.Destroy();
         }, 2500);
     };
     //-----------------------------------------------------------------------------
@@ -239,9 +244,12 @@ PickingChallenge.prototype.Activate = function()
  */
 PickingChallenge.prototype.Destroy = function()
 {
-    this.clock.Pause();
-    var scene = ogGetScene(m_context);
-    this.OnDestroy();
+    if(!this.destroyed)
+    {
+        this.clock.Pause();
+        this.OnDestroy();
+        this.destroyed = true;
+    }
 };
 //-----------------------------------------------------------------------------
 /**
@@ -250,16 +258,26 @@ PickingChallenge.prototype.Destroy = function()
 PickingChallenge.prototype.OnDestroy = function()
 {   this.clock.Destroy();
     var that = this;
-    FadeOut(function(){
+        if(!this.editormode)
+        {
+        FadeOut(function(){
+            that.screenText.Destroy();
+            that.resultPin.Destroy();
+            that.posPin.Destroy();
+            that.okayBtn.Destroy();
+            m_ui.remove(that.overlay);
+            ogRemoveImageLayer(that.layerId);
+            if(m_globeGame)
+                m_globeGame.NextChallenge();
+        });
+    } else
+    {
         that.screenText.Destroy();
         that.resultPin.Destroy();
         that.posPin.Destroy();
         that.okayBtn.Destroy();
         m_ui.remove(that.overlay);
-        ogRemoveImageLayer(that.layerId);
-        if(m_globeGame)
-            m_globeGame.NextChallenge();
-    });
+    }
 };
 //-----------------------------------------------------------------------------
 /**

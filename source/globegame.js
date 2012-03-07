@@ -123,9 +123,12 @@ GlobeGame.prototype.InitQuiz = function()
  */
 GlobeGame.prototype.NextChallenge = function()
 {
-    if(m_gameData.questions.length > 0){
-        this.currentChallenge = m_gameData.PickChallenge();
-        this.InitQuiz();
+    if(m_globeGame)
+    {
+        if(m_gameData.questions.length > 0){
+            this.currentChallenge = m_gameData.PickChallenge();
+            this.InitQuiz();
+        }
     }
 };
 //-----------------------------------------------------------------------------

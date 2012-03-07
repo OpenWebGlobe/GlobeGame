@@ -126,11 +126,15 @@ LandmarkChallenge.prototype.Activate = function()
  */
 LandmarkChallenge.prototype.Destroy = function()
 {
-    this.clock.Pause();
-    this.stop = true;
-    var scene = ogGetScene(m_context);
-    ogStopFlyTo(scene);
-    this.OnDestroy();
+    if(!this.destroyed)
+    {
+        this.clock.Pause();
+        this.stop = true;
+        var scene = ogGetScene(m_context);
+        ogStopFlyTo(scene);
+        this.OnDestroy();
+        this.destroyed = true;
+    }
 };
 //-----------------------------------------------------------------------------
 /**
@@ -140,15 +144,26 @@ LandmarkChallenge.prototype.OnDestroy = function()
 {
     this.clock.Destroy();
     var that = this;
-    FadeOut(function(){
+    if(!this.editormode)
+    {
+        FadeOut(function(){
+            that.buttonArray[0].Destroy();
+            that.buttonArray[1].Destroy();
+            that.buttonArray[2].Destroy();
+            that.buttonArray[3].Destroy();
+            that.screenText.Destroy();
+            if(m_globeGame)
+                m_globeGame.NextChallenge();
+        });
+    }
+    else
+    {
         that.buttonArray[0].Destroy();
         that.buttonArray[1].Destroy();
         that.buttonArray[2].Destroy();
         that.buttonArray[3].Destroy();
         that.screenText.Destroy();
-        if(m_globeGame)
-            m_globeGame.NextChallenge();
-    });
+    }
 };
 //-----------------------------------------------------------------------------
 /**
@@ -163,15 +178,19 @@ LandmarkChallenge.prototype.PickOption = function(option, timeleft) {
     this.buttonArray[3].SetEnabled(false);
     var that = this;
     if (this.correctOption == option) {
-        m_player.ScorePoints(this.baseScore, "");
-        m_player.ScorePoints(Math.floor(timeleft / 5), m_locale["timebonus"]);
-        if (timeleft > 50) {
-            m_player.ScorePoints(20, m_locale["speedbonus"]);
+        if(m_player)
+        {
+            m_player.ScorePoints(this.baseScore, "");
+            m_player.ScorePoints(Math.floor(timeleft / 5), m_locale["timebonus"]);
+            if (timeleft > 50) {
+                m_player.ScorePoints(20, m_locale["speedbonus"]);
+            }
         }
         this.buttonArray[option - 1].SetEnabled(true);
         this.buttonArray[option - 1].SetState(3);
         setTimeout(function () {
-            that.Destroy();
+            if(!that.editormode)
+                that.Destroy();
         }, 2000);
     } else {
         this.buttonArray[option - 1].SetEnabled(true);
@@ -179,7 +198,8 @@ LandmarkChallenge.prototype.PickOption = function(option, timeleft) {
         this.buttonArray[option - 1].SetState(4);
         this.buttonArray[this.correctOption - 1].SetState(5);
         setTimeout(function () {
-            that.Destroy();
+            if(!that.editormode)
+                that.Destroy();
         }, 2000);
     }
 };

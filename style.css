@@ -120,6 +120,10 @@ body{
     font-family: Verdana;
     font-size: 11px;
 }
+hr{
+    margin-top:8px;
+    margin-bottom:8px;
+}
 .edbutton{
     margin: 5px;
     font-family: Arial, Helvetica, sans-serif;
@@ -152,4 +156,9 @@ body{
     text-shadow:
         0px -1px 0px rgba(000,000,000,0.4),
         0px 1px 0px rgba(255,255,255,0.3);
+}
+
+input
+{
+    background-color: #ffffee;
 }
