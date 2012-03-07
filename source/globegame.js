@@ -41,11 +41,11 @@ goog.require('owg.gg.GameData');
 var m_images = {};
 var m_loadedImages = 0;
 var m_numImages = 0;
-var m_context = ogCreateContextFromCanvas("canvas", true);
-var m_globe = ogCreateGlobe(m_context);
+var m_context = null;
+var m_globe = null;
 var m_stage = null;
-var m_ui = new Kinetic.Layer();
-var m_static = new Kinetic.Layer();
+var m_ui =     null;
+var m_static = null;
 var m_centerX = window.innerWidth/2;
 var m_centerY = window.innerHeight/2;
 var m_lang = "de";
@@ -64,8 +64,9 @@ var m_globeGame = null;
  * @description main class of globe game
  *
  * @author Robert Wüest robert.wst@gmail.ch
+ * @param {string} canvasDiv
  */
-function GlobeGame()
+function GlobeGame(canvasDiv)
 {
     /* State definitions
      0: Idle Mode intro
@@ -78,6 +79,10 @@ function GlobeGame()
     this.currentChallenge = null;
     this.callbacks = [];
     var that = this;
+    m_globeGame = this;
+    m_stage = new Kinetic.Stage(canvasDiv, window.innerWidth, window.innerHeight);
+    m_ui = new Kinetic.Layer();
+    m_static = new Kinetic.Layer();
 }
 //-----------------------------------------------------------------------------
 /**
@@ -164,6 +169,7 @@ GlobeGame.prototype.LoadImages = function(sources, callback){
         m_images[src] = new Image();
         m_images[src].onload = function(){
          if (++m_loadedImages >= m_numImages) {
+             if(callback != null)
                 callback();
             }
          };
@@ -177,8 +183,9 @@ GlobeGame.prototype.LoadImages = function(sources, callback){
  */
 GlobeGame.prototype.LoadLanguage = function(callback)
 {
-    jQuery.getJSON('../data/lang_'+m_lang+'.json', function(data) {
+    jQuery.getJSON('data/lang_'+m_lang+'.json', function(data) {
         m_locale = data;
+        if(callback != null)
         callback();
     });
 }
@@ -187,29 +194,28 @@ GlobeGame.prototype.LoadLanguage = function(callback)
 /**
  * @description init game and preload data
  * @param {function({number})} renderCallback
- * @param {string} canvasDiv
  */
-GlobeGame.prototype.Init = function(renderCallback, canvasDiv)
+GlobeGame.prototype.Init = function(renderCallback)
 {
     var that = this;
-    m_stage = new Kinetic.Stage(canvasDiv, window.innerWidth, window.innerHeight);
+
     // load gamedata
     m_gameData = new GameData();
     // Preload images
     var sources = {
-        btn_01: "../art/btn_01.png",
-        btn_01_c: "../art/btn_01_c.png",
-        btn_01_h: "../art/btn_01_h.png",
-        btn_01_d: "../art/btn_01_d.png",
-        btn_01_f: "../art/btn_01_f.png",
-        btn_01_t: "../art/btn_01_t.png",
-        btn_01_o: "../art/btn_01_o.png",
-        clock: "../art/clock.png",
-        dial: "../art/dial.png",
-        pin_blue: "../art/pin_blue.png",
-        pin_red: "../art/pin_red.png",
-        pin_green: "../art/pin_green.png",
-        pin_yellow: "../art/pin_yellow.png"
+        btn_01: "art/btn_01.png",
+        btn_01_c: "art/btn_01_c.png",
+        btn_01_h: "art/btn_01_h.png",
+        btn_01_d: "art/btn_01_d.png",
+        btn_01_f: "art/btn_01_f.png",
+        btn_01_t: "art/btn_01_t.png",
+        btn_01_o: "art/btn_01_o.png",
+        clock: "art/clock.png",
+        dial: "art/dial.png",
+        pin_blue: "art/pin_blue.png",
+        pin_red: "art/pin_red.png",
+        pin_green: "art/pin_green.png",
+        pin_yellow: "art/pin_yellow.png"
     };
     this.LoadImages(sources, null);
     this.LoadLanguage(function()
@@ -220,6 +226,8 @@ GlobeGame.prototype.Init = function(renderCallback, canvasDiv)
             that.OnLoaded();
         });
     });
+    m_context = ogCreateContextFromCanvas("canvas", true);
+    m_globe = ogCreateGlobe(m_context);
     // Add OWG Data
     ogAddImageLayer(m_globe, {
         url: ["http://www.openwebglobe.org/data/img"],
@@ -237,7 +245,6 @@ GlobeGame.prototype.Init = function(renderCallback, canvasDiv)
         layer: "DHM25",
         service: "owg"
     });
-
     ogSetRenderFunction(m_context, this.OnOGRender);
     ogSetResizeFunction(m_context, this.OnOGResize);
 
@@ -285,11 +292,13 @@ GlobeGame.prototype.OnOGResize = function(context)
  * @param {function()} renderCallback
  * @param {string} canvasDiv
  */
+/*
 function InitGlobeGame(renderCallback, canvasDiv)
 {
     m_globeGame = new GlobeGame();
     m_globeGame.Init(renderCallback, canvasDiv);
 }
+*/
 
 goog.exportSymbol('GlobeGame', GlobeGame);
 goog.exportProperty(GlobeGame.prototype, 'OnLoaded', GlobeGame.prototype.OnLoaded);
@@ -304,4 +313,4 @@ goog.exportProperty(GlobeGame.prototype, 'Init', GlobeGame.prototype.Init);
 goog.exportProperty(GlobeGame.prototype, 'OnOGResize', GlobeGame.prototype.OnOGResize);
 goog.exportProperty(GlobeGame.prototype, 'OnOGRender', GlobeGame.prototype.OnOGRender);
 goog.exportProperty(GlobeGame.prototype, 'OnCanvasRender', GlobeGame.prototype.OnCanvasRender);
-goog.exportSymbol('InitGlobeGame', InitGlobeGame);
+//goog.exportSymbol('InitGlobeGame', InitGlobeGame);

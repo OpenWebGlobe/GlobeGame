@@ -51,7 +51,7 @@ function FlyingText(layer, text, fontcolor)
         m_ftinternal = 0;
     }
 
-    this.shape = new Kinetic.Shape(function(){
+    this.shape = new Kinetic.Shape({drawFunc:function(){
         var ctx = this.getContext();
         ctx.beginPath(); // !!!
         ctx.font = "28pt LuckiestGuy";
@@ -72,7 +72,7 @@ function FlyingText(layer, text, fontcolor)
         {
             that.layer.remove(that.shape);
         }
-    });
+    }});
     layer.add(this.shape);
 
 }

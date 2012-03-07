@@ -39,7 +39,7 @@ function GameData()
     // load question array
     this.questions = [];
     var that = this;
-    jQuery.getJSON('../data/challenges_'+m_lang+'.json', function(data) {
+    jQuery.getJSON('data/challenges_'+m_lang+'.json', function(data) {
 
         var items = [];
         /** @type {{Type:number}} */

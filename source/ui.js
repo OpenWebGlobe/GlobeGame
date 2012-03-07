@@ -65,7 +65,7 @@ function Button01(layer, name, x, y, width, height, caption, fontsize)
     this.onMouseUpEvent = function() {};
     var that = this;
 
-    this.shape = new Kinetic.Shape(function(){
+    this.shape = new Kinetic.Shape({drawFunc:function(){
         var ctx = this.getContext();
         var clickOffset = 0;
         if(that.enabled == false)
@@ -114,7 +114,7 @@ function Button01(layer, name, x, y, width, height, caption, fontsize)
         ctx.lineWidth = 1;
         ctx.strokeStyle = "#000"; // stroke color
         ctx.strokeText(that.caption, tX, tY);
-    });
+    }});
 
     this.shape.on("mouseout", function(){
         that.onMouseOutEvent();
@@ -200,7 +200,7 @@ function Clock(layer, x, y, seconds)
     this.running = false;
     this.onTimeoutEvent = function() {};
 
-    this.shape = new Kinetic.Shape(function(){
+    this.shape = new Kinetic.Shape({drawFunc:function(){
 
         if(that.visible == true)
         {
@@ -224,7 +224,7 @@ function Clock(layer, x, y, seconds)
             ctx.strokeStyle = "#000"; // stroke color
             ctx.strokeText(secs, 85, 110);
         }
-    });
+    }});
     layer.add(this.shape);
 };
 //-----------------------------------------------------------------------------
@@ -345,7 +345,7 @@ function ScreenText(layer, text, x, y, fontsize, align)
     this.layer = layer;
     var that = this;
 
-    this.shape = new Kinetic.Shape(function(){
+    this.shape = new Kinetic.Shape({drawFunc:function(){
         var ctx = this.getContext();
         ctx.textAlign = that.align;
         ctx.fillStyle = "#FFF";
@@ -355,7 +355,7 @@ function ScreenText(layer, text, x, y, fontsize, align)
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#000"; // stroke color
         ctx.strokeText(that.text,  that.x, that.y);
-    });
+    }});
     layer.add(this.shape);
 }
 
@@ -398,7 +398,7 @@ function MessageDialog(layer, message, width, height)
         that.Callback();
     };
 
-    this.shape = new Kinetic.Shape(function(){
+    this.shape = new Kinetic.Shape({drawFunc:function(){
         var ctx = this.getContext();
         ctx.beginPath();
         ctx.rect((window.innerWidth/2)-(width/2), (window.innerHeight/2)-(height/2), width, height);
@@ -419,7 +419,7 @@ function MessageDialog(layer, message, width, height)
         ctx.strokeStyle = "#000"; // stroke color
         ctx.strokeText(that.message, window.innerWidth/2, window.innerHeight/2-(height/2)+80);
 
-    });
+    }});
     layer.add(this.shape);
     this.okayButton = new Button01(m_ui, "dialog", window.innerWidth/2-150, window.innerHeight/2+(height/2)-100, 300, 69, "OK", 15);
     this.okayButton.onClickEvent = this.OnOkay;
@@ -462,7 +462,7 @@ function ScoreCount(layer)
     this.layer = layer;
     var that = this;
 
-    this.shape = new Kinetic.Shape(function(){
+    this.shape = new Kinetic.Shape({drawFunc:function(){
         var ctx = this.getContext();
         ctx.beginPath();
         ctx.rect(10, 10, 225, 50);
@@ -483,7 +483,7 @@ function ScoreCount(layer)
         ctx.strokeStyle = "#000"; // stroke color
         ctx.strokeText(m_locale["score"]+": "+m_player.playerScore, 25, 45);
 
-    });
+    }});
     layer.add(this.shape);
 }
 
@@ -519,7 +519,7 @@ function Pin(layer, image, x, y)
     this.y = y;
     this.visible = true;
 
-    this.shape = new Kinetic.Shape(function(){
+    this.shape = new Kinetic.Shape({drawFunc:function(){
         if(that.visible == true)
         {
             var ctx = this.getContext();
@@ -527,7 +527,7 @@ function Pin(layer, image, x, y)
             ctx.drawImage(image, that.x-74, that.y-132, 86, 144);
         }
 
-    });
+    }});
     layer.add(this.shape);
 }
 

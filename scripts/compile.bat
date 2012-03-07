@@ -2,7 +2,7 @@
 
 call setup.bat
 
-set COMPILATION_LEVEL=WHITESPACE_ONLY
+set COMPILATION_LEVEL=SIMPLE_OPTIMIZATIONS
 set CLOSURE_LIBRARY=..\external\closure-library
 set COMPILER_JAR=..\external\closure\compiler.jar
 

@@ -74,7 +74,7 @@ function PickingChallenge(baseScore, title, pos)
         var distance = ogCalcDistanceWGS84(that.solutionPos[0], that.solutionPos[1], that.pickPos[1], that.pickPos[2]);
         distance = Math.round((distance/1000)*Math.pow(10,1))/Math.pow(10,1);
         that.resultPin = new Pin(m_ui, m_images["pin_green"], screenPos[0], screenPos[1]);
-        var line = new Kinetic.Shape(function(){
+        var line = new Kinetic.Shape({drawFunc:function(){
             var ctx = this.getContext();
             ctx.moveTo(screenPos[0], screenPos[1]);
             ctx.lineTo(that.posPin.x, that.posPin.y);
@@ -90,7 +90,7 @@ function PickingChallenge(baseScore, title, pos)
             ctx.strokeStyle = "#000"; // stroke color
             ctx.strokeText(distance+"km", screenPos[0], screenPos[1]);
 
-        });
+        }});
         m_ui.add(line);
         m_player.ScorePoints(Math.floor(that.baseScore/distance),m_locale["estimation"]);
         m_player.ScorePoints(Math.floor(that.clock.seconds/5), m_locale["timebonus"]);
