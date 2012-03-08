@@ -433,14 +433,14 @@ owg.gg.ScreenText = {};
 owg.gg.Pin = {};
 owg.gg.Clock = {};
 owg.gg.ScoreCount = {};
-function Button01(a, b, d, c, e, f, h, i) {
+function Button01(a, b, d, c, e, f, i, h) {
   this.x = d;
   this.y = c;
   this.width = e;
   this.height = f;
   this.state = 0;
-  this.caption = h;
-  this.fontsize = i;
+  this.caption = i;
+  this.fontsize = h;
   this.name = b;
   this.enabled = !0;
   this.layer = a;
@@ -461,12 +461,12 @@ function Button01(a, b, d, c, e, f, h, i) {
     a.beginPath();
     a.rect(d, c, e, f);
     a.closePath();
-    a.font = i + "pt TitanOne";
+    a.font = h + "pt TitanOne";
     a.fillStyle = "#FFF";
-    var h = a.measureText(g.caption).width;
+    var i = a.measureText(g.caption).width;
     a.measureText(g.caption);
     var j = d + b, b = c + 3 * (f / 5) + b;
-    h <= e && (j = d + (e - h) / 2);
+    i <= e && (j = d + (e - i) / 2);
     a.fillText(g.caption, j, b);
     a.lineWidth = 1;
     a.strokeStyle = "#000";
@@ -595,17 +595,17 @@ function ScreenText(a, b, d, c, e, f) {
   this.fontsize = e;
   this.align = f;
   this.layer = a;
-  var h = this;
+  var i = this;
   this.shape = new Kinetic.Shape({drawFunc:function() {
     var a = this.getContext();
-    a.textAlign = h.align;
+    a.textAlign = i.align;
     a.fillStyle = "#FFF";
-    a.font = h.fontsize + "pt TitanOne";
-    a.textAlign = h.align;
-    a.fillText(h.text, h.x, h.y);
+    a.font = i.fontsize + "pt TitanOne";
+    a.textAlign = i.align;
+    a.fillText(i.text, i.x, i.y);
     a.lineWidth = 2;
     a.strokeStyle = "#000";
-    a.strokeText(h.text, h.x, h.y)
+    a.strokeText(i.text, i.x, i.y)
   }});
   a.add(this.shape)
 }
@@ -752,10 +752,10 @@ function HighScoreDialog(a, b, d, c) {
     a.font = "15pt TitanOne";
     for(b = 1;b <= e.list.length;b++) {
       a.fillStyle = b == 1 ? "#FFAA33" : "#FFF";
-      var i = b + ". " + e.list[b - 1][0] + "  " + e.list[b - 1][1];
-      a.fillText(i, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 75 + b * 22);
+      var h = b + ". " + e.list[b - 1][0] + "  " + e.list[b - 1][1];
+      a.fillText(h, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 75 + b * 22);
       a.lineWidth = 1;
-      a.strokeText(i, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 75 + b * 22)
+      a.strokeText(h, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 75 + b * 22)
     }
   }});
   a.add(this.shape);
@@ -903,7 +903,7 @@ function PickingChallenge(a, b, d) {
   this.mouseLock = !1;
   this.distanceLine = this.ogFrameLayer = this.clock = null;
   this.OnOkay = function() {
-    var a = ogGetScene(m_context), b = ogToCartesian(a, c.solutionPos[0], c.solutionPos[1], c.solutionPos[2]), d = ogWorldToWindow(a, b[0], b[1], b[2]), i = ogCalcDistanceWGS84(c.solutionPos[0], c.solutionPos[1], c.pickPos[1], c.pickPos[2]), i = Math.round(i / 1E3 * Math.pow(10, 1)) / Math.pow(10, 1);
+    var a = ogGetScene(m_context), b = ogToCartesian(a, c.solutionPos[0], c.solutionPos[1], c.solutionPos[2]), d = ogWorldToWindow(a, b[0], b[1], b[2]), h = ogCalcDistanceWGS84(c.solutionPos[0], c.solutionPos[1], c.pickPos[1], c.pickPos[2]), h = Math.round(h / 1E3 * Math.pow(10, 1)) / Math.pow(10, 1);
     c.resultPin = new Pin(m_ui, m_images.pin_green, d[0], d[1]);
     c.distanceLine = new Kinetic.Shape({drawFunc:function() {
       var a = this.getContext();
@@ -916,13 +916,13 @@ function PickingChallenge(a, b, d) {
       a.fillStyle = "#FF0";
       a.font = "16pt TitanOne";
       a.textAlign = "left";
-      a.fillText(i + "km", d[0], d[1]);
+      a.fillText(h + "km", d[0], d[1]);
       a.lineWidth = 2;
       a.strokeStyle = "#000";
-      a.strokeText(i + "km", d[0], d[1])
+      a.strokeText(h + "km", d[0], d[1])
     }});
     m_ui.add(c.distanceLine);
-    m_player && (m_player.ScorePoints(Math.floor(c.baseScore / i), m_locale.estimation), m_player.ScorePoints(Math.floor(c.clock.seconds / 5), m_locale.timebonus), c.clock.seconds > 50 && m_player.ScorePoints(20, m_locale.speedbonus));
+    m_player && (m_player.ScorePoints(Math.floor(c.baseScore / h), m_locale.estimation), m_player.ScorePoints(Math.floor(c.clock.seconds / 5), m_locale.timebonus), c.clock.seconds > 50 && m_player.ScorePoints(20, m_locale.speedbonus));
     setTimeout(function() {
       c.callback()
     }, 2500)
@@ -1038,19 +1038,19 @@ function GameData(a) {
   var b = this;
   jQuery.getJSON("data/challenges_" + m_lang + ".json", function(d) {
     var c = [];
-    jQuery.each(d, function(b, d) {
-      if(d.Type == 0) {
-        var h = d.BaseScore, i = d.Title, h = new LandmarkChallenge(h, d.Options, d.CorrectOption, d.Views, i);
-        c.push(h)
+    jQuery.each(d, function(a, b) {
+      if(b.Type == 0) {
+        var d = b.BaseScore, h = b.Title, d = new LandmarkChallenge(d, b.Options, b.CorrectOption, b.Views, h);
+        c.push(d)
       }else {
-        if(d.Type == 1) {
-          var g = d.Longitude, k = d.Latitude, l = d.Elevation, h = d.BaseScore, i = d.Title, h = new PickingChallenge(h, i, [g, k, l]);
-          c.push(h)
+        if(b.Type == 1) {
+          var g = b.Longitude, k = b.Latitude, l = b.Elevation, d = b.BaseScore, h = b.Title, d = new PickingChallenge(d, h, [g, k, l]);
+          c.push(d)
         }
       }
-      a && a()
     });
-    b.questions = c
+    b.questions = c;
+    a && a()
   })
 }
 GameData.prototype.PickChallenge = function() {
@@ -1078,7 +1078,7 @@ GlobeGame.prototype.Init = function(a) {
   this.LoadLanguage(function() {
     (new MessageDialog(m_ui, m_locale.start, 500, 250)).RegisterCallback(function() {
       m_ui.setAlpha(0);
-      b.EnterHighscore()
+      b.OnLoaded()
     })
   });
   m_context = ogCreateContextFromCanvas("canvas", !0);
@@ -1137,7 +1137,7 @@ GlobeGame.prototype.LoadLanguage = function(a) {
   })
 };
 GlobeGame.prototype.ProcessChallenge = function() {
-  m_globeGame && (m_globeGame.currentChallenge ? m_globeGame.currentChallenge.Destroy(m_globeGame.NextChallenge) : m_globeGame.NextChallenge())
+  m_globeGame && (m_globeGame.currentChallenge && !m_globeGame.currentChallenge.destroyed ? m_globeGame.currentChallenge.Destroy(m_globeGame.NextChallenge) : m_globeGame.NextChallenge())
 };
 GlobeGame.prototype.NextChallenge = function() {
   m_gameData.questions.length > 0 ? (m_globeGame.currentChallenge = m_gameData.PickChallenge(), m_globeGame.currentChallenge.RegisterCallback(m_globeGame.ProcessChallenge), m_globeGame.InitQuiz()) : m_globeGame.EnterHighscore()
