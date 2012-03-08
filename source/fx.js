@@ -22,7 +22,7 @@
  *******************************************************************************/
 /* Effects */
 goog.provide('owg.gg.FlyingText');
-var m_ftinternal = 0;
+var m_hInc = 0;
 //-----------------------------------------------------------------------------
 /**
  * @class FlyingText
@@ -44,12 +44,27 @@ function FlyingText(layer, text, fontcolor)
     this.alpha = 1.0;
     this.layer = layer;
     var that = this;
-    var rY = m_ftinternal*45;
-    m_ftinternal +=1;
-    if(m_ftinternal > 3)
+    var rY = m_hInc*45;
+    m_hInc += 1;
+    if(m_hInc >= 3)
+        m_hInc = 0;
+
+    this.Step = function(step)
     {
-        m_ftinternal = 0;
-    }
+        step += 1;
+        that.alpha = that.alpha -0.02;
+        that.scalefactor = that.scalefactor + 0.02;
+        if(that.alpha <= 0.0)
+        {
+            that.layer.remove(that.shape);
+        }
+        else
+        {
+            setTimeout(function(){
+                that.Step(step);
+            }, 10);
+        }
+    };
 
     this.shape = new Kinetic.Shape({drawFunc:function(){
         var ctx = this.getContext();
@@ -64,17 +79,10 @@ function FlyingText(layer, text, fontcolor)
         ctx.strokeStyle = "#000"; // stroke color
         ctx.strokeText(that.text, tX, tY);
         this.setScale(that.scalefactor,that.scalefactor);
-        that.scalefactor = that.scalefactor + 0.05;
         this.setAlpha(that.alpha);
-        that.alpha = that.alpha -0.05;
-
-        if(that.alpha <= 0.0)
-        {
-            that.layer.remove(that.shape);
-        }
     }});
     layer.add(this.shape);
-
+    that.Step(0);
 }
 goog.exportSymbol('FlyingText', FlyingText);
 //-----------------------------------------------------------------------------

@@ -40,9 +40,16 @@ function Challenge(type)
     this.type = type;
     this.baseScore = 0;
     this.destroyed = false;
-    this.editormode = false;
+    this.draftmode = false;
+    var that = this;
+    this.eventDestroyed = function() {};
+    this.callback = function() {};
     this.Activate = function() {};
-    this.Destroy = function() {};
+    this.Destroy = function(event) {};
     this.OnDestroy = function() {};
+    this.RegisterCallback = function(func)
+    {
+        that.callback = func;
+    };
 }
 goog.exportSymbol('Challenge', Challenge);

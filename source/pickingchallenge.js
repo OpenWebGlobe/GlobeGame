@@ -57,10 +57,11 @@ function PickingChallenge(baseScore, title, pos)
     this.line = null;
     this.distancText = null;
     this.okayBtn = null;
-    this.overlay = null;
+    this.pickOverlay = null;
     this.mouseLock = false;
     this.clock = null;
-    this.layerId = null;
+    this.ogFrameLayer = null;
+    this.distanceLine = null;
 
     /* Inline functions */
     //-----------------------------------------------------------------------------
@@ -75,7 +76,7 @@ function PickingChallenge(baseScore, title, pos)
         var distance = ogCalcDistanceWGS84(that.solutionPos[0], that.solutionPos[1], that.pickPos[1], that.pickPos[2]);
         distance = Math.round((distance/1000)*Math.pow(10,1))/Math.pow(10,1);
         that.resultPin = new Pin(m_ui, m_images["pin_green"], screenPos[0], screenPos[1]);
-        var line = new Kinetic.Shape({drawFunc:function(){
+        that.distanceLine = new Kinetic.Shape({drawFunc:function(){
             var ctx = this.getContext();
             ctx.moveTo(screenPos[0], screenPos[1]);
             ctx.lineTo(that.posPin.x, that.posPin.y);
@@ -92,7 +93,7 @@ function PickingChallenge(baseScore, title, pos)
             ctx.strokeText(distance+"km", screenPos[0], screenPos[1]);
 
         }});
-        m_ui.add(line);
+        m_ui.add(that.distanceLine);
         if(m_player)
         {
             m_player.ScorePoints(Math.floor(that.baseScore/distance),m_locale["estimation"]);
@@ -103,9 +104,7 @@ function PickingChallenge(baseScore, title, pos)
             }
         }
         setTimeout(function(){
-            m_ui.remove(line);
-            if(!that.editormode)
-                that.Destroy();
+            that.callback();
         }, 2500);
     };
     //-----------------------------------------------------------------------------
@@ -208,16 +207,16 @@ PickingChallenge.prototype.constructor=PickingChallenge;
 PickingChallenge.prototype.Activate = function()
 {
     this.screenText = new ScreenText(m_ui, this.text,m_centerX, window.innerHeight-255, 20, "center");
-    this.overlay = new Kinetic.Rect({
+    this.pickOverlay = new Kinetic.Rect({
         x: 0,
         y: 0,
         width: window.innerWidth,
         height: window.innerHeight
     });
-    this.overlay.on("mousedown", this.OnMouseDown);
-    this.overlay.on("mouseup", this.OnMouseUp);
-    this.overlay.on("mousemove", this.OnMouseMove);
-    m_ui.add(this.overlay);
+    this.pickOverlay.on("mousedown", this.OnMouseDown);
+    this.pickOverlay.on("mouseup", this.OnMouseUp);
+    this.pickOverlay.on("mousemove", this.OnMouseMove);
+    m_ui.add(this.pickOverlay);
     this.okayBtn = new Button01(m_ui, "okbtn1", m_centerX-150, window.innerHeight-180, 300, 69, "OK", 15);
     this.okayBtn.onClickEvent = this.OnOkay;
     this.okayBtn.onMouseOverEvent = this.MouseOverOkBtn;
@@ -232,7 +231,7 @@ PickingChallenge.prototype.Activate = function()
     ogSetOrientation(camId,0.0,-90.0, 0.0);
 
     ogSetInPositionFunction(m_context,this.FlightCallback);
-    this.layerId = ogAddImageLayer(m_globe, {
+    this.ogFrameLayer = ogAddImageLayer(m_globe, {
         url: ["http://10.42.2.37"],
         layer: "ch_boundaries",
         service: "owg"
@@ -242,10 +241,12 @@ PickingChallenge.prototype.Activate = function()
 /**
  * @description destroy challenge
  */
-PickingChallenge.prototype.Destroy = function()
+PickingChallenge.prototype.Destroy = function(event)
 {
     if(!this.destroyed)
     {
+        this.eventDestroyed = event;
+        ogSetInPositionFunction(m_context,function() {});
         this.clock.Pause();
         this.OnDestroy();
         this.destroyed = true;
@@ -258,17 +259,17 @@ PickingChallenge.prototype.Destroy = function()
 PickingChallenge.prototype.OnDestroy = function()
 {   this.clock.Destroy();
     var that = this;
-        if(!this.editormode)
-        {
+    if(!this.draftmode)
+    {
         FadeOut(function(){
             that.screenText.Destroy();
             that.resultPin.Destroy();
             that.posPin.Destroy();
             that.okayBtn.Destroy();
-            m_ui.remove(that.overlay);
-            ogRemoveImageLayer(that.layerId);
-            if(m_globeGame)
-                m_globeGame.NextChallenge();
+            m_ui.remove(that.distanceLine);
+            m_ui.remove(that.pickOverlay);
+            ogRemoveImageLayer(that.ogFrameLayer);
+            that.eventDestroyed();
         });
     } else
     {
@@ -276,7 +277,10 @@ PickingChallenge.prototype.OnDestroy = function()
         that.resultPin.Destroy();
         that.posPin.Destroy();
         that.okayBtn.Destroy();
-        m_ui.remove(that.overlay);
+        m_ui.remove(that.distanceLine);
+        m_ui.remove(that.pickOverlay);
+        ogRemoveImageLayer(that.ogFrameLayer);
+        that.eventDestroyed();
     }
 };
 //-----------------------------------------------------------------------------
@@ -311,4 +315,5 @@ goog.exportProperty(PickingChallenge.prototype, 'Destroy', PickingChallenge.prot
 goog.exportProperty(PickingChallenge.prototype, 'OnDestroy', PickingChallenge.prototype.OnDestroy);
 goog.exportProperty(PickingChallenge.prototype, 'ZoomIn', PickingChallenge.prototype.ZoomIn);
 goog.exportProperty(PickingChallenge.prototype, 'ZoomOut', PickingChallenge.prototype.ZoomOut);
+goog.exportProperty(PickingChallenge.prototype, 'RegisterCallback', PickingChallenge.prototype.RegisterCallback);
 

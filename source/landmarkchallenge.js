@@ -124,11 +124,13 @@ LandmarkChallenge.prototype.Activate = function()
 /**
  * @description destroy challenge
  */
-LandmarkChallenge.prototype.Destroy = function()
+LandmarkChallenge.prototype.Destroy = function(event)
 {
     if(!this.destroyed)
     {
+        this.eventDestroyed = event;
         this.clock.Pause();
+        ogSetInPositionFunction(m_context,function() {});
         this.stop = true;
         var scene = ogGetScene(m_context);
         ogStopFlyTo(scene);
@@ -144,7 +146,7 @@ LandmarkChallenge.prototype.OnDestroy = function()
 {
     this.clock.Destroy();
     var that = this;
-    if(!this.editormode)
+    if(!this.draftmode)
     {
         FadeOut(function(){
             that.buttonArray[0].Destroy();
@@ -152,8 +154,7 @@ LandmarkChallenge.prototype.OnDestroy = function()
             that.buttonArray[2].Destroy();
             that.buttonArray[3].Destroy();
             that.screenText.Destroy();
-            if(m_globeGame)
-                m_globeGame.NextChallenge();
+            that.eventDestroyed();
         });
     }
     else
@@ -163,6 +164,7 @@ LandmarkChallenge.prototype.OnDestroy = function()
         that.buttonArray[2].Destroy();
         that.buttonArray[3].Destroy();
         that.screenText.Destroy();
+        that.eventDestroyed();
     }
 };
 //-----------------------------------------------------------------------------
@@ -189,8 +191,7 @@ LandmarkChallenge.prototype.PickOption = function(option, timeleft) {
         this.buttonArray[option - 1].SetEnabled(true);
         this.buttonArray[option - 1].SetState(3);
         setTimeout(function () {
-            if(!that.editormode)
-                that.Destroy();
+            that.callback();
         }, 2000);
     } else {
         this.buttonArray[option - 1].SetEnabled(true);
@@ -198,8 +199,7 @@ LandmarkChallenge.prototype.PickOption = function(option, timeleft) {
         this.buttonArray[option - 1].SetState(4);
         this.buttonArray[this.correctOption - 1].SetState(5);
         setTimeout(function () {
-            if(!that.editormode)
-                that.Destroy();
+            that.callback();
         }, 2000);
     }
 };
@@ -209,3 +209,4 @@ goog.exportProperty(LandmarkChallenge.prototype, 'Activate', LandmarkChallenge.p
 goog.exportProperty(LandmarkChallenge.prototype, 'Destroy', LandmarkChallenge.prototype.Destroy);
 goog.exportProperty(LandmarkChallenge.prototype, 'OnDestroy', LandmarkChallenge.prototype.OnDestroy);
 goog.exportProperty(LandmarkChallenge.prototype, 'PickOption', LandmarkChallenge.prototype.PickOption);
+goog.exportProperty(LandmarkChallenge.prototype, 'RegisterCallback', LandmarkChallenge.prototype.RegisterCallback);

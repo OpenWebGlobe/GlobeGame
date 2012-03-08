@@ -367,15 +367,23 @@ goog.scope = function(a) {
 };
 var owg = {gg:{}};
 owg.gg.FlyingText = {};
-var m_ftinternal = 0;
+var m_hInc = 0;
 function FlyingText(a, b, d) {
   this.text = b;
   this.fontcolor = d;
   this.alpha = this.scalefactor = 1;
   this.layer = a;
-  var c = this, e = m_ftinternal * 45;
-  m_ftinternal += 1;
-  m_ftinternal > 3 && (m_ftinternal = 0);
+  var c = this, e = m_hInc * 45;
+  m_hInc += 1;
+  m_hInc >= 3 && (m_hInc = 0);
+  this.Step = function(a) {
+    a += 1;
+    c.alpha -= 0.02;
+    c.scalefactor += 0.02;
+    c.alpha <= 0 ? c.layer.remove(c.shape) : setTimeout(function() {
+      c.Step(a)
+    }, 10)
+  };
   this.shape = new Kinetic.Shape({drawFunc:function() {
     var a = this.getContext();
     a.beginPath();
@@ -388,12 +396,10 @@ function FlyingText(a, b, d) {
     a.strokeStyle = "#000";
     a.strokeText(c.text, b, d);
     this.setScale(c.scalefactor, c.scalefactor);
-    c.scalefactor += 0.05;
-    this.setAlpha(c.alpha);
-    c.alpha -= 0.05;
-    c.alpha <= 0 && c.layer.remove(c.shape)
+    this.setAlpha(c.alpha)
   }});
-  a.add(this.shape)
+  a.add(this.shape);
+  c.Step(0)
 }
 goog.exportSymbol("FlyingText", FlyingText);
 function FadeOut(a) {
@@ -717,12 +723,20 @@ owg.gg.Challenge = {};
 function Challenge(a) {
   this.type = a;
   this.baseScore = 0;
-  this.editormode = this.destroyed = !1;
+  this.draftmode = this.destroyed = !1;
+  var b = this;
+  this.eventDestroyed = function() {
+  };
+  this.callback = function() {
+  };
   this.Activate = function() {
   };
   this.Destroy = function() {
   };
   this.OnDestroy = function() {
+  };
+  this.RegisterCallback = function(a) {
+    b.callback = a
   }
 }
 goog.exportSymbol("Challenge", Challenge);
@@ -788,26 +802,22 @@ LandmarkChallenge.prototype.Activate = function() {
   ogSetInPositionFunction(m_context, this.FlightCallback);
   this.FlightCallback()
 };
-LandmarkChallenge.prototype.Destroy = function() {
+LandmarkChallenge.prototype.Destroy = function(a) {
   if(!this.destroyed) {
-    this.clock.Pause();
-    this.stop = !0;
-    var a = ogGetScene(m_context);
-    ogStopFlyTo(a);
-    this.OnDestroy();
-    this.destroyed = !0
+    this.eventDestroyed = a, this.clock.Pause(), ogSetInPositionFunction(m_context, function() {
+    }), this.stop = !0, a = ogGetScene(m_context), ogStopFlyTo(a), this.OnDestroy(), this.destroyed = !0
   }
 };
 LandmarkChallenge.prototype.OnDestroy = function() {
   this.clock.Destroy();
   var a = this;
-  this.editormode ? (a.buttonArray[0].Destroy(), a.buttonArray[1].Destroy(), a.buttonArray[2].Destroy(), a.buttonArray[3].Destroy(), a.screenText.Destroy()) : FadeOut(function() {
+  this.draftmode ? (a.buttonArray[0].Destroy(), a.buttonArray[1].Destroy(), a.buttonArray[2].Destroy(), a.buttonArray[3].Destroy(), a.screenText.Destroy(), a.eventDestroyed()) : FadeOut(function() {
     a.buttonArray[0].Destroy();
     a.buttonArray[1].Destroy();
     a.buttonArray[2].Destroy();
     a.buttonArray[3].Destroy();
     a.screenText.Destroy();
-    m_globeGame && m_globeGame.NextChallenge()
+    a.eventDestroyed()
   })
 };
 LandmarkChallenge.prototype.PickOption = function(a, b) {
@@ -818,7 +828,7 @@ LandmarkChallenge.prototype.PickOption = function(a, b) {
   var d = this;
   this.correctOption == a ? (m_player && (m_player.ScorePoints(this.baseScore, ""), m_player.ScorePoints(Math.floor(b / 5), m_locale.timebonus), b > 50 && m_player.ScorePoints(20, m_locale.speedbonus)), this.buttonArray[a - 1].SetEnabled(!0), this.buttonArray[a - 1].SetState(3)) : (this.buttonArray[a - 1].SetEnabled(!0), this.buttonArray[this.correctOption - 1].SetEnabled(!0), this.buttonArray[a - 1].SetState(4), this.buttonArray[this.correctOption - 1].SetState(5));
   setTimeout(function() {
-    d.editormode || d.Destroy()
+    d.callback()
   }, 2E3)
 };
 goog.exportSymbol("LandmarkChallenge", LandmarkChallenge);
@@ -826,6 +836,7 @@ goog.exportProperty(LandmarkChallenge.prototype, "Activate", LandmarkChallenge.p
 goog.exportProperty(LandmarkChallenge.prototype, "Destroy", LandmarkChallenge.prototype.Destroy);
 goog.exportProperty(LandmarkChallenge.prototype, "OnDestroy", LandmarkChallenge.prototype.OnDestroy);
 goog.exportProperty(LandmarkChallenge.prototype, "PickOption", LandmarkChallenge.prototype.PickOption);
+goog.exportProperty(LandmarkChallenge.prototype, "RegisterCallback", LandmarkChallenge.prototype.RegisterCallback);
 owg.gg.PickingChallenge = {};
 function PickingChallenge(a, b, d) {
   this.screenText = null;
@@ -835,13 +846,13 @@ function PickingChallenge(a, b, d) {
   this.zoomState = this.flystate = !1;
   this.pickPos = [];
   this.solutionPos = d;
-  this.overlay = this.okayBtn = this.distancText = this.line = this.resultPin = this.posPin = null;
+  this.pickOverlay = this.okayBtn = this.distancText = this.line = this.resultPin = this.posPin = null;
   this.mouseLock = !1;
-  this.layerId = this.clock = null;
+  this.distanceLine = this.ogFrameLayer = this.clock = null;
   this.OnOkay = function() {
     var a = ogGetScene(m_context), b = ogToCartesian(a, c.solutionPos[0], c.solutionPos[1], c.solutionPos[2]), d = ogWorldToWindow(a, b[0], b[1], b[2]), i = ogCalcDistanceWGS84(c.solutionPos[0], c.solutionPos[1], c.pickPos[1], c.pickPos[2]), i = Math.round(i / 1E3 * Math.pow(10, 1)) / Math.pow(10, 1);
     c.resultPin = new Pin(m_ui, m_images.pin_green, d[0], d[1]);
-    var g = new Kinetic.Shape({drawFunc:function() {
+    c.distanceLine = new Kinetic.Shape({drawFunc:function() {
       var a = this.getContext();
       a.moveTo(d[0], d[1]);
       a.lineTo(c.posPin.x, c.posPin.y);
@@ -857,11 +868,10 @@ function PickingChallenge(a, b, d) {
       a.strokeStyle = "#000";
       a.strokeText(i + "km", d[0], d[1])
     }});
-    m_ui.add(g);
+    m_ui.add(c.distanceLine);
     m_player && (m_player.ScorePoints(Math.floor(c.baseScore / i), m_locale.estimation), m_player.ScorePoints(Math.floor(c.clock.seconds / 5), m_locale.timebonus), c.clock.seconds > 50 && m_player.ScorePoints(20, m_locale.speedbonus));
     setTimeout(function() {
-      m_ui.remove(g);
-      c.editormode || c.Destroy()
+      c.callback()
     }, 2500)
   };
   this.MouseOverOkBtn = function() {
@@ -911,11 +921,11 @@ PickingChallenge.prototype = new Challenge(1);
 PickingChallenge.prototype.constructor = PickingChallenge;
 PickingChallenge.prototype.Activate = function() {
   this.screenText = new ScreenText(m_ui, this.text, m_centerX, window.innerHeight - 255, 20, "center");
-  this.overlay = new Kinetic.Rect({x:0, y:0, width:window.innerWidth, height:window.innerHeight});
-  this.overlay.on("mousedown", this.OnMouseDown);
-  this.overlay.on("mouseup", this.OnMouseUp);
-  this.overlay.on("mousemove", this.OnMouseMove);
-  m_ui.add(this.overlay);
+  this.pickOverlay = new Kinetic.Rect({x:0, y:0, width:window.innerWidth, height:window.innerHeight});
+  this.pickOverlay.on("mousedown", this.OnMouseDown);
+  this.pickOverlay.on("mouseup", this.OnMouseUp);
+  this.pickOverlay.on("mousemove", this.OnMouseMove);
+  m_ui.add(this.pickOverlay);
   this.okayBtn = new Button01(m_ui, "okbtn1", m_centerX - 150, window.innerHeight - 180, 300, 69, "OK", 15);
   this.okayBtn.onClickEvent = this.OnOkay;
   this.okayBtn.onMouseOverEvent = this.MouseOverOkBtn;
@@ -928,24 +938,26 @@ PickingChallenge.prototype.Activate = function() {
   ogSetPosition(a, 8.225578, 46.8248707, 28E4);
   ogSetOrientation(a, 0, -90, 0);
   ogSetInPositionFunction(m_context, this.FlightCallback);
-  this.layerId = ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"ch_boundaries", service:"owg"})
+  this.ogFrameLayer = ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"ch_boundaries", service:"owg"})
 };
-PickingChallenge.prototype.Destroy = function() {
+PickingChallenge.prototype.Destroy = function(a) {
   if(!this.destroyed) {
-    this.clock.Pause(), this.OnDestroy(), this.destroyed = !0
+    this.eventDestroyed = a, ogSetInPositionFunction(m_context, function() {
+    }), this.clock.Pause(), this.OnDestroy(), this.destroyed = !0
   }
 };
 PickingChallenge.prototype.OnDestroy = function() {
   this.clock.Destroy();
   var a = this;
-  this.editormode ? (a.screenText.Destroy(), a.resultPin.Destroy(), a.posPin.Destroy(), a.okayBtn.Destroy(), m_ui.remove(a.overlay)) : FadeOut(function() {
+  this.draftmode ? (a.screenText.Destroy(), a.resultPin.Destroy(), a.posPin.Destroy(), a.okayBtn.Destroy(), m_ui.remove(a.distanceLine), m_ui.remove(a.pickOverlay), ogRemoveImageLayer(a.ogFrameLayer), a.eventDestroyed()) : FadeOut(function() {
     a.screenText.Destroy();
     a.resultPin.Destroy();
     a.posPin.Destroy();
     a.okayBtn.Destroy();
-    m_ui.remove(a.overlay);
-    ogRemoveImageLayer(a.layerId);
-    m_globeGame && m_globeGame.NextChallenge()
+    m_ui.remove(a.distanceLine);
+    m_ui.remove(a.pickOverlay);
+    ogRemoveImageLayer(a.ogFrameLayer);
+    a.eventDestroyed()
   })
 };
 PickingChallenge.prototype.ZoomIn = function(a) {
@@ -966,6 +978,7 @@ goog.exportProperty(PickingChallenge.prototype, "Destroy", PickingChallenge.prot
 goog.exportProperty(PickingChallenge.prototype, "OnDestroy", PickingChallenge.prototype.OnDestroy);
 goog.exportProperty(PickingChallenge.prototype, "ZoomIn", PickingChallenge.prototype.ZoomIn);
 goog.exportProperty(PickingChallenge.prototype, "ZoomOut", PickingChallenge.prototype.ZoomOut);
+goog.exportProperty(PickingChallenge.prototype, "RegisterCallback", PickingChallenge.prototype.RegisterCallback);
 owg.gg.GameData = {};
 function GameData() {
   this.questions = [];
@@ -1004,13 +1017,35 @@ function GlobeGame(a) {
   m_ui = new Kinetic.Layer;
   m_static = new Kinetic.Layer
 }
+GlobeGame.prototype.Init = function(a) {
+  var b = this;
+  m_gameData = new GameData;
+  this.LoadImages({btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png"}, null);
+  this.LoadLanguage(function() {
+    (new MessageDialog(m_ui, m_locale.start, 500, 250)).RegisterCallback(function() {
+      m_ui.setAlpha(0);
+      b.OnLoaded()
+    })
+  });
+  m_context = ogCreateContextFromCanvas("canvas", !0);
+  m_globe = ogCreateGlobe(m_context);
+  ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"bluemarble", service:"owg"});
+  ogSetRenderFunction(m_context, this.OnOGRender);
+  ogSetResizeFunction(m_context, this.OnOGResize);
+  m_stage.add(m_static);
+  m_stage.add(m_ui);
+  m_stage.onFrame(function(d) {
+    b.OnCanvasRender(d);
+    a(d)
+  });
+  m_stage.start()
+};
 GlobeGame.prototype.OnLoaded = function() {
   this.state = 1;
   var a = prompt(m_locale.entername, "Name");
   m_player = new Player(a);
   m_score = new ScoreCount(m_ui);
-  this.currentChallenge = m_gameData.PickChallenge();
-  this.InitQuiz()
+  this.ProcessChallenge()
 };
 GlobeGame.prototype.CycleCallback = function() {
   for(var a = 0;a < this.callbacks.length;a++) {
@@ -1020,11 +1055,6 @@ GlobeGame.prototype.CycleCallback = function() {
 GlobeGame.prototype.InitQuiz = function() {
   this.currentChallenge.Activate();
   this.state = 2
-};
-GlobeGame.prototype.NextChallenge = function() {
-  if(m_globeGame && m_gameData.questions.length > 0) {
-    this.currentChallenge = m_gameData.PickChallenge(), this.InitQuiz()
-  }
 };
 GlobeGame.prototype.RegisterCycleCallback = function(a, b) {
   this.callbacks.push([a, b])
@@ -1050,30 +1080,13 @@ GlobeGame.prototype.LoadLanguage = function(a) {
     a != null && a()
   })
 };
-GlobeGame.prototype.Init = function(a) {
-  var b = this;
-  m_gameData = new GameData;
-  this.LoadImages({btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png"}, null);
-  this.LoadLanguage(function() {
-    (new MessageDialog(m_ui, m_locale.start, 500, 250)).RegisterCallback(function() {
-      m_ui.setAlpha(0);
-      b.OnLoaded()
-    })
-  });
-  m_context = ogCreateContextFromCanvas("canvas", !0);
-  m_globe = ogCreateGlobe(m_context);
-  ogAddImageLayer(m_globe, {url:["http://www.openwebglobe.org/data/img"], layer:"World500", service:"i3d"});
-  ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"swissimage", service:"owg"});
-  ogAddElevationLayer(m_globe, {url:["http://10.42.2.37"], layer:"DHM25", service:"owg"});
-  ogSetRenderFunction(m_context, this.OnOGRender);
-  ogSetResizeFunction(m_context, this.OnOGResize);
-  m_stage.add(m_static);
-  m_stage.add(m_ui);
-  m_stage.onFrame(function(d) {
-    b.OnCanvasRender(d);
-    a(d)
-  });
-  m_stage.start()
+GlobeGame.prototype.ProcessChallenge = function() {
+  m_globeGame && (m_globeGame.currentChallenge ? m_globeGame.currentChallenge.Destroy(m_globeGame.NextChallenge) : m_globeGame.NextChallenge())
+};
+GlobeGame.prototype.NextChallenge = function() {
+  m_gameData.questions.length > 0 ? (m_globeGame.currentChallenge = m_gameData.PickChallenge(), m_globeGame.currentChallenge.RegisterCallback(m_globeGame.ProcessChallenge), m_globeGame.InitQuiz()) : m_globeGame.EnterHighscore()
+};
+GlobeGame.prototype.EnterHighscore = function() {
 };
 GlobeGame.prototype.OnCanvasRender = function() {
   m_stage.draw();
@@ -1090,7 +1103,9 @@ goog.exportSymbol("GlobeGame", GlobeGame);
 goog.exportProperty(GlobeGame.prototype, "OnLoaded", GlobeGame.prototype.OnLoaded);
 goog.exportProperty(GlobeGame.prototype, "CycleCallback", GlobeGame.prototype.CycleCallback);
 goog.exportProperty(GlobeGame.prototype, "InitQuiz", GlobeGame.prototype.InitQuiz);
+goog.exportProperty(GlobeGame.prototype, "ProcessChallenge", GlobeGame.prototype.ProcessChallenge);
 goog.exportProperty(GlobeGame.prototype, "NextChallenge", GlobeGame.prototype.NextChallenge);
+goog.exportProperty(GlobeGame.prototype, "EnterHighscore", GlobeGame.prototype.EnterHighscore);
 goog.exportProperty(GlobeGame.prototype, "RegisterCycleCallback", GlobeGame.prototype.RegisterCycleCallback);
 goog.exportProperty(GlobeGame.prototype, "UnregisterCycleCallback", GlobeGame.prototype.UnregisterCycleCallback);
 goog.exportProperty(GlobeGame.prototype, "LoadImages", GlobeGame.prototype.LoadImages);

@@ -86,6 +86,72 @@ function GlobeGame(canvasDiv)
 }
 //-----------------------------------------------------------------------------
 /**
+ * @description init game and preload data
+ * @param {function({number})} renderCallback
+ */
+GlobeGame.prototype.Init = function(renderCallback)
+{
+    var that = this;
+
+    // load gamedata
+    m_gameData = new GameData();
+    // Preload images
+    var sources = {
+        btn_01: "art/btn_01.png",
+        btn_01_c: "art/btn_01_c.png",
+        btn_01_h: "art/btn_01_h.png",
+        btn_01_d: "art/btn_01_d.png",
+        btn_01_f: "art/btn_01_f.png",
+        btn_01_t: "art/btn_01_t.png",
+        btn_01_o: "art/btn_01_o.png",
+        clock: "art/clock.png",
+        dial: "art/dial.png",
+        pin_blue: "art/pin_blue.png",
+        pin_red: "art/pin_red.png",
+        pin_green: "art/pin_green.png",
+        pin_yellow: "art/pin_yellow.png"
+    };
+    this.LoadImages(sources, null);
+    this.LoadLanguage(function()
+    {
+        var startMessage = new MessageDialog(m_ui, m_locale.start, 500, 250);
+        startMessage.RegisterCallback(function(){
+            m_ui.setAlpha(0.0);
+            that.OnLoaded();
+        });
+    });
+    m_context = ogCreateContextFromCanvas("canvas", true);
+    m_globe = ogCreateGlobe(m_context);
+    // Add OWG Data
+    ogAddImageLayer(m_globe, {
+        url: ["http://10.42.2.37"],
+        layer: "bluemarble",
+        service: "owg"
+    });
+    /*ogAddImageLayer(m_globe, {
+        url: ["http://10.42.2.37"],
+        layer: "swissimage",
+        service: "owg"
+    });
+
+    ogAddElevationLayer(m_globe, {
+        url: ["http://10.42.2.37"],
+        layer: "DHM25",
+        service: "owg"
+    });*/
+    ogSetRenderFunction(m_context, this.OnOGRender);
+    ogSetResizeFunction(m_context, this.OnOGResize);
+
+    m_stage.add(m_static);
+    m_stage.add(m_ui);
+    m_stage.onFrame(function(frame){
+        that.OnCanvasRender(frame);
+        renderCallback(frame);
+    });
+    m_stage.start();
+};
+//-----------------------------------------------------------------------------
+/**
  * @description initialize player and pick first challenge
  */
 GlobeGame.prototype.OnLoaded = function()
@@ -94,8 +160,7 @@ GlobeGame.prototype.OnLoaded = function()
     var name = prompt(m_locale["entername"], "Name");
     m_player = new Player(name);
     m_score = new ScoreCount(m_ui);
-    this.currentChallenge = m_gameData.PickChallenge();
-    this.InitQuiz();
+    this.ProcessChallenge();
 };
 //-----------------------------------------------------------------------------
 /**
@@ -116,20 +181,6 @@ GlobeGame.prototype.InitQuiz = function()
 {
     this.currentChallenge.Activate();
     this.state = 2;
-};
-//-----------------------------------------------------------------------------
-/**
- * @description move on to next available challenge
- */
-GlobeGame.prototype.NextChallenge = function()
-{
-    if(m_globeGame)
-    {
-        if(m_gameData.questions.length > 0){
-            this.currentChallenge = m_gameData.PickChallenge();
-            this.InitQuiz();
-        }
-    }
 };
 //-----------------------------------------------------------------------------
 /**
@@ -178,7 +229,8 @@ GlobeGame.prototype.LoadImages = function(sources, callback){
          };
         m_images[src].src = sources[src];
     }
-}
+};
+
 //-----------------------------------------------------------------------------
 /**
  * @description load languages
@@ -191,73 +243,49 @@ GlobeGame.prototype.LoadLanguage = function(callback)
         if(callback != null)
         callback();
     });
-}
-
+};
 //-----------------------------------------------------------------------------
 /**
- * @description init game and preload data
- * @param {function({number})} renderCallback
+ * @description ProcessChallenge
  */
-GlobeGame.prototype.Init = function(renderCallback)
+GlobeGame.prototype.ProcessChallenge = function()
 {
-    var that = this;
-
-    // load gamedata
-    m_gameData = new GameData();
-    // Preload images
-    var sources = {
-        btn_01: "art/btn_01.png",
-        btn_01_c: "art/btn_01_c.png",
-        btn_01_h: "art/btn_01_h.png",
-        btn_01_d: "art/btn_01_d.png",
-        btn_01_f: "art/btn_01_f.png",
-        btn_01_t: "art/btn_01_t.png",
-        btn_01_o: "art/btn_01_o.png",
-        clock: "art/clock.png",
-        dial: "art/dial.png",
-        pin_blue: "art/pin_blue.png",
-        pin_red: "art/pin_red.png",
-        pin_green: "art/pin_green.png",
-        pin_yellow: "art/pin_yellow.png"
-    };
-    this.LoadImages(sources, null);
-    this.LoadLanguage(function()
+    if(m_globeGame)
     {
-        var startMessage = new MessageDialog(m_ui, m_locale.start, 500, 250);
-        startMessage.RegisterCallback(function(){
-            m_ui.setAlpha(0.0);
-            that.OnLoaded();
-        });
-    });
-    m_context = ogCreateContextFromCanvas("canvas", true);
-    m_globe = ogCreateGlobe(m_context);
-    // Add OWG Data
-    ogAddImageLayer(m_globe, {
-        url: ["http://www.openwebglobe.org/data/img"],
-        layer: "World500",
-        service: "i3d"
-    });
-    ogAddImageLayer(m_globe, {
-        url: ["http://10.42.2.37"],
-        layer: "swissimage",
-        service: "owg"
-    });
+        // evaluate past challenge
+        if(m_globeGame.currentChallenge)
+        {
+            m_globeGame.currentChallenge.Destroy(m_globeGame.NextChallenge);
+        }
+        else
+        {
+            m_globeGame.NextChallenge();
+        }
+    }
+};
+//-----------------------------------------------------------------------------
+/**
+ * @description NextChallenge
+ */
+GlobeGame.prototype.NextChallenge = function()
+{
+    if(m_gameData.questions.length > 0){
+        m_globeGame.currentChallenge = m_gameData.PickChallenge();
+        m_globeGame.currentChallenge.RegisterCallback(m_globeGame.ProcessChallenge);
+        m_globeGame.InitQuiz();
+    }
+    else
+    {
+        m_globeGame.EnterHighscore();
+    }
+};
+//-----------------------------------------------------------------------------
+/**
+ * @description enter name in highscore and show highscore
+ */
+GlobeGame.prototype.EnterHighscore = function()
+{
 
-    ogAddElevationLayer(m_globe, {
-        url: ["http://10.42.2.37"],
-        layer: "DHM25",
-        service: "owg"
-    });
-    ogSetRenderFunction(m_context, this.OnOGRender);
-    ogSetResizeFunction(m_context, this.OnOGResize);
-
-    m_stage.add(m_static);
-    m_stage.add(m_ui);
-    m_stage.onFrame(function(frame){
-        that.OnCanvasRender(frame);
-        renderCallback(frame);
-    });
-    m_stage.start();
 };
 //-----------------------------------------------------------------------------
 /**
@@ -307,7 +335,9 @@ goog.exportSymbol('GlobeGame', GlobeGame);
 goog.exportProperty(GlobeGame.prototype, 'OnLoaded', GlobeGame.prototype.OnLoaded);
 goog.exportProperty(GlobeGame.prototype, 'CycleCallback', GlobeGame.prototype.CycleCallback);
 goog.exportProperty(GlobeGame.prototype, 'InitQuiz', GlobeGame.prototype.InitQuiz);
+goog.exportProperty(GlobeGame.prototype, 'ProcessChallenge', GlobeGame.prototype.ProcessChallenge);
 goog.exportProperty(GlobeGame.prototype, 'NextChallenge', GlobeGame.prototype.NextChallenge);
+goog.exportProperty(GlobeGame.prototype, 'EnterHighscore', GlobeGame.prototype.EnterHighscore);
 goog.exportProperty(GlobeGame.prototype, 'RegisterCycleCallback', GlobeGame.prototype.RegisterCycleCallback);
 goog.exportProperty(GlobeGame.prototype, 'UnregisterCycleCallback', GlobeGame.prototype.UnregisterCycleCallback);
 goog.exportProperty(GlobeGame.prototype, 'LoadImages', GlobeGame.prototype.LoadImages);
