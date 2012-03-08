@@ -94,7 +94,7 @@ GlobeGame.prototype.Init = function(renderCallback)
     var that = this;
 
     // load gamedata
-    m_gameData = new GameData();
+    m_gameData = new GameData(null);
     // Preload images
     var sources = {
         btn_01: "art/btn_01.png",
@@ -128,7 +128,7 @@ GlobeGame.prototype.Init = function(renderCallback)
         layer: "bluemarble",
         service: "owg"
     });
-    /*ogAddImageLayer(m_globe, {
+    ogAddImageLayer(m_globe, {
         url: ["http://10.42.2.37"],
         layer: "swissimage",
         service: "owg"
@@ -138,7 +138,7 @@ GlobeGame.prototype.Init = function(renderCallback)
         url: ["http://10.42.2.37"],
         layer: "DHM25",
         service: "owg"
-    });*/
+    });
     ogSetRenderFunction(m_context, this.OnOGRender);
     ogSetResizeFunction(m_context, this.OnOGResize);
 
@@ -253,7 +253,7 @@ GlobeGame.prototype.ProcessChallenge = function()
     if(m_globeGame)
     {
         // evaluate past challenge
-        if(m_globeGame.currentChallenge)
+        if(m_globeGame.currentChallenge && !m_globeGame.currentChallenge.destroyed)
         {
             m_globeGame.currentChallenge.Destroy(m_globeGame.NextChallenge);
         }
@@ -285,7 +285,31 @@ GlobeGame.prototype.NextChallenge = function()
  */
 GlobeGame.prototype.EnterHighscore = function()
 {
-
+    var that = this;
+    m_ui.setAlpha(1.0);
+    var list =
+        [
+            ["Hans Huber", 100],
+            ["Max Muster", 100],
+            ["Peter Plautze", 100],
+            ["Franz Feierabend", 100],
+            ["Test 5", 100],
+            ["Test 6", 100],
+            ["Test 7", 100],
+            ["Test 8", 100],
+            ["Test 9", 100],
+            ["Test 10", 100],
+            ["Test 11", 100]
+        ];
+    var highscore = new HighScoreDialog(m_ui, list, 500, 650);
+    highscore.RegisterCallback(function(){
+        if(m_score)
+            m_score.Destroy();
+        m_gameData = new GameData(function()
+        {
+            that.OnLoaded();
+        });
+    });
 };
 //-----------------------------------------------------------------------------
 /**
@@ -317,19 +341,6 @@ GlobeGame.prototype.OnOGResize = function(context)
     m_centerX = window.innerWidth/2;
     m_centerY = window.innerHeight/2;
 };
-//-----------------------------------------------------------------------------
-/**
- * @description initialize game
- * @param {function()} renderCallback
- * @param {string} canvasDiv
- */
-/*
-function InitGlobeGame(renderCallback, canvasDiv)
-{
-    m_globeGame = new GlobeGame();
-    m_globeGame.Init(renderCallback, canvasDiv);
-}
-*/
 
 goog.exportSymbol('GlobeGame', GlobeGame);
 goog.exportProperty(GlobeGame.prototype, 'OnLoaded', GlobeGame.prototype.OnLoaded);
@@ -346,4 +357,3 @@ goog.exportProperty(GlobeGame.prototype, 'Init', GlobeGame.prototype.Init);
 goog.exportProperty(GlobeGame.prototype, 'OnOGResize', GlobeGame.prototype.OnOGResize);
 goog.exportProperty(GlobeGame.prototype, 'OnOGRender', GlobeGame.prototype.OnOGRender);
 goog.exportProperty(GlobeGame.prototype, 'OnCanvasRender', GlobeGame.prototype.OnCanvasRender);
-//goog.exportSymbol('InitGlobeGame', InitGlobeGame);

@@ -642,7 +642,7 @@ function MessageDialog(a, b, d, c) {
     a.font = "18pt TitanOne";
     a.textAlign = "center";
     a.fillText(e.message, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 80);
-    a.lineWidth = 2;
+    a.lineWidth = 1;
     a.strokeStyle = "#000";
     a.strokeText(e.message, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 80)
   }});
@@ -719,6 +719,59 @@ goog.exportSymbol("Pin", Pin);
 goog.exportProperty(Pin.prototype, "SetPos", Pin.prototype.SetPos);
 goog.exportProperty(Pin.prototype, "SetVisible", Pin.prototype.SetVisible);
 goog.exportProperty(Pin.prototype, "Destroy", Pin.prototype.Destroy);
+function HighScoreDialog(a, b, d, c) {
+  this.list = b;
+  this.layer = a;
+  this.okayButton = null;
+  var e = this;
+  this.Callback = function() {
+  };
+  this.OnOkay = function() {
+    e.Destroy();
+    e.Callback()
+  };
+  this.shape = new Kinetic.Shape({drawFunc:function() {
+    var a = this.getContext();
+    a.beginPath();
+    a.rect(window.innerWidth / 2 - d / 2, window.innerHeight / 2 - c / 2, d, c);
+    var b = a.createLinearGradient(window.innerWidth / 2, window.innerHeight / 2 - c / 2, window.innerWidth / 2, window.innerHeight / 2 + c / 2);
+    b.addColorStop(0, "#555");
+    b.addColorStop(1, "#CCC");
+    a.fillStyle = b;
+    a.fill();
+    a.lineWidth = 3;
+    a.strokeStyle = "#FFF";
+    a.stroke();
+    a.textAlign = "center";
+    a.lineWidth = 2;
+    a.strokeStyle = "#000";
+    a.fillStyle = "#FF0";
+    a.font = "25pt TitanOne";
+    a.fillText(m_locale.highscores, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 45);
+    a.strokeText(m_locale.highscores, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 45);
+    a.font = "15pt TitanOne";
+    for(b = 1;b <= e.list.length;b++) {
+      a.fillStyle = b == 1 ? "#FFAA33" : "#FFF";
+      var i = b + ". " + e.list[b - 1][0] + "  " + e.list[b - 1][1];
+      a.fillText(i, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 75 + b * 22);
+      a.lineWidth = 1;
+      a.strokeText(i, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 75 + b * 22)
+    }
+  }});
+  a.add(this.shape);
+  this.okayButton = new Button01(m_ui, "dialog", window.innerWidth / 2 - 150, window.innerHeight / 2 + c / 2 - 100, 300, 69, m_locale.playagain, 15);
+  this.okayButton.onClickEvent = this.OnOkay
+}
+HighScoreDialog.prototype.RegisterCallback = function(a) {
+  this.Callback = a
+};
+HighScoreDialog.prototype.Destroy = function() {
+  this.layer.remove(this.shape);
+  this.layer.remove(this.okayButton.shape)
+};
+goog.exportSymbol("HighScoreDialog", HighScoreDialog);
+goog.exportProperty(HighScoreDialog.prototype, "RegisterCallback", HighScoreDialog.prototype.RegisterCallback);
+goog.exportProperty(HighScoreDialog.prototype, "Destroy", HighScoreDialog.prototype.Destroy);
 owg.gg.Challenge = {};
 function Challenge(a) {
   this.type = a;
@@ -980,23 +1033,24 @@ goog.exportProperty(PickingChallenge.prototype, "ZoomIn", PickingChallenge.proto
 goog.exportProperty(PickingChallenge.prototype, "ZoomOut", PickingChallenge.prototype.ZoomOut);
 goog.exportProperty(PickingChallenge.prototype, "RegisterCallback", PickingChallenge.prototype.RegisterCallback);
 owg.gg.GameData = {};
-function GameData() {
+function GameData(a) {
   this.questions = [];
-  var a = this;
-  jQuery.getJSON("data/challenges_" + m_lang + ".json", function(b) {
-    var d = [];
-    jQuery.each(b, function(a, b) {
-      if(b.Type == 0) {
-        var f = b.BaseScore, h = b.Title, f = new LandmarkChallenge(f, b.Options, b.CorrectOption, b.Views, h);
-        d.push(f)
+  var b = this;
+  jQuery.getJSON("data/challenges_" + m_lang + ".json", function(d) {
+    var c = [];
+    jQuery.each(d, function(b, d) {
+      if(d.Type == 0) {
+        var h = d.BaseScore, i = d.Title, h = new LandmarkChallenge(h, d.Options, d.CorrectOption, d.Views, i);
+        c.push(h)
       }else {
-        if(b.Type == 1) {
-          var i = b.Longitude, g = b.Latitude, k = b.Elevation, f = b.BaseScore, h = b.Title, f = new PickingChallenge(f, h, [i, g, k]);
-          d.push(f)
+        if(d.Type == 1) {
+          var g = d.Longitude, k = d.Latitude, l = d.Elevation, h = d.BaseScore, i = d.Title, h = new PickingChallenge(h, i, [g, k, l]);
+          c.push(h)
         }
       }
+      a && a()
     });
-    a.questions = d
+    b.questions = c
   })
 }
 GameData.prototype.PickChallenge = function() {
@@ -1019,17 +1073,19 @@ function GlobeGame(a) {
 }
 GlobeGame.prototype.Init = function(a) {
   var b = this;
-  m_gameData = new GameData;
+  m_gameData = new GameData(null);
   this.LoadImages({btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png"}, null);
   this.LoadLanguage(function() {
     (new MessageDialog(m_ui, m_locale.start, 500, 250)).RegisterCallback(function() {
       m_ui.setAlpha(0);
-      b.OnLoaded()
+      b.EnterHighscore()
     })
   });
   m_context = ogCreateContextFromCanvas("canvas", !0);
   m_globe = ogCreateGlobe(m_context);
   ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"bluemarble", service:"owg"});
+  ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"swissimage", service:"owg"});
+  ogAddElevationLayer(m_globe, {url:["http://10.42.2.37"], layer:"DHM25", service:"owg"});
   ogSetRenderFunction(m_context, this.OnOGRender);
   ogSetResizeFunction(m_context, this.OnOGResize);
   m_stage.add(m_static);
@@ -1087,6 +1143,14 @@ GlobeGame.prototype.NextChallenge = function() {
   m_gameData.questions.length > 0 ? (m_globeGame.currentChallenge = m_gameData.PickChallenge(), m_globeGame.currentChallenge.RegisterCallback(m_globeGame.ProcessChallenge), m_globeGame.InitQuiz()) : m_globeGame.EnterHighscore()
 };
 GlobeGame.prototype.EnterHighscore = function() {
+  var a = this;
+  m_ui.setAlpha(1);
+  (new HighScoreDialog(m_ui, [["Hans Huber", 100], ["Max Muster", 100], ["Peter Plautze", 100], ["Franz Feierabend", 100], ["Test 5", 100], ["Test 6", 100], ["Test 7", 100], ["Test 8", 100], ["Test 9", 100], ["Test 10", 100], ["Test 11", 100]], 500, 650)).RegisterCallback(function() {
+    m_score && m_score.Destroy();
+    m_gameData = new GameData(function() {
+      a.OnLoaded()
+    })
+  })
 };
 GlobeGame.prototype.OnCanvasRender = function() {
   m_stage.draw();

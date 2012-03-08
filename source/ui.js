@@ -415,7 +415,7 @@ function MessageDialog(layer, message, width, height)
         ctx.font = "18pt TitanOne";
         ctx.textAlign = "center";
         ctx.fillText(that.message, window.innerWidth/2, window.innerHeight/2-(height/2)+80);
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1;
         ctx.strokeStyle = "#000"; // stroke color
         ctx.strokeText(that.message, window.innerWidth/2, window.innerHeight/2-(height/2)+80);
 
@@ -564,3 +564,90 @@ goog.exportSymbol('Pin', Pin);
 goog.exportProperty(Pin.prototype, 'SetPos', Pin.prototype.SetPos);
 goog.exportProperty(Pin.prototype, 'SetVisible', Pin.prototype.SetVisible);
 goog.exportProperty(Pin.prototype, 'Destroy', Pin.prototype.Destroy);
+
+//-----------------------------------------------------------------------------
+/**
+ * @class HighScoreDialog
+ * @constructor
+ *
+ * @description draw highscores on screen
+ *
+ * @author Robert Wüest robert.wst@gmail.ch
+ *
+ * @param {Object} layer
+ * @param {Array.<Array.<string>>} list
+ * @param {number} width
+ * @param {number} height
+ */
+function HighScoreDialog(layer, list, width, height)
+{
+    this.list = list;
+    this.layer = layer;
+    this.okayButton = null;
+    var that = this;
+
+    /** Inline Functions */
+    this.Callback = function(){};
+    this.OnOkay = function()
+    {
+        that.Destroy();
+        that.Callback();
+    };
+
+    this.shape = new Kinetic.Shape({drawFunc:function(){
+        var ctx = this.getContext();
+        ctx.beginPath();
+        ctx.rect((window.innerWidth/2)-(width/2), (window.innerHeight/2)-(height/2), width, height);
+        var grad = ctx.createLinearGradient(window.innerWidth/2, (window.innerHeight/2)-(height/2), window.innerWidth/2, (window.innerHeight/2)+(height/2));
+        grad.addColorStop(0, "#555"); // light blue
+        grad.addColorStop(1, "#CCC"); // dark blue
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#FFF";
+        ctx.stroke();
+
+        ctx.textAlign = "center";
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#000"; // stroke color
+        ctx.fillStyle = "#FF0";
+        ctx.font = "25pt TitanOne";
+        ctx.fillText(m_locale["highscores"], window.innerWidth/2, window.innerHeight/2-(height/2)+45);
+        ctx.strokeText(m_locale["highscores"], window.innerWidth/2, window.innerHeight/2-(height/2)+45);
+        ctx.font = "15pt TitanOne";
+        for(var i = 1; i <= that.list.length; i++)
+        {
+            if(i == 1) {ctx.fillStyle = "#FFAA33";} else { ctx.fillStyle = "#FFF";}
+            var textOut = i + ". "+ that.list[i-1][0] + "  " + that.list[i-1][1];
+            ctx.fillText(textOut, window.innerWidth/2, window.innerHeight/2-(height/2)+75+(i*22));
+            ctx.lineWidth = 1;
+            ctx.strokeText(textOut, window.innerWidth/2, window.innerHeight/2-(height/2)+75+(i*22));
+        }
+
+    }});
+    layer.add(this.shape);
+    this.okayButton = new Button01(m_ui, "dialog", window.innerWidth/2-150, window.innerHeight/2+(height/2)-100, 300, 69, m_locale["playagain"], 15);
+    this.okayButton.onClickEvent = this.OnOkay;
+
+}
+//-----------------------------------------------------------------------------
+/**
+ * @description define callbackfunction when hit okay
+ * @param {function()} callback
+ */
+HighScoreDialog.prototype.RegisterCallback = function(callback)
+{
+    this.Callback = callback;
+};
+//-----------------------------------------------------------------------------
+/**
+ * @description destroy the dialog
+ */
+HighScoreDialog.prototype.Destroy = function()
+{
+    this.layer.remove(this.shape);
+    this.layer.remove(this.okayButton.shape);
+};
+goog.exportSymbol('HighScoreDialog', HighScoreDialog);
+goog.exportProperty(HighScoreDialog.prototype, 'RegisterCallback', HighScoreDialog.prototype.RegisterCallback);
+goog.exportProperty(HighScoreDialog.prototype, 'Destroy', HighScoreDialog.prototype.Destroy);

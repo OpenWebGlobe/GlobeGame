@@ -5,5 +5,7 @@
     "speedbonus": "Geschwindigkeit",
     "start": "Um zu beginnen drücke OK!",
     "score": "Punkte",
-    "estimation": "Schätzung"
+    "estimation": "Schätzung",
+    "highscores": "Bestenliste",
+    "playagain": "Nochmal spielen"
 }

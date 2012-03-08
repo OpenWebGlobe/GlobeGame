@@ -29,10 +29,10 @@
     <script type="text/javascript" src="source/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="../WebViewer/compiled/owg-optimized.js"></script>
     <script type="text/javascript" src="source/kineticjs.js"></script>
-    <!--<script type="text/javascript" src="compiled/globegame-optimized.js"></script>-->
-    <script type="text/javascript" src="external/closure-library/closure/goog/base.js"></script>
+    <script type="text/javascript" src="compiled/globegame-optimized.js"></script>
+    <!--<script type="text/javascript" src="external/closure-library/closure/goog/base.js"></script>
     <script type="text/javascript" src="compiled/deps.js"></script>
-    <script type="text/javascript">goog.require('owg.gg.GlobeGame');</script>
+    <script type="text/javascript">goog.require('owg.gg.GlobeGame');</script>-->
     <script type="text/javascript" src="compiled/ggedit-optimized.js"></script>
     <!--<script type="text/javascript" src="compiled/deps_editor.js"></script>
     <script type="text/javascript">goog.require('owg.gg.Editor');</script>-->
@@ -95,13 +95,18 @@
     <input class="edbutton" type="button" style="width:150px; height: 25px" value="Hinzuf&uuml;gen" onclick="AddView()"/><input class="edbutton" type="button" style="width:150px; height: 25px" value="Leeren" onclick="ClearViews()"/>
     <br/>Current:<span id="current"></span></div><hr/>
     <b>Ausgabe:</b>
-    <textarea id="output" style="height:400px; width: 350px;background-color: #ffffee;" onclick="SelectAllText('output')"></textarea>
+    <textarea id="output" style="height:300px; width: 350px;background-color: #ffffee;" onclick="SelectAllText('output')"></textarea><br/>
+    <input id="save" class="edbutton" type="button" style="width:150px; height: 25px; visibility: visible" value="Speichern" onclick="SaveToFile()"/>
     </div>
 </div>
 
 
 <script type="text/javascript">
 
+    function SaveToFile()
+    {
+        window.open("save_to_file.php?content="+jQuery("#output").val());
+    }
 </script>
 </body>
 </html>

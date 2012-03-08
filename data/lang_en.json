@@ -5,5 +5,7 @@
     "speedbonus": "Speedbonus",
     "start": "Press OK to begin!",
     "score": "Score",
-    "estimation": "Estimation"
+    "estimation": "Estimation",
+    "highscores": "Hall Of Fame",
+    "playagain": "Play again"
 }

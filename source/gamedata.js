@@ -33,8 +33,9 @@ goog.require('owg.gg.PickingChallenge');
  * @description game data I/O handler
  *
  * @author Robert Wüest robert.wst@gmail.ch
+ * @param {(function()|null)} callback
  */
-function GameData()
+function GameData(callback)
 {
     // load question array
     this.questions = [];
@@ -65,9 +66,12 @@ function GameData()
                 var pickingchallenge = new PickingChallenge(baseScore, title, pos);
                 items.push(pickingchallenge);
             }
-
         });
         that.questions = items;
+        if(callback)
+        {
+            callback();
+        }
     });
 }
 //-----------------------------------------------------------------------------
