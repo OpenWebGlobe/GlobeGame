@@ -50,7 +50,7 @@ function PickingChallenge(baseScore, title, pos)
     var that = this;
     this.flystate = false;
     this.zoomState = false;
-    this.pickPos = [];
+    this.pickPos = [null, 0,0,0];
     this.solutionPos = pos;
     this.posPin = null;
     this.resultPin = null;
@@ -76,24 +76,27 @@ function PickingChallenge(baseScore, title, pos)
         var distance = ogCalcDistanceWGS84(that.solutionPos[0], that.solutionPos[1], that.pickPos[1], that.pickPos[2]);
         distance = Math.round((distance/1000)*Math.pow(10,1))/Math.pow(10,1);
         that.resultPin = new Pin(m_ui, m_images["pin_green"], screenPos[0], screenPos[1]);
-        that.distanceLine = new Kinetic.Shape({drawFunc:function(){
-            var ctx = this.getContext();
-            ctx.moveTo(screenPos[0], screenPos[1]);
-            ctx.lineTo(that.posPin.x, that.posPin.y);
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = "#DD6600";
-            ctx.stroke();
-            ctx.textAlign = "center";
-            ctx.fillStyle = "#FF0";
-            ctx.font = "16pt TitanOne";
-            ctx.textAlign = "left";
-            ctx.fillText(distance+"km", screenPos[0], screenPos[1]);
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = "#000"; // stroke color
-            ctx.strokeText(distance+"km", screenPos[0], screenPos[1]);
+        if(that.posPin)
+        {
+            that.distanceLine = new Kinetic.Shape({drawFunc:function(){
+                var ctx = this.getContext();
+                ctx.moveTo(screenPos[0], screenPos[1]);
+                ctx.lineTo(that.posPin.x, that.posPin.y);
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = "#DD6600";
+                ctx.stroke();
+                ctx.textAlign = "center";
+                ctx.fillStyle = "#FF0";
+                ctx.font = "16pt TitanOne";
+                ctx.textAlign = "left";
+                ctx.fillText(distance+"km", screenPos[0], screenPos[1]);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#000"; // stroke color
+                ctx.strokeText(distance+"km", screenPos[0], screenPos[1]);
 
-        }});
-        m_ui.add(that.distanceLine);
+            }});
+            m_ui.add(that.distanceLine);
+        }
         if(m_player)
         {
             m_player.ScorePoints(Math.floor(that.baseScore/distance),m_locale["estimation"]);
@@ -163,8 +166,8 @@ function PickingChallenge(baseScore, title, pos)
             var mx = pos.x-10;
             var my = pos.y-10;
             that.pickPos = ogPickGlobe(scene, pos.x, pos.y);
-
-            that.posPin.SetVisible(false);
+            if(that.posPin != null)
+                that.posPin.SetVisible(false);
             if(that.flystate == true)
             {
                 ogStopFlyTo(scene);
@@ -182,7 +185,8 @@ function PickingChallenge(baseScore, title, pos)
         if(that.zoomState == true)
         {
             var pos = m_stage.getMousePosition();
-            that.posPin.SetPos(pos.x, pos.y);
+            if(that.posPin != null)
+                that.posPin.SetPos(pos.x, pos.y);
         }
     };
     //-----------------------------------------------------------------------------
@@ -194,8 +198,11 @@ function PickingChallenge(baseScore, title, pos)
         that.flystate = false;
         var scene = ogGetScene(m_context);
         var pos = ogWorldToWindow(scene,that.pickPos[4],that.pickPos[5],that.pickPos[6]);
-        that.posPin.SetVisible(true);
-        that.posPin.SetPos(pos[0], pos[1]);
+        if(that.posPin != null)
+        {
+            that.posPin.SetVisible(true);
+            that.posPin.SetPos(pos[0], pos[1]);
+        }
     };
 }
 PickingChallenge.prototype = new Challenge(1);
@@ -264,9 +271,13 @@ PickingChallenge.prototype.OnDestroy = function()
         FadeOut(function(){
             that.screenText.Destroy();
             that.resultPin.Destroy();
-            that.posPin.Destroy();
+            if(that.posPin)
+            {
+                that.posPin.Destroy();
+                m_ui.remove(that.distanceLine);
+            }
             that.okayBtn.Destroy();
-            m_ui.remove(that.distanceLine);
+
             m_ui.remove(that.pickOverlay);
             ogRemoveImageLayer(that.ogFrameLayer);
             that.eventDestroyed();
@@ -275,9 +286,13 @@ PickingChallenge.prototype.OnDestroy = function()
     {
         that.screenText.Destroy();
         that.resultPin.Destroy();
-        that.posPin.Destroy();
+        if(that.posPin)
+        {
+            that.posPin.Destroy();
+            m_ui.remove(that.distanceLine);
+        }
         that.okayBtn.Destroy();
-        m_ui.remove(that.distanceLine);
+
         m_ui.remove(that.pickOverlay);
         ogRemoveImageLayer(that.ogFrameLayer);
         that.eventDestroyed();

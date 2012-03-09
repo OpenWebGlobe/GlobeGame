@@ -24,6 +24,8 @@
 goog.provide('owg.gg.GlobeGame');
 
 goog.require('owg.gg.Button01');
+goog.require('owg.gg.Button02');
+goog.require('owg.gg.TouchKeyboard');
 goog.require('owg.gg.MessageDialog');
 goog.require('owg.gg.ScreenText');
 goog.require('owg.gg.Clock');
@@ -68,13 +70,7 @@ var m_globeGame = null;
  */
 function GlobeGame(canvasDiv)
 {
-    /* State definitions
-     0: Idle Mode intro
-     1: Configuring Player
-     2: Challenge
-     3: Terminate show highscore
-     */
-    this.state = 0;
+    this.state = GlobeGame.STATE.IDLE;
     this.qCount = 0;
     this.currentChallenge = null;
     this.callbacks = [];
@@ -84,6 +80,15 @@ function GlobeGame(canvasDiv)
     m_ui = new Kinetic.Layer();
     m_static = new Kinetic.Layer();
 }
+//-----------------------------------------------------------------------------
+/**
+ * @enum {number}
+ */
+GlobeGame.STATE = {
+    IDLE: 0,
+    CHALLENGE: 1,
+    HIGHSCORE: 2
+};
 //-----------------------------------------------------------------------------
 /**
  * @description init game and preload data
@@ -104,20 +109,28 @@ GlobeGame.prototype.Init = function(renderCallback)
         btn_01_f: "art/btn_01_f.png",
         btn_01_t: "art/btn_01_t.png",
         btn_01_o: "art/btn_01_o.png",
+        btn_02:   "art/btn_02.png",
+        btn_02_c: "art/btn_02_c.png",
+        btn_02_h: "art/btn_02_h.png",
         clock: "art/clock.png",
         dial: "art/dial.png",
         pin_blue: "art/pin_blue.png",
         pin_red: "art/pin_red.png",
         pin_green: "art/pin_green.png",
-        pin_yellow: "art/pin_yellow.png"
+        pin_yellow: "art/pin_yellow.png",
+        nw_logo: "art/nw_logo.png"
     };
-    this.LoadImages(sources, null);
+    /* Preload */
     this.LoadLanguage(function()
     {
-        var startMessage = new MessageDialog(m_ui, m_locale.start, 500, 250);
-        startMessage.RegisterCallback(function(){
-            m_ui.setAlpha(0.0);
-            that.OnLoaded();
+        that.LoadImages(sources, function(){
+            /* nw logo */
+            var nw_logo = new Kinetic.Shape({drawFunc:function(){
+                var ctx = this.getContext();
+                ctx.drawImage(m_images["nw_logo"], 0, window.innerHeight-82, 670, 82);
+            }});
+            m_static.add(nw_logo);
+            that.EnterIdle();
         });
     });
     m_context = ogCreateContextFromCanvas("canvas", true);
@@ -144,6 +157,7 @@ GlobeGame.prototype.Init = function(renderCallback)
 
     m_stage.add(m_static);
     m_stage.add(m_ui);
+
     m_stage.onFrame(function(frame){
         that.OnCanvasRender(frame);
         renderCallback(frame);
@@ -152,15 +166,120 @@ GlobeGame.prototype.Init = function(renderCallback)
 };
 //-----------------------------------------------------------------------------
 /**
- * @description initialize player and pick first challenge
+ * @description STATE function enter idle mode
  */
-GlobeGame.prototype.OnLoaded = function()
+GlobeGame.prototype.EnterIdle = function()
 {
-    this.state = 1;
-    var name = prompt(m_locale["entername"], "Name");
-    m_player = new Player(name);
+    var that = this;
+    var startMessage = new MessageDialog(m_ui, m_locale.start, 500, 250);
+    startMessage.RegisterCallback(function(){
+        that.StopFlyTo();
+        m_ui.setAlpha(0.0);
+        that.EnterChallenge();
+    });
+    this.FlyAround();
+};
+//-----------------------------------------------------------------------------
+/**
+ * @description STATE function enter challenge mode
+ */
+GlobeGame.prototype.EnterChallenge = function()
+{
+    this.state = GlobeGame.STATE.CHALLENGE;
+    m_player = new Player("");
     m_score = new ScoreCount(m_ui);
     this.ProcessChallenge();
+};
+//-----------------------------------------------------------------------------
+/**
+ * @description STATE function enter highscore
+ */
+GlobeGame.prototype.EnterHighscore = function()
+{
+    var that = this;
+    m_ui.setAlpha(1.0);
+    var keyboard = new TouchKeyboard(m_ui,"keys",(window.innerWidth/2)-426,(window.innerHeight/2)-195, m_locale["entername"],
+        function(name){
+            //m_player.name = name;
+            keyboard.Destroy();
+            var list =
+                [
+                    ["Hans Huber", 100],
+                    ["Max Muster", 100],
+                    ["Peter Plautze", 100],
+                    ["Franz Feierabend", 100],
+                    ["Test 5", 100],
+                    ["Test 6", 100],
+                    ["Test 7", 100],
+                    ["Test 8", 100],
+                    ["Test 9", 100],
+                    ["Test 10", 100],
+                    ["Test 11", 100]
+                ];
+            var highscore = new HighScoreDialog(m_ui, list, 500, 650);
+            that.FlyAround();
+            highscore.RegisterCallback(function(){
+                if(m_score)
+                    m_score.Destroy();
+                m_gameData = new GameData(function()
+                {
+                    that.StopFlyTo();
+                    m_ui.setAlpha(0.0);
+                    that.EnterChallenge();
+                });
+            });
+        });
+};
+//-----------------------------------------------------------------------------
+/**
+ * @description flying around the terrain
+ */
+GlobeGame.prototype.FlyAround = function()
+{
+    var scene = ogGetScene(m_context);
+    var cam = ogGetActiveCamera(scene);
+    ogSetPosition(cam,7.743465423583984,46.25442886352539,5133.49755859375);
+    ogSetOrientation(cam,47.90983606557377,-15.122950819672129,0);
+    var views = [
+        { "longitude": 8.006896018981934,
+            "latitude": 46.27399444580078,
+            "elevation": 6440.3505859375,
+            "yaw": 0.6147540983606554,
+            "pitch": -17.74590163934426,
+            "roll": 0
+        },
+        { "longitude": 8.078167915344238,
+            "latitude": 46.43217849731445,
+            "elevation": 3730.73583984375,
+            "yaw": -12.663934426229508,
+            "pitch": -5.737704918032784,
+            "roll": 0
+        },
+        { "longitude": 8.09277629852295,
+            "latitude": 46.60940170288086,
+            "elevation": 7909.09912109375,
+            "yaw": -50.9016393442623,
+            "pitch": -28.442622950819672,
+            "roll": 0
+        },
+        { "longitude": 7.97355318069458,
+            "latitude": 46.78914260864258,
+            "elevation": 1968.3804931640625,
+            "yaw": -108.60655737704916,
+            "pitch": -18.360655737704917,
+            "roll": 0
+        }
+    ];
+    var pos = 0;
+    ogSetFlightDuration(scene,20000);
+    var introFlyTo = function IntroFlyTo()
+    {
+        var oView = views[pos];
+        ogFlyTo(scene,oView["longitude"],oView["latitude"], oView["elevation"],oView["yaw"],oView["pitch"],oView["roll"]);
+        if(pos >= 3) {pos = 0;} else{ pos += 1; }
+    };
+    ogSetInPositionFunction(m_context,introFlyTo);
+    introFlyTo();
 };
 //-----------------------------------------------------------------------------
 /**
@@ -281,35 +400,13 @@ GlobeGame.prototype.NextChallenge = function()
 };
 //-----------------------------------------------------------------------------
 /**
- * @description enter name in highscore and show highscore
+ * @description NextChallenge
  */
-GlobeGame.prototype.EnterHighscore = function()
+GlobeGame.prototype.StopFlyTo = function()
 {
-    var that = this;
-    m_ui.setAlpha(1.0);
-    var list =
-        [
-            ["Hans Huber", 100],
-            ["Max Muster", 100],
-            ["Peter Plautze", 100],
-            ["Franz Feierabend", 100],
-            ["Test 5", 100],
-            ["Test 6", 100],
-            ["Test 7", 100],
-            ["Test 8", 100],
-            ["Test 9", 100],
-            ["Test 10", 100],
-            ["Test 11", 100]
-        ];
-    var highscore = new HighScoreDialog(m_ui, list, 500, 650);
-    highscore.RegisterCallback(function(){
-        if(m_score)
-            m_score.Destroy();
-        m_gameData = new GameData(function()
-        {
-            that.OnLoaded();
-        });
-    });
+    var scene = ogGetScene(m_context);
+    ogSetInPositionFunction(m_context,function(){});
+    ogStopFlyTo(scene);
 };
 //-----------------------------------------------------------------------------
 /**
@@ -343,17 +440,19 @@ GlobeGame.prototype.OnOGResize = function(context)
 };
 
 goog.exportSymbol('GlobeGame', GlobeGame);
-goog.exportProperty(GlobeGame.prototype, 'OnLoaded', GlobeGame.prototype.OnLoaded);
+goog.exportProperty(GlobeGame.prototype, 'EnterIdle', GlobeGame.prototype.EnterIdle);
+goog.exportProperty(GlobeGame.prototype, 'EnterChallenge', GlobeGame.prototype.EnterChallenge);
+goog.exportProperty(GlobeGame.prototype, 'EnterHighscore', GlobeGame.prototype.EnterHighscore);
 goog.exportProperty(GlobeGame.prototype, 'CycleCallback', GlobeGame.prototype.CycleCallback);
 goog.exportProperty(GlobeGame.prototype, 'InitQuiz', GlobeGame.prototype.InitQuiz);
 goog.exportProperty(GlobeGame.prototype, 'ProcessChallenge', GlobeGame.prototype.ProcessChallenge);
 goog.exportProperty(GlobeGame.prototype, 'NextChallenge', GlobeGame.prototype.NextChallenge);
-goog.exportProperty(GlobeGame.prototype, 'EnterHighscore', GlobeGame.prototype.EnterHighscore);
 goog.exportProperty(GlobeGame.prototype, 'RegisterCycleCallback', GlobeGame.prototype.RegisterCycleCallback);
 goog.exportProperty(GlobeGame.prototype, 'UnregisterCycleCallback', GlobeGame.prototype.UnregisterCycleCallback);
 goog.exportProperty(GlobeGame.prototype, 'LoadImages', GlobeGame.prototype.LoadImages);
 goog.exportProperty(GlobeGame.prototype, 'LoadLanguage', GlobeGame.prototype.LoadLanguage);
 goog.exportProperty(GlobeGame.prototype, 'Init', GlobeGame.prototype.Init);
+goog.exportProperty(GlobeGame.prototype, 'StopFlyTo', GlobeGame.prototype.StopFlyTo);
 goog.exportProperty(GlobeGame.prototype, 'OnOGResize', GlobeGame.prototype.OnOGResize);
 goog.exportProperty(GlobeGame.prototype, 'OnOGRender', GlobeGame.prototype.OnOGRender);
 goog.exportProperty(GlobeGame.prototype, 'OnCanvasRender', GlobeGame.prototype.OnCanvasRender);

@@ -22,6 +22,7 @@
 *******************************************************************************/
 /* GUI Elements */
 goog.provide('owg.gg.Button01');
+goog.provide('owg.gg.Button02');
 goog.provide('owg.gg.MessageDialog');
 goog.provide('owg.gg.ScreenText');
 goog.provide('owg.gg.Pin');
@@ -173,6 +174,121 @@ goog.exportSymbol('Button01', Button01);
 goog.exportProperty(Button01.prototype, 'SetEnabled', Button01.prototype.SetEnabled);
 goog.exportProperty(Button01.prototype, 'SetState', Button01.prototype.SetState);
 goog.exportProperty(Button01.prototype, 'Destroy', Button01.prototype.Destroy);
+//-----------------------------------------------------------------------------
+/**
+ * @class Button02
+ * @constructor
+ *
+ * @description default button class native 76 x 69 pixel
+ *
+ * @author Robert Wüest robert.wst@gmail.ch
+ *
+ * @param {Object} layer
+ * @param {string} name
+ * @param {number} x
+ * @param {number} y
+ * @param {number} width
+ * @param {number} height
+ * @param {string} caption
+ * @param {number} fontsize
+ * @param {(function()|null)} clickevent
+ */
+function Button02(layer, name, x, y, width, height, caption, fontsize, clickevent)
+{
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.state = 0;
+    this.caption = caption;
+    this.fontsize = fontsize;
+    this.name = name;
+    this.enabled = true;
+    this.layer = layer;
+
+    if(clickevent == null)
+    {this.onClickEvent = function(sender) {};}
+    else
+    {this.onClickEvent = clickevent;}
+    this.onMouseOverEvent = function() {};
+    this.onMouseOutEvent = function() {};
+    this.onMouseDownEvent = function() {};
+    this.onMouseUpEvent = function() {};
+    var that = this;
+
+    this.shape = new Kinetic.Shape({drawFunc:function(){
+        var ctx = this.getContext();
+        var clickOffset = 0;
+        if(that.state == 0)
+        {
+            ctx.drawImage(m_images["btn_02"], x, y, width, height);
+        }
+        else if(that.state == 1)
+        {
+            ctx.drawImage(m_images["btn_02_h"], x, y, width, height);
+        }
+        else if(that.state == 2)
+        {
+            ctx.drawImage(m_images["btn_02_c"], x, y, width, height);
+            clickOffset = 2;
+        }
+        ctx.beginPath();
+        ctx.rect(x, y, width, height);
+        ctx.closePath();
+        ctx.font = fontsize+"pt TitanOne";
+        ctx.fillStyle = "#FFF";
+        var textWidth = ctx.measureText(that.caption).width;
+        var textHeight = ctx.measureText(that.caption).height;
+        var tX = x+clickOffset;
+        var tY = y+ 3*(height/5)+clickOffset;
+        if(textWidth <= width)
+        {
+            tX = x + ((width-textWidth)/2);
+        }
+        ctx.fillText(that.caption, tX, tY);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#000"; // stroke color
+        ctx.strokeText(that.caption, tX, tY);
+    }});
+
+    this.shape.on("mouseout", function(){
+        that.onMouseOutEvent();
+        if(that.state < 3)
+        {that.state = 0;}
+    });
+    this.shape.on("mouseover", function(){
+        that.onMouseOverEvent();
+        if(that.state < 3)
+        {that.state = 1;}
+    });
+    this.shape.on("mousedown", function(){
+        that.onMouseDownEvent();
+        if(that.state < 3)
+        {that.state = 2;}
+
+    });
+    this.shape.on("mouseup", function(){
+        that.onMouseUpEvent();
+        if(that.state < 3)
+        {that.state = 1;
+            that.onClickEvent(that);
+        }
+    });
+    this.shape.name = name;
+    layer.add(this.shape);
+}
+
+//-----------------------------------------------------------------------------
+/**
+ * @description destroy button
+ */
+Button02.prototype.Destroy = function()
+{
+    this.layer.remove(this.shape);
+};
+
+goog.exportSymbol('Button02', Button02);
+goog.exportProperty(Button02.prototype, 'Destroy', Button02.prototype.Destroy);
 //-----------------------------------------------------------------------------
 /**
  * @class Clock
