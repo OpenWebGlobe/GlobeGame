@@ -308,10 +308,10 @@ goog.getCssName = function(a, b) {
     return goog.cssNameMapping_[a] || a
   }, c;
   c = goog.cssNameMapping_ ? goog.cssNameMappingStyle_ == "BY_WHOLE" ? d : function(a) {
-    for(var a = a.split("-"), b = [], c = 0;c < a.length;c++) {
-      b.push(d(a[c]))
+    for(var a = a.split("-"), c = [], b = 0;b < a.length;b++) {
+      c.push(d(a[b]))
     }
-    return b.join("-")
+    return c.join("-")
   } : function(a) {
     return a
   };
@@ -1209,9 +1209,15 @@ GlobeGame.STATE = {IDLE:0, CHALLENGE:1, HIGHSCORE:2};
 GlobeGame.prototype.Init = function(a) {
   var b = this;
   m_gameData = new GameData(null);
-  this.LoadImages({btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", btn_02:"art/btn_02.png", btn_02_c:"art/btn_02_c.png", btn_02_h:"art/btn_02_h.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png"}, null);
+  var d = {btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", btn_02:"art/btn_02.png", btn_02_c:"art/btn_02_c.png", btn_02_h:"art/btn_02_h.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png", nw_logo:"art/nw_logo.png"};
   this.LoadLanguage(function() {
-    b.EnterHighscore()
+    b.LoadImages(d, function() {
+      var a = new Kinetic.Shape({drawFunc:function() {
+        this.getContext().drawImage(m_images.nw_logo, 0, window.innerHeight - 82, 670, 82)
+      }});
+      m_static.add(a);
+      b.EnterIdle()
+    })
   });
   m_context = ogCreateContextFromCanvas("canvas", !0);
   m_globe = ogCreateGlobe(m_context);
@@ -1222,9 +1228,9 @@ GlobeGame.prototype.Init = function(a) {
   ogSetResizeFunction(m_context, this.OnOGResize);
   m_stage.add(m_static);
   m_stage.add(m_ui);
-  m_stage.onFrame(function(d) {
-    b.OnCanvasRender(d);
-    a(d)
+  m_stage.onFrame(function(c) {
+    b.OnCanvasRender(c);
+    a(c)
   });
   m_stage.start()
 };
@@ -1244,12 +1250,12 @@ GlobeGame.prototype.EnterChallenge = function() {
   this.ProcessChallenge()
 };
 GlobeGame.prototype.EnterHighscore = function() {
-  var a = this, b = new TouchKeyboard(m_ui, "keys", window.innerWidth / 2 - 426, window.innerHeight / 2 - 195, m_locale.entername, function(d) {
-    m_player.name = d;
+  var a = this;
+  m_ui.setAlpha(1);
+  var b = new TouchKeyboard(m_ui, "keys", window.innerWidth / 2 - 426, window.innerHeight / 2 - 195, m_locale.entername, function() {
     b.Destroy();
-    m_ui.setAlpha(1);
-    d = new HighScoreDialog(m_ui, [["Hans Huber", 100], ["Max Muster", 100], ["Peter Plautze", 100], ["Franz Feierabend", 100], ["Test 5", 100], ["Test 6", 100], ["Test 7", 100], ["Test 8", 100], ["Test 9", 100], ["Test 10", 100], ["Test 11", 100]], 500, 650);
-    this.FlyAround();
+    var d = new HighScoreDialog(m_ui, [["Hans Huber", 100], ["Max Muster", 100], ["Peter Plautze", 100], ["Franz Feierabend", 100], ["Test 5", 100], ["Test 6", 100], ["Test 7", 100], ["Test 8", 100], ["Test 9", 100], ["Test 10", 100], ["Test 11", 100]], 500, 650);
+    a.FlyAround();
     d.RegisterCallback(function() {
       m_score && m_score.Destroy();
       m_gameData = new GameData(function() {
@@ -1261,16 +1267,19 @@ GlobeGame.prototype.EnterHighscore = function() {
   })
 };
 GlobeGame.prototype.FlyAround = function() {
-  var a = ogGetScene(m_context), b = [{longitude:7.743465423583984, latitude:46.25442886352539, elevation:5133.49755859375, yaw:47.90983606557377, pitch:-15.122950819672129, roll:0}, {longitude:8.006896018981934, latitude:46.27399444580078, elevation:6440.3505859375, yaw:0.6147540983606554, pitch:-17.74590163934426, roll:0}, {longitude:8.078167915344238, latitude:46.43217849731445, elevation:3730.73583984375, yaw:-12.663934426229508, pitch:-5.737704918032784, roll:0}, {longitude:8.09277629852295, 
-  latitude:46.60940170288086, elevation:7909.09912109375, yaw:-50.9016393442623, pitch:-28.442622950819672, roll:0}, {longitude:7.97355318069458, latitude:46.78914260864258, elevation:1968.3804931640625, yaw:-108.60655737704916, pitch:-18.360655737704917, roll:0}], d = 0;
+  var a = ogGetScene(m_context), b = ogGetActiveCamera(a);
+  ogSetPosition(b, 7.743465423583984, 46.25442886352539, 5133.49755859375);
+  ogSetOrientation(b, 47.90983606557377, -15.122950819672129, 0);
+  var d = [{longitude:8.006896018981934, latitude:46.27399444580078, elevation:6440.3505859375, yaw:0.6147540983606554, pitch:-17.74590163934426, roll:0}, {longitude:8.078167915344238, latitude:46.43217849731445, elevation:3730.73583984375, yaw:-12.663934426229508, pitch:-5.737704918032784, roll:0}, {longitude:8.09277629852295, latitude:46.60940170288086, elevation:7909.09912109375, yaw:-50.9016393442623, pitch:-28.442622950819672, roll:0}, {longitude:7.97355318069458, latitude:46.78914260864258, 
+  elevation:1968.3804931640625, yaw:-108.60655737704916, pitch:-18.360655737704917, roll:0}], c = 0;
   ogSetFlightDuration(a, 2E4);
-  var c = function() {
-    var c = b[d];
-    ogFlyTo(a, c.longitude, c.latitude, c.elevation, c.yaw, c.pitch, c.roll);
-    d >= 4 ? d = 0 : d += 1
+  b = function() {
+    var b = d[c];
+    ogFlyTo(a, b.longitude, b.latitude, b.elevation, b.yaw, b.pitch, b.roll);
+    c >= 3 ? c = 0 : c += 1
   };
-  ogSetInPositionFunction(m_context, c);
-  c()
+  ogSetInPositionFunction(m_context, b);
+  b()
 };
 GlobeGame.prototype.CycleCallback = function() {
   for(var a = 0;a < this.callbacks.length;a++) {
