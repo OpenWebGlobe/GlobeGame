@@ -110,7 +110,7 @@ function Init() {
         layer: "DHM25",
         service: "owg"
     });
-    ogSetRenderQuality(m_globe, 2);
+    //ogSetRenderQuality(m_globe, 2);
     ogSetRenderFunction(m_context, OnRender);
     ogSetResizeFunction(m_context, OnResize);
     var scene = ogGetScene(m_context);

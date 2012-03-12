@@ -474,26 +474,22 @@ function Button01(a, b, d, c, e, f, h, j) {
     a.strokeText(g.caption, k, b)
   }});
   this.shape.on("mouseout", function() {
-    g.onMouseOutEvent();
-    if(g.state < 3) {
+    if(g.enabled && (g.onMouseOutEvent(), g.state < 3)) {
       g.state = 0
     }
   });
   this.shape.on("mouseover", function() {
-    g.onMouseOverEvent();
-    if(g.state < 3) {
+    if(g.enabled && (g.onMouseOverEvent(), g.state < 3)) {
       g.state = 1
     }
   });
   this.shape.on("mousedown", function() {
-    g.onMouseDownEvent();
-    if(g.state < 3) {
+    if(g.enabled && (g.onMouseDownEvent(), g.state < 3)) {
       g.state = 2
     }
   });
   this.shape.on("mouseup", function() {
-    g.onMouseUpEvent();
-    if(g.state < 3) {
+    if(g.enabled && (g.onMouseUpEvent(), g.state < 3)) {
       g.state = 1, g.onClickEvent()
     }
   });
@@ -553,26 +549,22 @@ function Button02(a, b, d, c, e, f, h, j, g) {
     a.strokeText(i.caption, g, b)
   }});
   this.shape.on("mouseout", function() {
-    i.onMouseOutEvent();
-    if(i.state < 3) {
+    if(i.enabled && (i.onMouseOutEvent(), i.state < 3)) {
       i.state = 0
     }
   });
   this.shape.on("mouseover", function() {
-    i.onMouseOverEvent();
-    if(i.state < 3) {
+    if(i.enabled && (i.onMouseOverEvent(), i.state < 3)) {
       i.state = 1
     }
   });
   this.shape.on("mousedown", function() {
-    i.onMouseDownEvent();
-    if(i.state < 3) {
+    if(i.enabled && (i.onMouseDownEvent(), i.state < 3)) {
       i.state = 2
     }
   });
   this.shape.on("mouseup", function() {
-    i.onMouseUpEvent();
-    if(i.state < 3) {
+    if(i.enabled && (i.onMouseUpEvent(), i.state < 3)) {
       i.state = 1, i.onClickEvent(i)
     }
   });

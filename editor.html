@@ -51,7 +51,7 @@
     <input id="resetbtn" class="edbutton" type="button" style="width:150px; height: 25px; visibility: hidden" value="Reset" onclick="HideChallenge()"/><br/>
     <div id="details">
     <input type="checkbox" onchange="TrafficLayer(this.checked)">OSM Layer einblenden</input><br/>
-    <b>Typ der Aufgabe: </b><select id="ctype" onchange="TypeChanged(this.value)">
+    <b>Typ der Aufgabe: </b><select onkeydown="InputBoxKeyPressed(event)" id="ctype" onchange="TypeChanged(this.value)">
         <option value="landmark">Wissensaufgabe</option>
         <option value="picking">Orientierungsaufgabe</option>
     </select><br/><hr/>
@@ -60,32 +60,32 @@
     <div id="picking_div" style="visibility: hidden; position: absolute">
         <table>
             <tr>
-                <td>Punkte: </td><td><input id="qscore" type="number" value="100"/></td>
+                <td>Punkte: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="qscore" type="number" value="100"/></td>
             </tr>
             <tr>
-                <td>Beschreibung: </td><td><input id="location" type="text" value="Test Title" /></td>
+                <td>Beschreibung: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="location" type="text" value="Test Title" /></td>
             </tr>
         </table>
     </div>
     <div id="landmark_div" style="visibility: visible">
     <table>
         <tr>
-            <td>Antwort 1: </td><td><input id="option1" type="text" value="Option1"/></td>
+            <td>Antwort 1: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="option1" type="text" value="Option1"/></td>
         </tr>
         <tr>
-            <td>Antwort 2: </td><td><input id="option2" type="text" value="Option2"/></td>
+            <td>Antwort 2: </td><td><input  onkeydown="InputBoxKeyPressed(event)" id="option2" type="text" value="Option2"/></td>
         </tr>
         <tr>
-            <td>Antwort 3: </td><td><input id="option3" type="text" value="Option3"/></td>
+            <td>Antwort 3: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="option3" type="text" value="Option3"/></td>
         </tr>
         <tr>
-            <td>Antwort 4: </td><td><input id="option4" type="text" value="Option4"/></td>
+            <td>Antwort 4: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="option4" type="text" value="Option4"/></td>
         </tr>
         <tr>
-            <td>L&ouml;sungsantwort(1-4): </td><td><input id="correctoption" type="number" value="1"/></td>
+            <td>L&ouml;sungsantwort(1-4): </td><td><input onkeydown="InputBoxKeyPressed(event)" id="correctoption" type="number" value="1"/></td>
         </tr>
         <tr>
-            <td>Punkte: </td><td><input id="basescore" type="number" value="100"/></td>
+            <td>Punkte: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="basescore" type="number" value="100"/></td>
         </tr>
         <tr>
             <td>Beschreibung: </td><td><input id="title" type="text" value="Test Title" /></td>
@@ -95,7 +95,7 @@
     <input class="edbutton" type="button" style="width:150px; height: 25px" value="Hinzuf&uuml;gen" onclick="AddView()"/><input class="edbutton" type="button" style="width:150px; height: 25px" value="Leeren" onclick="ClearViews()"/>
     <br/>Current:<span id="current"></span></div><hr/>
     <b>Ausgabe:</b>
-    <textarea id="output" style="height:300px; width: 350px;background-color: #ffffee;" onclick="SelectAllText('output')"></textarea><br/>
+    <textarea id="output" onkeydown="InputBoxKeyPressed(event)" style="height:300px; width: 350px;background-color: #ffffee;" onclick="SelectAllText('output')"></textarea><br/>
     <input id="save" class="edbutton" type="button" style="width:150px; height: 25px" value="Speichern" onclick="SaveToFile()"/>
     </div>
 </div>
@@ -106,6 +106,11 @@
     function SaveToFile()
     {
         window.open("save_to_file.php?content="+jQuery("#output").val());
+    }
+    function InputBoxKeyPressed(evt)
+    {
+
+        evt.stopPropagation();
     }
 </script>
 </body>

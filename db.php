@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
     if($_GET['action'] == "append")
     {
         if(!preg_match('/[.#\\-$><?!()&%]/', $_GET['name']) && is_numeric($_GET['score']))

@@ -118,26 +118,34 @@ function Button01(layer, name, x, y, width, height, caption, fontsize)
     }});
 
     this.shape.on("mouseout", function(){
-        that.onMouseOutEvent();
-        if(that.state < 3)
-        {that.state = 0;}
+        if(that.enabled){
+            that.onMouseOutEvent();
+            if(that.state < 3)
+            {that.state = 0;}
+        }
     });
     this.shape.on("mouseover", function(){
-        that.onMouseOverEvent();
-        if(that.state < 3)
-        {that.state = 1;}
+        if(that.enabled){
+            that.onMouseOverEvent();
+            if(that.state < 3)
+            {that.state = 1;}
+        }
     });
     this.shape.on("mousedown", function(){
-        that.onMouseDownEvent();
-        if(that.state < 3)
-        {that.state = 2;}
+        if(that.enabled){
+            that.onMouseDownEvent();
+            if(that.state < 3)
+            {that.state = 2;}
+        }
 
     });
     this.shape.on("mouseup", function(){
-        that.onMouseUpEvent();
-        if(that.state < 3)
-        {that.state = 1;
-        that.onClickEvent();
+        if(that.enabled){
+            that.onMouseUpEvent();
+            if(that.state < 3)
+            {that.state = 1;
+            that.onClickEvent();
+            }
         }
     });
     this.shape.name = name;
@@ -252,26 +260,34 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
     }});
 
     this.shape.on("mouseout", function(){
-        that.onMouseOutEvent();
-        if(that.state < 3)
-        {that.state = 0;}
+        if(that.enabled){
+            that.onMouseOutEvent();
+            if(that.state < 3)
+            {that.state = 0;}
+        }
     });
     this.shape.on("mouseover", function(){
-        that.onMouseOverEvent();
-        if(that.state < 3)
-        {that.state = 1;}
+        if(that.enabled){
+            that.onMouseOverEvent();
+            if(that.state < 3)
+            {that.state = 1;}
+        }
     });
     this.shape.on("mousedown", function(){
-        that.onMouseDownEvent();
-        if(that.state < 3)
-        {that.state = 2;}
+        if(that.enabled){
+            that.onMouseDownEvent();
+            if(that.state < 3)
+            {that.state = 2;}
+        }
 
     });
     this.shape.on("mouseup", function(){
-        that.onMouseUpEvent();
-        if(that.state < 3)
-        {that.state = 1;
-            that.onClickEvent(that);
+        if(that.enabled){
+            that.onMouseUpEvent();
+            if(that.state < 3)
+            {that.state = 1;
+                that.onClickEvent(that);
+            }
         }
     });
     this.shape.name = name;

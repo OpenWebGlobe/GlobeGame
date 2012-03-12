@@ -389,7 +389,6 @@ function Init() {
   ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"bluemarble", service:"owg"});
   ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"swissimage", service:"owg"});
   m_elev = ogAddElevationLayer(m_globe, {url:["http://10.42.2.37"], layer:"DHM25", service:"owg"});
-  ogSetRenderQuality(m_globe, 2);
   ogSetRenderFunction(m_context, OnRender);
   ogSetResizeFunction(m_context, OnResize);
   var a = ogGetScene(m_context), b = ogGetActiveCamera(a);
