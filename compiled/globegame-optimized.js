@@ -791,16 +791,16 @@ goog.exportSymbol("Pin", Pin);
 goog.exportProperty(Pin.prototype, "SetPos", Pin.prototype.SetPos);
 goog.exportProperty(Pin.prototype, "SetVisible", Pin.prototype.SetVisible);
 goog.exportProperty(Pin.prototype, "Destroy", Pin.prototype.Destroy);
-function HighScoreDialog(a, b, d, c) {
+function HighScoreDialog(a, b, d, c, e) {
   this.list = b;
   this.layer = a;
   this.okayButton = null;
-  var e = this;
+  var f = this;
   this.Callback = function() {
   };
   this.OnOkay = function() {
-    e.Destroy();
-    e.Callback()
+    f.Destroy();
+    f.Callback()
   };
   this.shape = new Kinetic.Shape({drawFunc:function() {
     var a = this.getContext();
@@ -822,12 +822,12 @@ function HighScoreDialog(a, b, d, c) {
     a.fillText(m_locale.highscores, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 45);
     a.strokeText(m_locale.highscores, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 45);
     a.font = "15pt TitanOne";
-    for(b = 1;b <= e.list.length;b++) {
-      a.fillStyle = b == 1 ? "#FFAA33" : "#FFF";
-      var j = b + ". " + e.list[b - 1][0] + "  " + e.list[b - 1][1];
-      a.fillText(j, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 75 + b * 22);
+    for(b = 1;b <= f.list.length;b++) {
+      a.fillStyle = b == 1 ? "#FFAA33" : e.playerName == f.list[b - 1][0] && e.playerScore == f.list[b - 1][2] ? "#0FF" : "#FFF";
+      var g = b + ". " + f.list[b - 1][0] + "  " + f.list[b - 1][2];
+      a.fillText(g, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 75 + b * 22);
       a.lineWidth = 1;
-      a.strokeText(j, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 75 + b * 22)
+      a.strokeText(g, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 75 + b * 22)
     }
   }});
   a.add(this.shape);
@@ -891,7 +891,7 @@ function LandmarkChallenge(a, b, d, c, e) {
     f.PickOption(4, f.clock.GetSeconds())
   };
   this.FlightCallback = function() {
-    if(f.stop != !0 && f.flystate - 1 < f.views.length) {
+    if(f.stop != !0 && f.flystate < f.views.length) {
       var a = f.views[f.flystate], b = ogGetScene(m_context);
       f.flystate += 1;
       ogFlyTo(b, a.longitude, a.latitude, a.elevation, a.yaw, a.pitch, a.roll)
@@ -901,7 +901,7 @@ function LandmarkChallenge(a, b, d, c, e) {
 LandmarkChallenge.prototype = new Challenge(0);
 LandmarkChallenge.prototype.constructor = LandmarkChallenge;
 LandmarkChallenge.prototype.Activate = function() {
-  var a = null, b = null, d = null, c = null, a = new Button01(m_ui, "btn1", m_centerX - 310, window.innerHeight - 239, 300, 69, this.options[0], 15);
+  var a = null, b = null, d = null, c = null, e = this, a = new Button01(m_ui, "btn1", m_centerX - 310, window.innerHeight - 239, 300, 69, this.options[0], 15);
   a.onClickEvent = this.onOption1;
   b = new Button01(m_ui, "btn2", m_centerX + 10, window.innerHeight - 239, 300, 69, this.options[1], 15);
   b.onClickEvent = this.onOption2;
@@ -915,6 +915,9 @@ LandmarkChallenge.prototype.Activate = function() {
   this.buttonArray.push(c);
   this.screenText = new ScreenText(m_ui, this.text, m_centerX, window.innerHeight - 255, 20, "center");
   this.clock = new Clock(m_ui, 50, 75, 60);
+  this.clock.onTimeoutEvent = function() {
+    e.callback()
+  };
   this.clock.Start();
   FadeIn(function() {
   });
@@ -976,7 +979,7 @@ function PickingChallenge(a, b, d) {
   this.distanceLine = this.ogFrameLayer = this.clock = null;
   this.OnOkay = function() {
     var a = ogGetScene(m_context), b = ogToCartesian(a, c.solutionPos[0], c.solutionPos[1], c.solutionPos[2]), d = ogWorldToWindow(a, b[0], b[1], b[2]), j = ogCalcDistanceWGS84(c.solutionPos[0], c.solutionPos[1], c.pickPos[1], c.pickPos[2]), j = Math.round(j / 1E3 * Math.pow(10, 1)) / Math.pow(10, 1);
-    c.resultPin = new Pin(m_ui, m_images.pin_green, d[0], d[1]);
+    c.resultPin.SetPos(d[0], d[1]);
     if(c.posPin) {
       c.distanceLine = new Kinetic.Shape({drawFunc:function() {
         var a = this.getContext();
@@ -1047,21 +1050,26 @@ PickingChallenge.prototype.constructor = PickingChallenge;
 PickingChallenge.prototype.Activate = function() {
   this.screenText = new ScreenText(m_ui, this.text, m_centerX, window.innerHeight - 255, 20, "center");
   this.pickOverlay = new Kinetic.Rect({x:0, y:0, width:window.innerWidth, height:window.innerHeight});
+  var a = this;
   this.pickOverlay.on("mousedown", this.OnMouseDown);
   this.pickOverlay.on("mouseup", this.OnMouseUp);
   this.pickOverlay.on("mousemove", this.OnMouseMove);
   m_ui.add(this.pickOverlay);
   this.okayBtn = new Button01(m_ui, "okbtn1", m_centerX - 150, window.innerHeight - 180, 300, 69, "OK", 15);
+  this.resultPin = new Pin(m_ui, m_images.pin_green, -1, -1);
   this.okayBtn.onClickEvent = this.OnOkay;
   this.okayBtn.onMouseOverEvent = this.MouseOverOkBtn;
   this.okayBtn.onMouseOutEvent = this.MouseOutOkBtn;
   this.clock = new Clock(m_ui, 50, 75, 60);
+  this.clock.onTimeoutEvent = function() {
+    a.callback()
+  };
   this.clock.Start();
   FadeIn(function() {
   });
-  var a = ogGetScene(m_context), a = ogGetActiveCamera(a);
-  ogSetPosition(a, 8.225578, 46.8248707, 28E4);
-  ogSetOrientation(a, 0, -90, 0);
+  var b = ogGetScene(m_context), b = ogGetActiveCamera(b);
+  ogSetPosition(b, 8.225578, 46.8248707, 28E4);
+  ogSetOrientation(b, 0, -90, 0);
   ogSetInPositionFunction(m_context, this.FlightCallback);
   this.ogFrameLayer = ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"ch_boundaries", service:"owg"})
 };
@@ -1074,10 +1082,10 @@ PickingChallenge.prototype.Destroy = function(a) {
 PickingChallenge.prototype.OnDestroy = function() {
   this.clock.Destroy();
   var a = this;
-  this.draftmode ? (a.screenText.Destroy(), a.resultPin.Destroy(), a.posPin && (a.posPin.Destroy(), m_ui.remove(a.distanceLine)), a.okayBtn.Destroy(), m_ui.remove(a.pickOverlay), ogRemoveImageLayer(a.ogFrameLayer), a.eventDestroyed()) : FadeOut(function() {
+  this.draftmode ? (a.screenText.Destroy(), a.resultPin.Destroy(), a.posPin && (a.posPin.Destroy(), a.distanceLine && m_ui.remove(a.distanceLine)), a.okayBtn.Destroy(), m_ui.remove(a.pickOverlay), ogRemoveImageLayer(a.ogFrameLayer), a.eventDestroyed()) : FadeOut(function() {
     a.screenText.Destroy();
     a.resultPin.Destroy();
-    a.posPin && (a.posPin.Destroy(), m_ui.remove(a.distanceLine));
+    a.posPin && (a.posPin.Destroy(), a.distanceLine && m_ui.remove(a.distanceLine));
     a.okayBtn.Destroy();
     m_ui.remove(a.pickOverlay);
     ogRemoveImageLayer(a.ogFrameLayer);
@@ -1252,16 +1260,20 @@ GlobeGame.prototype.EnterChallenge = function() {
 GlobeGame.prototype.EnterHighscore = function() {
   var a = this;
   m_ui.setAlpha(1);
-  var b = new TouchKeyboard(m_ui, "keys", window.innerWidth / 2 - 426, window.innerHeight / 2 - 195, m_locale.entername, function() {
+  var b = new TouchKeyboard(m_ui, "keys", window.innerWidth / 2 - 426, window.innerHeight / 2 - 195, m_locale.entername, function(d) {
+    m_player.playerName = d;
     b.Destroy();
-    var d = new HighScoreDialog(m_ui, [["Hans Huber", 100], ["Max Muster", 100], ["Peter Plautze", 100], ["Franz Feierabend", 100], ["Test 5", 100], ["Test 6", 100], ["Test 7", 100], ["Test 8", 100], ["Test 9", 100], ["Test 10", 100], ["Test 11", 100]], 500, 650);
-    a.FlyAround();
-    d.RegisterCallback(function() {
-      m_score && m_score.Destroy();
-      m_gameData = new GameData(function() {
-        a.StopFlyTo();
-        m_ui.setAlpha(0);
-        a.EnterChallenge()
+    jQuery.get("db.php?action=append&name=" + m_player.playerName + "&score=" + m_player.playerScore, function(b) {
+      b = eval(b);
+      b = new HighScoreDialog(m_ui, b, 500, 650, m_player);
+      a.FlyAround();
+      b.RegisterCallback(function() {
+        m_score && m_score.Destroy();
+        m_gameData = new GameData(function() {
+          a.StopFlyTo();
+          m_ui.setAlpha(0);
+          a.EnterChallenge()
+        })
       })
     })
   })

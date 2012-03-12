@@ -200,32 +200,24 @@ GlobeGame.prototype.EnterHighscore = function()
     m_ui.setAlpha(1.0);
     var keyboard = new TouchKeyboard(m_ui,"keys",(window.innerWidth/2)-426,(window.innerHeight/2)-195, m_locale["entername"],
         function(name){
-            //m_player.name = name;
+            m_player.playerName = name;
             keyboard.Destroy();
-            var list =
-                [
-                    ["Hans Huber", 100],
-                    ["Max Muster", 100],
-                    ["Peter Plautze", 100],
-                    ["Franz Feierabend", 100],
-                    ["Test 5", 100],
-                    ["Test 6", 100],
-                    ["Test 7", 100],
-                    ["Test 8", 100],
-                    ["Test 9", 100],
-                    ["Test 10", 100],
-                    ["Test 11", 100]
-                ];
-            var highscore = new HighScoreDialog(m_ui, list, 500, 650);
-            that.FlyAround();
-            highscore.RegisterCallback(function(){
-                if(m_score)
-                    m_score.Destroy();
-                m_gameData = new GameData(function()
-                {
-                    that.StopFlyTo();
-                    m_ui.setAlpha(0.0);
-                    that.EnterChallenge();
+
+            jQuery.get('db.php?action=append&name='+m_player.playerName+'&score='+m_player.playerScore, function(data) {
+
+                var list = /** @type {Array} */eval(data);
+
+                var highscore = new HighScoreDialog(m_ui, list, 500, 650, m_player);
+                that.FlyAround();
+                highscore.RegisterCallback(function(){
+                    if(m_score)
+                        m_score.Destroy();
+                    m_gameData = new GameData(function()
+                    {
+                        that.StopFlyTo();
+                        m_ui.setAlpha(0.0);
+                        that.EnterChallenge();
+                    });
                 });
             });
         });

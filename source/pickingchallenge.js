@@ -75,7 +75,7 @@ function PickingChallenge(baseScore, title, pos)
         var screenPos = ogWorldToWindow(scene,cartesian[0],cartesian[1],cartesian[2]);
         var distance = ogCalcDistanceWGS84(that.solutionPos[0], that.solutionPos[1], that.pickPos[1], that.pickPos[2]);
         distance = Math.round((distance/1000)*Math.pow(10,1))/Math.pow(10,1);
-        that.resultPin = new Pin(m_ui, m_images["pin_green"], screenPos[0], screenPos[1]);
+        that.resultPin.SetPos(screenPos[0], screenPos[1]);
         if(that.posPin)
         {
             that.distanceLine = new Kinetic.Shape({drawFunc:function(){
@@ -220,16 +220,19 @@ PickingChallenge.prototype.Activate = function()
         width: window.innerWidth,
         height: window.innerHeight
     });
+    var that = this;
     this.pickOverlay.on("mousedown", this.OnMouseDown);
     this.pickOverlay.on("mouseup", this.OnMouseUp);
     this.pickOverlay.on("mousemove", this.OnMouseMove);
     m_ui.add(this.pickOverlay);
     this.okayBtn = new Button01(m_ui, "okbtn1", m_centerX-150, window.innerHeight-180, 300, 69, "OK", 15);
+    this.resultPin = new Pin(m_ui, m_images["pin_green"], -1, -1);
     this.okayBtn.onClickEvent = this.OnOkay;
     this.okayBtn.onMouseOverEvent = this.MouseOverOkBtn;
     this.okayBtn.onMouseOutEvent = this.MouseOutOkBtn;
 
     this.clock = new Clock(m_ui, 50, 75, 60);
+    this.clock.onTimeoutEvent = function(){that.callback()};
     this.clock.Start();
     FadeIn(function() {});
     var scene = ogGetScene(m_context);
@@ -274,7 +277,8 @@ PickingChallenge.prototype.OnDestroy = function()
             if(that.posPin)
             {
                 that.posPin.Destroy();
-                m_ui.remove(that.distanceLine);
+                if(that.distanceLine)
+                    m_ui.remove(that.distanceLine);
             }
             that.okayBtn.Destroy();
 
@@ -289,7 +293,8 @@ PickingChallenge.prototype.OnDestroy = function()
         if(that.posPin)
         {
             that.posPin.Destroy();
-            m_ui.remove(that.distanceLine);
+            if(that.distanceLine)
+                m_ui.remove(that.distanceLine);
         }
         that.okayBtn.Destroy();
 

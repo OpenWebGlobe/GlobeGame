@@ -695,7 +695,7 @@ goog.exportProperty(Pin.prototype, 'Destroy', Pin.prototype.Destroy);
  * @param {number} width
  * @param {number} height
  */
-function HighScoreDialog(layer, list, width, height)
+function HighScoreDialog(layer, list, width, height, player)
 {
     this.list = list;
     this.layer = layer;
@@ -733,8 +733,10 @@ function HighScoreDialog(layer, list, width, height)
         ctx.font = "15pt TitanOne";
         for(var i = 1; i <= that.list.length; i++)
         {
-            if(i == 1) {ctx.fillStyle = "#FFAA33";} else { ctx.fillStyle = "#FFF";}
-            var textOut = i + ". "+ that.list[i-1][0] + "  " + that.list[i-1][1];
+            if(i == 1) {ctx.fillStyle = "#FFAA33";} else if(player.playerName == that.list[i-1][0] && player.playerScore == that.list[i-1][2])
+            { ctx.fillStyle = "#0FF"; }
+            else { ctx.fillStyle = "#FFF";}
+            var textOut = i + ". "+ that.list[i-1][0] + "  " + that.list[i-1][2];
             ctx.fillText(textOut, window.innerWidth/2, window.innerHeight/2-(height/2)+75+(i*22));
             ctx.lineWidth = 1;
             ctx.strokeText(textOut, window.innerWidth/2, window.innerHeight/2-(height/2)+75+(i*22));

@@ -53,7 +53,7 @@
     <input type="checkbox" onchange="TrafficLayer(this.checked)">OSM Layer einblenden</input><br/>
     <b>Typ der Aufgabe: </b><select id="ctype" onchange="TypeChanged(this.value)">
         <option value="landmark">Wissensaufgabe</option>
-        <option value="picking">Positionsfindung</option>
+        <option value="picking">Orientierungsaufgabe</option>
     </select><br/><hr/>
     <b>Details:</b>
 
@@ -96,7 +96,7 @@
     <br/>Current:<span id="current"></span></div><hr/>
     <b>Ausgabe:</b>
     <textarea id="output" style="height:300px; width: 350px;background-color: #ffffee;" onclick="SelectAllText('output')"></textarea><br/>
-    <input id="save" class="edbutton" type="button" style="width:150px; height: 25px; visibility: visible" value="Speichern" onclick="SaveToFile()"/>
+    <input id="save" class="edbutton" type="button" style="width:150px; height: 25px" value="Speichern" onclick="SaveToFile()"/>
     </div>
 </div>
 

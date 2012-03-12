@@ -336,14 +336,15 @@ function OnChallengeReset()
 {
     var scene = ogGetScene(m_context);
     var camId = ogGetActiveCamera(scene);
-    ogSetPosition(camId,8.225578,46.8248707, 280000.0);
-    ogSetOrientation(camId,0.0,-90.0, 0.0);
+
     if(m_cType == 0)
     {
         jQuery('#main_ui').css("visibility", "hidden");
     }
     else if(m_cType == 1)
     {
+        ogSetPosition(camId,8.225578,46.8248707, 280000.0);
+        ogSetOrientation(camId,0.0,-90.0, 0.0);
         m_stage.add(m_static);
     }
 }
@@ -391,8 +392,8 @@ function OnRender(context)
     {
         var out = "{\n"+
             "   \"Type\": 1,\n"+
-            "   \"BaseScore\": " + document.getElementById('basescore').value + ",\n"+
-            "   \"Title\": \"" + document.getElementById('title').value + "\",\n"+
+            "   \"BaseScore\": " + document.getElementById('qscore').value + ",\n"+
+            "   \"Title\": \"" + document.getElementById('location').value + "\",\n"+
             "   \"Longitude\": " + m_pick[1] + ",\n"+
             "   \"Latitude\": " + m_pick[2] + ",\n"+
             "   \"Elevation\": " + m_pick[3] + "\n"+
