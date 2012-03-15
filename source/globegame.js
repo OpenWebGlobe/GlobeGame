@@ -93,44 +93,49 @@ GlobeGame.STATE = {
 /**
  * @description init game and preload data
  * @param {function({number})} renderCallback
+ * @param {({number}|null)} renderQuality
  */
-GlobeGame.prototype.Init = function(renderCallback)
+GlobeGame.prototype.Init = function(renderCallback, renderQuality)
 {
     var that = this;
 
-    // load gamedata
-    m_gameData = new GameData(null);
-    // Preload images
-    var sources = {
-        btn_01: "art/btn_01.png",
-        btn_01_c: "art/btn_01_c.png",
-        btn_01_h: "art/btn_01_h.png",
-        btn_01_d: "art/btn_01_d.png",
-        btn_01_f: "art/btn_01_f.png",
-        btn_01_t: "art/btn_01_t.png",
-        btn_01_o: "art/btn_01_o.png",
-        btn_02:   "art/btn_02.png",
-        btn_02_c: "art/btn_02_c.png",
-        btn_02_h: "art/btn_02_h.png",
-        clock: "art/clock.png",
-        dial: "art/dial.png",
-        pin_blue: "art/pin_blue.png",
-        pin_red: "art/pin_red.png",
-        pin_green: "art/pin_green.png",
-        pin_yellow: "art/pin_yellow.png",
-        nw_logo: "art/nw_logo.png"
-    };
     /* Preload */
-    this.LoadLanguage(function()
+    // load gamedata
+    m_gameData = new GameData(function()
     {
-        that.LoadImages(sources, function(){
-            /* nw logo */
-            var nw_logo = new Kinetic.Shape({drawFunc:function(){
-                var ctx = this.getContext();
-                ctx.drawImage(m_images["nw_logo"], 0, window.innerHeight-82, 670, 82);
-            }});
-            m_static.add(nw_logo);
-            that.EnterIdle();
+        // Preload images
+        var sources = {
+            btn_01: "art/btn_01.png",
+            btn_01_c: "art/btn_01_c.png",
+            btn_01_h: "art/btn_01_h.png",
+            btn_01_d: "art/btn_01_d.png",
+            btn_01_f: "art/btn_01_f.png",
+            btn_01_t: "art/btn_01_t.png",
+            btn_01_o: "art/btn_01_o.png",
+            btn_02:   "art/btn_02.png",
+            btn_02_c: "art/btn_02_c.png",
+            btn_02_h: "art/btn_02_h.png",
+            clock: "art/clock.png",
+            dial: "art/dial.png",
+            pin_blue: "art/pin_blue.png",
+            pin_red: "art/pin_red.png",
+            pin_green: "art/pin_green.png",
+            pin_yellow: "art/pin_yellow.png",
+            nw_logo: "art/nw_logo.png"
+        };
+
+        that.LoadLanguage(function()
+        {
+            that.LoadImages(sources, function(){
+                /* nw logo */
+                var nw_logo = new Kinetic.Shape({drawFunc:function(){
+                    var ctx = this.getContext();
+                    ctx.drawImage(m_images["nw_logo"], 0, window.innerHeight-82, 670, 82);
+                }});
+                m_static.add(nw_logo);
+
+                that.EnterIdle();
+            });
         });
     });
     m_context = ogCreateContextFromCanvas("canvas", true);
@@ -152,8 +157,13 @@ GlobeGame.prototype.Init = function(renderCallback)
         layer: "DHM25",
         service: "owg"
     });
+    if(renderQuality != null)
+    {
+        ogSetRenderQuality(m_globe,renderQuality);
+    }
     ogSetRenderFunction(m_context, this.OnOGRender);
     ogSetResizeFunction(m_context, this.OnOGResize);
+
 
     m_stage.add(m_static);
     m_stage.add(m_ui);

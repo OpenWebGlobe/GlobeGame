@@ -379,10 +379,10 @@ function FlyingText(a, b, d) {
   this.Step = function(a) {
     a += 1;
     c.alpha -= 0.02;
-    c.scalefactor += 0.02;
+    c.scalefactor += 0.01;
     c.alpha <= 0 ? c.layer.remove(c.shape) : setTimeout(function() {
       c.Step(a)
-    }, 10)
+    }, 15)
   };
   this.shape = new Kinetic.Shape({drawFunc:function() {
     var a = this.getContext();
@@ -990,7 +990,7 @@ function PickingChallenge(a, b, d) {
         a.strokeText(j + "km", d[0], d[1])
       }}), m_ui.add(c.distanceLine)
     }
-    m_player && (m_player.ScorePoints(Math.floor(c.baseScore / j), m_locale.estimation), m_player.ScorePoints(Math.floor(c.clock.seconds / 5), m_locale.timebonus), c.clock.seconds > 50 && m_player.ScorePoints(20, m_locale.speedbonus));
+    m_player && j < 50 && (m_player.ScorePoints(Math.floor(c.baseScore / 50 * (50 - j)), m_locale.estimation), m_player.ScorePoints(Math.floor(c.clock.seconds / 5), m_locale.timebonus), c.clock.seconds > 50 && m_player.ScorePoints(20, m_locale.speedbonus));
     setTimeout(function() {
       c.callback()
     }, 2500)
@@ -1206,17 +1206,18 @@ function GlobeGame(a) {
   m_static = new Kinetic.Layer
 }
 GlobeGame.STATE = {IDLE:0, CHALLENGE:1, HIGHSCORE:2};
-GlobeGame.prototype.Init = function(a) {
-  var b = this;
-  m_gameData = new GameData(null);
-  var d = {btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", btn_02:"art/btn_02.png", btn_02_c:"art/btn_02_c.png", btn_02_h:"art/btn_02_h.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png", nw_logo:"art/nw_logo.png"};
-  this.LoadLanguage(function() {
-    b.LoadImages(d, function() {
-      var a = new Kinetic.Shape({drawFunc:function() {
-        this.getContext().drawImage(m_images.nw_logo, 0, window.innerHeight - 82, 670, 82)
-      }});
-      m_static.add(a);
-      b.EnterIdle()
+GlobeGame.prototype.Init = function(a, b) {
+  var d = this;
+  m_gameData = new GameData(function() {
+    var a = {btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", btn_02:"art/btn_02.png", btn_02_c:"art/btn_02_c.png", btn_02_h:"art/btn_02_h.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png", nw_logo:"art/nw_logo.png"};
+    d.LoadLanguage(function() {
+      d.LoadImages(a, function() {
+        var a = new Kinetic.Shape({drawFunc:function() {
+          this.getContext().drawImage(m_images.nw_logo, 0, window.innerHeight - 82, 670, 82)
+        }});
+        m_static.add(a);
+        d.EnterIdle()
+      })
     })
   });
   m_context = ogCreateContextFromCanvas("canvas", !0);
@@ -1224,13 +1225,14 @@ GlobeGame.prototype.Init = function(a) {
   ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"bluemarble", service:"owg"});
   ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"swissimage", service:"owg"});
   ogAddElevationLayer(m_globe, {url:["http://10.42.2.37"], layer:"DHM25", service:"owg"});
+  b != null && ogSetRenderQuality(m_globe, b);
   ogSetRenderFunction(m_context, this.OnOGRender);
   ogSetResizeFunction(m_context, this.OnOGResize);
   m_stage.add(m_static);
   m_stage.add(m_ui);
-  m_stage.onFrame(function(c) {
-    b.OnCanvasRender(c);
-    a(c)
+  m_stage.onFrame(function(b) {
+    d.OnCanvasRender(b);
+    a(b)
   });
   m_stage.start()
 };

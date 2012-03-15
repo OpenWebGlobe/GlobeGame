@@ -53,7 +53,7 @@ function FlyingText(layer, text, fontcolor)
     {
         step += 1;
         that.alpha = that.alpha -0.02;
-        that.scalefactor = that.scalefactor + 0.02;
+        that.scalefactor = that.scalefactor + 0.01;
         if(that.alpha <= 0.0)
         {
             that.layer.remove(that.shape);
@@ -62,7 +62,7 @@ function FlyingText(layer, text, fontcolor)
         {
             setTimeout(function(){
                 that.Step(step);
-            }, 10);
+            }, 15);
         }
     };
 

@@ -73,5 +73,79 @@
         "Longitude":  7.594113,
         "Latitude": 47.554982,
         "Elevation": 400.0
+    },
+    "3":{
+        "Type": 0,
+        "BaseScore": 100,
+        "Title": "Welches Tal wird hier gesucht?",
+        "CorrectOption": 1,
+        "Options": ["Rhonetal", "St. Galler Rheintal", "Domleschg", "Valle Maggia"],
+        "Views": [
+            { "longitude": 7.020564556121826,
+                "latitude": 46.174644470214844,
+                "elevation": 1412.229248046875,
+                "yaw": 151.4916201117319,
+                "pitch": -8.949720670391061,
+                "roll": 0
+            },
+            { "longitude": 7.058945655822754,
+                "latitude": 46.11919021606445,
+                "elevation": 1412.229248046875,
+                "yaw": 78.4860335195531,
+                "pitch": -2.3128491620111724,
+                "roll": 0
+            },
+            { "longitude": 7.271801948547363,
+                "latitude": 46.19640350341797,
+                "elevation": 1412.229248046875,
+                "yaw": 49.474860335195565,
+                "pitch": -6.687150837988828,
+                "roll": 0
+            },
+            { "longitude": 7.508640289306641,
+                "latitude": 46.187416076660156,
+                "elevation": 14657.44140625,
+                "yaw": 43.59217877094975,
+                "pitch": -24.78770949720671,
+                "roll": 0
+            },
+            { "longitude": 7.85946798324585,
+                "latitude": 46.20303726196289,
+                "elevation": 23294.693359375,
+                "yaw": -84.62011173184354,
+                "pitch": -24.184357541899445,
+                "roll": 0
+            }
+        ]
+    },
+    "4":{   "Type": 0,   "BaseScore": 100,   "Title": "Welcher Gletscher wird hier gesucht?",   "CorrectOption": 3,   "Options": ["Unterer Grindelwald", "Gorner", "Grosser Aletsch", "Fiescher"],   "Views": [       { "longitude": 8.018750190734863,        "latitude": 46.38624572753906,        "elevation": 2373.823974609375,        "yaw": 34.64045164843817,        "pitch": 0.5867692186639366,        "roll": 0       },       { "longitude": 8.055248260498047,        "latitude": 46.415855407714844,        "elevation": 2373.823974609375,        "yaw": 34.64045164843817,        "pitch": 0.5867692186639366,        "roll": 0       },       { "longitude": 8.076416015625,        "latitude": 46.44169616699219,        "elevation": 3158.694091796875,        "yaw": -3.123632858604086,        "pitch": -26.349850499645925,        "roll": 0       },       { "longitude": 8.116338729858398,        "latitude": 46.429534912109375,        "elevation": 6753.48828125,        "yaw": -45.95813990085761,        "pitch": -30.73365331654734,        "roll": 0       },       { "longitude": 8.1456298828125,        "latitude": 46.363494873046875,        "elevation": 14358.8623046875,        "yaw": -44.21518215437874,        "pitch": -40.39914627429382,        "roll": 0       }   ]},
+    "5":{   "Type": 0,   "BaseScore": 100,   "Title": "Welcher See der Schweiz ist hier zu sehen?",   "CorrectOption": 2,   "Options": ["Bielersee", "Thunersee", "Brienzersee", "Sempachersee"],   "Views": [       { "longitude": 7.616090297698975,        "latitude": 46.736663818359375,        "elevation": 1156.0162353515625,        "yaw": 66.31843575418996,        "pitch": -26.89944134078211,        "roll": 0       },       { "longitude": 7.630553245544434,        "latitude": 46.72993087768555,        "elevation": 1156.0162353515625,        "yaw": 3.3687150837988935,        "pitch": -20.71508379888267,        "roll": 0       },       { "longitude": 7.648487091064453,        "latitude": 46.64182662963867,        "elevation": 4221.67333984375,        "yaw": 3.3687150837988935,        "pitch": -20.71508379888267,        "roll": 0       },       { "longitude": 7.688931465148926,        "latitude": 46.25858688354492,        "elevation": 26882.39453125,        "yaw": -0.9050279329608835,        "pitch": -27.955307262569825,        "roll": 0       }   ]},
+    "6":{
+        "Type": 1,
+        "BaseScore": 50,
+        "Title": "Wo befindet sich Bern?",
+        "Longitude": 7.459552764892578,
+        "Latitude": 46.96235656738281,
+        "Elevation": 695.5850830078125
+
+    },
+    "7":{
+        "Type": 1,
+        "BaseScore": 100,
+        "Title": "Wo befindet sich Liestal?",
+        "Longitude": 7.73233699798584,
+        "Latitude": 47.48242950439453,
+        "Elevation": 343.36334228515625
+
+    },
+    "8":
+    {
+        "Type": 1,
+        "BaseScore": 100,
+        "Title": "Wo befindet sich Olten?",
+        "Longitude": 7.911194324493408,
+        "Latitude": 47.35575866699219,
+        "Elevation": 718.5391845703125
+
     }
 }

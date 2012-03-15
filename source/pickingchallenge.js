@@ -99,11 +99,14 @@ function PickingChallenge(baseScore, title, pos)
         }
         if(m_player)
         {
-            m_player.ScorePoints(Math.floor(that.baseScore/distance),m_locale["estimation"]);
-            m_player.ScorePoints(Math.floor(that.clock.seconds/5), m_locale["timebonus"]);
-            if(that.clock.seconds > 50)
+            if(distance < 50.0)
             {
-                m_player.ScorePoints(20, m_locale["speedbonus"]);
+                m_player.ScorePoints(Math.floor((that.baseScore/50.0)*(50.0-distance)),m_locale["estimation"]);
+                m_player.ScorePoints(Math.floor(that.clock.seconds/5), m_locale["timebonus"]);
+                if(that.clock.seconds > 50)
+                {
+                    m_player.ScorePoints(20, m_locale["speedbonus"]);
+                }
             }
         }
         setTimeout(function(){
