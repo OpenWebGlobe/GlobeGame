@@ -208,6 +208,7 @@ GlobeGame.prototype.EnterHighscore = function()
 {
     var that = this;
     m_ui.setAlpha(1.0);
+    this.FlyAround();
     var keyboard = new TouchKeyboard(m_ui,"keys",(window.innerWidth/2)-426,(window.innerHeight/2)-195, m_locale["entername"],
         function(name){
             m_player.playerName = name;
@@ -218,7 +219,7 @@ GlobeGame.prototype.EnterHighscore = function()
                 var list = /** @type {Array} */eval(data);
 
                 var highscore = new HighScoreDialog(m_ui, list, 500, 650, m_player);
-                that.FlyAround();
+
                 highscore.RegisterCallback(function(){
                     if(m_score)
                         m_score.Destroy();
@@ -240,9 +241,10 @@ GlobeGame.prototype.FlyAround = function()
 {
     var scene = ogGetScene(m_context);
     var cam = ogGetActiveCamera(scene);
-    ogSetPosition(cam,7.743465423583984,46.25442886352539,5133.49755859375);
-    ogSetOrientation(cam,47.90983606557377,-15.122950819672129,0);
+    ogSetPosition(cam,8.006896018981934,46.27399444580078,10000000);
+    ogSetOrientation(cam,0,-90,0);
     var views = [
+
         { "longitude": 8.006896018981934,
             "latitude": 46.27399444580078,
             "elevation": 6440.3505859375,
@@ -270,15 +272,22 @@ GlobeGame.prototype.FlyAround = function()
             "yaw": -108.60655737704916,
             "pitch": -18.360655737704917,
             "roll": 0
+        },
+        { "longitude": 8.006896018981934,
+            "latitude": 46.27399444580078,
+            "elevation":10000000,
+            "yaw": 0.0,
+            "pitch": -90.0,
+            "roll": 0.0
         }
     ];
     var pos = 0;
     ogSetFlightDuration(scene,20000);
-    var introFlyTo = function IntroFlyTo()
+    var introFlyTo = function()
     {
         var oView = views[pos];
         ogFlyTo(scene,oView["longitude"],oView["latitude"], oView["elevation"],oView["yaw"],oView["pitch"],oView["roll"]);
-        if(pos >= 3) {pos = 0;} else{ pos += 1; }
+        if(pos >= 4) {pos = 0;} else{ pos += 1; }
     };
     ogSetInPositionFunction(m_context,introFlyTo);
     introFlyTo();

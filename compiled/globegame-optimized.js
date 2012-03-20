@@ -1254,14 +1254,13 @@ GlobeGame.prototype.EnterChallenge = function() {
 GlobeGame.prototype.EnterHighscore = function() {
   var a = this;
   m_ui.setAlpha(1);
+  this.FlyAround();
   var b = new TouchKeyboard(m_ui, "keys", window.innerWidth / 2 - 426, window.innerHeight / 2 - 195, m_locale.entername, function(d) {
     m_player.playerName = d;
     b.Destroy();
     jQuery.get("db.php?action=append&name=" + m_player.playerName + "&score=" + m_player.playerScore, function(b) {
       b = eval(b);
-      b = new HighScoreDialog(m_ui, b, 500, 650, m_player);
-      a.FlyAround();
-      b.RegisterCallback(function() {
+      (new HighScoreDialog(m_ui, b, 500, 650, m_player)).RegisterCallback(function() {
         m_score && m_score.Destroy();
         m_gameData = new GameData(function() {
           a.StopFlyTo();
@@ -1274,15 +1273,15 @@ GlobeGame.prototype.EnterHighscore = function() {
 };
 GlobeGame.prototype.FlyAround = function() {
   var a = ogGetScene(m_context), b = ogGetActiveCamera(a);
-  ogSetPosition(b, 7.743465423583984, 46.25442886352539, 5133.49755859375);
-  ogSetOrientation(b, 47.90983606557377, -15.122950819672129, 0);
+  ogSetPosition(b, 8.006896018981934, 46.27399444580078, 1E7);
+  ogSetOrientation(b, 0, -90, 0);
   var d = [{longitude:8.006896018981934, latitude:46.27399444580078, elevation:6440.3505859375, yaw:0.6147540983606554, pitch:-17.74590163934426, roll:0}, {longitude:8.078167915344238, latitude:46.43217849731445, elevation:3730.73583984375, yaw:-12.663934426229508, pitch:-5.737704918032784, roll:0}, {longitude:8.09277629852295, latitude:46.60940170288086, elevation:7909.09912109375, yaw:-50.9016393442623, pitch:-28.442622950819672, roll:0}, {longitude:7.97355318069458, latitude:46.78914260864258, 
-  elevation:1968.3804931640625, yaw:-108.60655737704916, pitch:-18.360655737704917, roll:0}], c = 0;
+  elevation:1968.3804931640625, yaw:-108.60655737704916, pitch:-18.360655737704917, roll:0}, {longitude:8.006896018981934, latitude:46.27399444580078, elevation:1E7, yaw:0, pitch:-90, roll:0}], c = 0;
   ogSetFlightDuration(a, 2E4);
   b = function() {
     var b = d[c];
     ogFlyTo(a, b.longitude, b.latitude, b.elevation, b.yaw, b.pitch, b.roll);
-    c >= 3 ? c = 0 : c += 1
+    c >= 4 ? c = 0 : c += 1
   };
   ogSetInPositionFunction(m_context, b);
   b()
