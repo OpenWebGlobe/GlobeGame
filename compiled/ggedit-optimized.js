@@ -367,7 +367,7 @@ goog.scope = function(a) {
 };
 var owg = {gg:{}};
 owg.gg.Editor = {};
-var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_context, m_globe, m_stage, m_ui = new Kinetic.Layer, m_static = new Kinetic.Layer, m_centerX = (window.innerWidth - 350) / 2, m_centerY = window.innerHeight / 2, m_challenge = null, m_cType = 0, m_pin, m_pick = [!1, 0, 0, 0], m_zoom = !1, m_pickOverlay, trLayer = null, m_elev, m_views = [];
+var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_context, m_globe, m_stage, m_ui = new Kinetic.Layer, m_static = new Kinetic.Layer, m_centerX = (window.innerWidth - 350) / 2, m_centerY = window.innerHeight / 2, m_challenge = null, m_cType = 0, m_pin, m_pick = [!1, 0, 0, 0], m_zoom = !1, m_pickOverlay, trLayer = null, m_elev, m_views = [], m_datahost = "http://localhost";
 function SelectAllText(a) {
   document.getElementById(a).focus();
   document.getElementById(a).select()
@@ -380,15 +380,16 @@ function LoadImages(a) {
     m_images[b] = new Image, m_images[b].src = a[b]
   }
 }
-function Init() {
+function Init(a) {
+  a && (m_datahost = a);
   ogSetArtworkDirectory("../WebViewer/art/");
   m_context = ogCreateContextFromCanvas("canvas", !0);
   m_globe = ogCreateGlobe(m_context);
   m_stage = new Kinetic.Stage("main_ui", window.innerWidth, window.innerHeight);
   LoadImages({btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png"});
-  ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"bluemarble", service:"owg"});
-  ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"swissimage", service:"owg"});
-  m_elev = ogAddElevationLayer(m_globe, {url:["http://10.42.2.37"], layer:"DHM25", service:"owg"});
+  ogAddImageLayer(m_globe, {url:[m_datahost], layer:"bluemarble", service:"owg"});
+  ogAddImageLayer(m_globe, {url:[m_datahost], layer:"swissimage", service:"owg"});
+  m_elev = ogAddElevationLayer(m_globe, {url:[m_datahost], layer:"DHM25", service:"owg"});
   ogSetRenderFunction(m_context, OnRender);
   ogSetResizeFunction(m_context, OnResize);
   var a = ogGetScene(m_context), b = ogGetActiveCamera(a);

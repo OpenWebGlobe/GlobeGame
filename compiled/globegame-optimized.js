@@ -308,10 +308,10 @@ goog.getCssName = function(a, b) {
     return goog.cssNameMapping_[a] || a
   }, c;
   c = goog.cssNameMapping_ ? goog.cssNameMappingStyle_ == "BY_WHOLE" ? d : function(a) {
-    for(var a = a.split("-"), c = [], b = 0;b < a.length;b++) {
-      c.push(d(a[b]))
+    for(var a = a.split("-"), b = [], c = 0;c < a.length;c++) {
+      b.push(d(a[c]))
     }
-    return c.join("-")
+    return b.join("-")
   } : function(a) {
     return a
   };
@@ -1194,9 +1194,10 @@ TouchKeyboard.prototype.Destroy = function() {
   this.spaceButton.Destroy()
 };
 owg.gg.GlobeGame = {};
-var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_context = null, m_globe = null, m_stage = null, m_ui = null, m_static = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "de", m_locale = [], m_player = null, m_score = null, m_gameData = null, m_globeGame = null;
-function GlobeGame(a) {
+var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_context = null, m_globe = null, m_stage = null, m_ui = null, m_static = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "de", m_datahost = "http://localhost", m_locale = [], m_player = null, m_score = null, m_gameData = null, m_globeGame = null;
+function GlobeGame(a, b) {
   this.state = GlobeGame.STATE.IDLE;
+  m_datahost = b;
   this.qCount = 0;
   this.currentChallenge = null;
   this.callbacks = [];
@@ -1222,9 +1223,9 @@ GlobeGame.prototype.Init = function(a, b) {
   });
   m_context = ogCreateContextFromCanvas("canvas", !0);
   m_globe = ogCreateGlobe(m_context);
-  ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"bluemarble", service:"owg"});
-  ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"swissimage", service:"owg"});
-  ogAddElevationLayer(m_globe, {url:["http://10.42.2.37"], layer:"DHM25", service:"owg"});
+  ogAddImageLayer(m_globe, {url:[m_datahost], layer:"bluemarble", service:"owg"});
+  ogAddImageLayer(m_globe, {url:[m_datahost], layer:"swissimage", service:"owg"});
+  ogAddElevationLayer(m_globe, {url:[m_datahost], layer:"DHM25", service:"owg"});
   b != null && ogSetRenderQuality(m_globe, b);
   ogSetRenderFunction(m_context, this.OnOGRender);
   ogSetResizeFunction(m_context, this.OnOGResize);

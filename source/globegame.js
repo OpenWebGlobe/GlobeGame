@@ -51,6 +51,7 @@ var m_static = null;
 var m_centerX = window.innerWidth/2;
 var m_centerY = window.innerHeight/2;
 var m_lang = "de";
+var m_datahost = "http://localhost";
 var m_locale = [];
 var m_player = null;
 var m_score = null;
@@ -67,10 +68,15 @@ var m_globeGame = null;
  *
  * @author Robert Wüest robert.wst@gmail.ch
  * @param {string} canvasDiv
+ * @param {(string|null)}
  */
-function GlobeGame(canvasDiv)
+function GlobeGame(canvasDiv, datapath)
 {
     this.state = GlobeGame.STATE.IDLE;
+    if(datapath)
+    {
+        m_datahost = datapath;
+    }
     this.qCount = 0;
     this.currentChallenge = null;
     this.callbacks = [];
@@ -142,18 +148,18 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
     m_globe = ogCreateGlobe(m_context);
     // Add OWG Data
     ogAddImageLayer(m_globe, {
-        url: ["http://10.42.2.37"],
+        url: [m_datahost],
         layer: "bluemarble",
         service: "owg"
     });
     ogAddImageLayer(m_globe, {
-        url: ["http://10.42.2.37"],
+        url: [m_datahost],
         layer: "swissimage",
         service: "owg"
     });
 
     ogAddElevationLayer(m_globe, {
-        url: ["http://10.42.2.37"],
+        url: [m_datahost],
         layer: "DHM25",
         service: "owg"
     });

@@ -41,6 +41,7 @@ var m_pickOverlay;
 var trLayer = null;
 var m_elev;
 var m_views = [];
+var m_datahost = "http://localhost";
 
 //-----------------------------------------------------------------------------
 /**
@@ -70,8 +71,13 @@ function LoadImages(sources){
 //-----------------------------------------------------------------------------
 /**
  * @description init editor
+ * @param {(string|null)} datapath
  */
-function Init() {
+function Init(datapath) {
+    if(datapath)
+    {
+        m_datahost = datapath;
+    }
     ogSetArtworkDirectory("../WebViewer/art/");
     m_context = ogCreateContextFromCanvas("canvas", true);
     m_globe = ogCreateGlobe(m_context);
@@ -96,17 +102,17 @@ function Init() {
 
     // Add OWG Data
     ogAddImageLayer(m_globe, {
-        url: ["http://10.42.2.37"],
+        url: [m_datahost],
         layer: "bluemarble",
         service: "owg"
     });
     ogAddImageLayer(m_globe, {
-        url: ["http://10.42.2.37"],
+        url: [m_datahost],
         layer: "swissimage",
         service: "owg"
     });
     m_elev = ogAddElevationLayer(m_globe, {
-        url: ["http://10.42.2.37"],
+        url: [m_datahost],
         layer: "DHM25",
         service: "owg"
     });
