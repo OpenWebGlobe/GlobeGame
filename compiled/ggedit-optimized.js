@@ -432,11 +432,11 @@ function PickMouseUp() {
   }, 100)
 }
 function TypeChanged(a) {
-  a == "landmark" ? (ClearViews(), jQuery("#picking_div").css("visibility", "hidden"), jQuery("#landmark_div").css("visibility", "visible"), jQuery("#main_ui").css("visibility", "hidden"), m_cType = 0, m_stage.remove(m_static), m_elev = ogAddElevationLayer(m_globe, {url:["http://10.42.2.37"], layer:"DHM25", service:"owg"})) : a == "picking" && (jQuery("#picking_div").css("visibility", "visible"), jQuery("#landmark_div").css("visibility", "hidden"), jQuery("#main_ui").css("visibility", "visible"), 
-  m_cType = 1, a = ogGetScene(m_context), a = ogGetActiveCamera(a), ogSetPosition(a, 8.225578, 46.8248707, 28E4), ogSetOrientation(a, 0, -90, 0), m_stage.add(m_static), ogRemoveImageLayer(m_elev))
+  a == "landmark" ? (ClearViews(), jQuery("#picking_div").css("visibility", "hidden"), jQuery("#landmark_div").css("visibility", "visible"), jQuery("#main_ui").css("visibility", "hidden"), m_cType = 0, m_stage.remove(m_static), m_elev = ogAddElevationLayer(m_globe, {url:[m_datahost], layer:"DHM25", service:"owg"})) : a == "picking" && (jQuery("#picking_div").css("visibility", "visible"), jQuery("#landmark_div").css("visibility", "hidden"), jQuery("#main_ui").css("visibility", "visible"), m_cType = 
+  1, a = ogGetScene(m_context), a = ogGetActiveCamera(a), ogSetPosition(a, 8.225578, 46.8248707, 28E4), ogSetOrientation(a, 0, -90, 0), m_stage.add(m_static), ogRemoveImageLayer(m_elev))
 }
 function TrafficLayer(a) {
-  a ? trLayer = ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"osm_transparent", service:"owg"}) : ogRemoveImageLayer(trLayer)
+  a ? trLayer = ogAddImageLayer(m_globe, {url:[m_datahost], layer:"osm_transparent", service:"owg"}) : ogRemoveImageLayer(trLayer)
 }
 function ViewObj(a, b, c, d, e, f) {
   this.longitude = a;

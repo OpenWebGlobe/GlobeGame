@@ -245,7 +245,7 @@ PickingChallenge.prototype.Activate = function()
 
     ogSetInPositionFunction(m_context,this.FlightCallback);
     this.ogFrameLayer = ogAddImageLayer(m_globe, {
-        url: ["http://10.42.2.37"],
+        url: [m_datahost],
         layer: "ch_boundaries",
         service: "owg"
     });

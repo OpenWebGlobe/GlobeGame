@@ -68,7 +68,7 @@ var m_globeGame = null;
  *
  * @author Robert Wüest robert.wst@gmail.ch
  * @param {string} canvasDiv
- * @param {(string|null)}
+ * @param {(string|null)} datapath
  */
 function GlobeGame(canvasDiv, datapath)
 {

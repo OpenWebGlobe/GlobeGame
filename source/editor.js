@@ -202,7 +202,7 @@ function TypeChanged(type)
         m_cType = 0;
         m_stage.remove(m_static);
         m_elev = ogAddElevationLayer(m_globe, {
-            url: ["http://10.42.2.37"],
+            url: [m_datahost],
             layer: "DHM25",
             service: "owg"
         });
@@ -230,7 +230,7 @@ function TrafficLayer(enabled)
     if(enabled)
     {
         trLayer = ogAddImageLayer(m_globe, {
-            url: ["http://10.42.2.37"],
+            url: [m_datahost],
             layer: "osm_transparent",
             service: "owg"
         });

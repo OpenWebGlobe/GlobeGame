@@ -1063,7 +1063,7 @@ PickingChallenge.prototype.Activate = function() {
   ogSetPosition(b, 8.225578, 46.8248707, 28E4);
   ogSetOrientation(b, 0, -90, 0);
   ogSetInPositionFunction(m_context, this.FlightCallback);
-  this.ogFrameLayer = ogAddImageLayer(m_globe, {url:["http://10.42.2.37"], layer:"ch_boundaries", service:"owg"})
+  this.ogFrameLayer = ogAddImageLayer(m_globe, {url:[m_datahost], layer:"ch_boundaries", service:"owg"})
 };
 PickingChallenge.prototype.Destroy = function(a) {
   if(!this.destroyed) {
@@ -1197,7 +1197,7 @@ owg.gg.GlobeGame = {};
 var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_context = null, m_globe = null, m_stage = null, m_ui = null, m_static = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "de", m_datahost = "http://localhost", m_locale = [], m_player = null, m_score = null, m_gameData = null, m_globeGame = null;
 function GlobeGame(a, b) {
   this.state = GlobeGame.STATE.IDLE;
-  m_datahost = b;
+  b && (m_datahost = b);
   this.qCount = 0;
   this.currentChallenge = null;
   this.callbacks = [];
