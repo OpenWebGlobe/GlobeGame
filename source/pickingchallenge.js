@@ -224,6 +224,7 @@ PickingChallenge.prototype.Activate = function()
         height: window.innerHeight
     });
     var that = this;
+
     this.pickOverlay.on("mousedown", this.OnMouseDown);
     this.pickOverlay.on("mouseup", this.OnMouseUp);
     this.pickOverlay.on("mousemove", this.OnMouseMove);
@@ -235,9 +236,7 @@ PickingChallenge.prototype.Activate = function()
     this.okayBtn.onMouseOutEvent = this.MouseOutOkBtn;
 
     this.clock = new Clock(m_ui, 50, 75, 60);
-    this.clock.onTimeoutEvent = function(){that.callback()};
-    this.clock.Start();
-    FadeIn(function() {});
+
     var scene = ogGetScene(m_context);
     var camId = ogGetActiveCamera(scene);
     ogSetPosition(camId,8.225578,46.8248707, 280000.0);
@@ -248,6 +247,13 @@ PickingChallenge.prototype.Activate = function()
         url: [m_datahost],
         layer: "ch_boundaries",
         service: "owg"
+    });
+    BlackScreen(4000,function()
+    {
+        FadeIn(function() {
+            that.clock.onTimeoutEvent = function(){that.callback()};
+            that.clock.Start();
+        });
     });
 };
 //-----------------------------------------------------------------------------

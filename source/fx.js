@@ -52,7 +52,7 @@ function FlyingText(layer, text, fontcolor)
     this.Step = function(step)
     {
         step += 1;
-        that.alpha = that.alpha -0.02;
+        that.alpha = that.alpha -0.01;
         that.scalefactor = that.scalefactor + 0.01;
         if(that.alpha <= 0.0)
         {
@@ -60,9 +60,9 @@ function FlyingText(layer, text, fontcolor)
         }
         else
         {
-            setTimeout(function(){
+            Timeout(function(){
                 that.Step(step);
-            }, 15);
+            }, 5);
         }
     };
 
@@ -92,7 +92,7 @@ goog.exportSymbol('FlyingText', FlyingText);
  */
 function FadeOut(callback)
 {
-    setTimeout(function(){
+    Timeout(function(){
         m_ui.setAlpha(m_ui.getAlpha()-0.1);
         if(m_ui.getAlpha() > 0.0)
         { FadeOut(callback);} else { m_ui.setAlpha(0.0); callback();}
@@ -106,10 +106,79 @@ goog.exportSymbol('FadeOut', FadeOut);
  */
 function FadeIn(callback)
 {
-    setTimeout(function(){
+    Timeout(function(){
         m_ui.setAlpha(m_ui.getAlpha()+0.1);
         if(m_ui.getAlpha() < 1.0)
         { FadeIn(callback);} else { m_ui.setAlpha(1.0); callback();}
     }, 1);
 }
+goog.exportSymbol('FadeIn', FadeIn);//-----------------------------------------------------------------------------
+/**
+ * @description Fading Blackscreen
+ * @param {number} duration
+ * @param {function()} callback
+ */
+function BlackScreen(duration, callback)
+{
+    var blackScreen = new Kinetic.Rect({
+        x: 0,
+        y: 0,
+        width: window.innerWidth,
+        height: window.innerHeight,
+        fill: "#000000",
+        alpha: 0.0
+    });
+    m_static.add(blackScreen);
+    blackScreen.setZIndex(-100);
+    var recurIn = function(cback){
+        blackScreen.setAlpha(blackScreen.getAlpha()+0.2);
+        if(blackScreen.getAlpha() < 1.0)
+        {
+            Timeout(function(){recurIn(cback);},1);
+        } else
+        {
+            blackScreen.setAlpha(1.0); cback();
+        }
+    };
+    var recurOut = function(cback){
+        blackScreen.setAlpha(blackScreen.getAlpha()-0.1);
+        if(blackScreen.getAlpha() > 0.0)
+        {
+            Timeout(function(){recurOut(cback);},1);
+        } else
+        {
+            blackScreen.setAlpha(1.0); cback();
+        }
+    };
+    recurIn(function(){
+
+    });
+    Timeout(function(){
+        recurOut(function(){
+            m_static.remove(blackScreen);
+            callback();
+        });
+    }, duration);
+}
 goog.exportSymbol('FadeIn', FadeIn);
+//-----------------------------------------------------------------------------
+/**
+ * @description more accurate timeout function
+ * @param {function()} callback
+ * @param {number} timeout
+ */
+function Timeout(callback,timeout)
+{
+    var tt0 = new Date();
+    var timeoutFunction = function(t0, t1, cback){
+        if((t1.valueOf() - t0.valueOf()) >= timeout)
+        {
+            cback();
+        }else
+        {
+            setTimeout(function(){timeoutFunction(t0,new Date(),cback)},0);
+        }
+    };
+    setTimeout(function(){timeoutFunction(tt0,new Date(), callback)},0);
+}
+goog.exportSymbol('Timeout', Timeout);

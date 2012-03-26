@@ -308,10 +308,10 @@ goog.getCssName = function(a, b) {
     return goog.cssNameMapping_[a] || a
   }, c;
   c = goog.cssNameMapping_ ? goog.cssNameMappingStyle_ == "BY_WHOLE" ? d : function(a) {
-    for(var a = a.split("-"), b = [], c = 0;c < a.length;c++) {
-      b.push(d(a[c]))
+    for(var a = a.split("-"), c = [], b = 0;b < a.length;b++) {
+      c.push(d(a[b]))
     }
-    return b.join("-")
+    return c.join("-")
   } : function(a) {
     return a
   };
@@ -378,11 +378,11 @@ function FlyingText(a, b, d) {
   m_hInc >= 3 && (m_hInc = 0);
   this.Step = function(a) {
     a += 1;
-    c.alpha -= 0.02;
+    c.alpha -= 0.01;
     c.scalefactor += 0.01;
-    c.alpha <= 0 ? c.layer.remove(c.shape) : setTimeout(function() {
+    c.alpha <= 0 ? c.layer.remove(c.shape) : Timeout(function() {
       c.Step(a)
-    }, 15)
+    }, 5)
   };
   this.shape = new Kinetic.Shape({drawFunc:function() {
     var a = this.getContext();
@@ -403,19 +403,55 @@ function FlyingText(a, b, d) {
 }
 goog.exportSymbol("FlyingText", FlyingText);
 function FadeOut(a) {
-  setTimeout(function() {
+  Timeout(function() {
     m_ui.setAlpha(m_ui.getAlpha() - 0.1);
     m_ui.getAlpha() > 0 ? FadeOut(a) : (m_ui.setAlpha(0), a())
   }, 1)
 }
 goog.exportSymbol("FadeOut", FadeOut);
 function FadeIn(a) {
-  setTimeout(function() {
+  Timeout(function() {
     m_ui.setAlpha(m_ui.getAlpha() + 0.1);
     m_ui.getAlpha() < 1 ? FadeIn(a) : (m_ui.setAlpha(1), a())
   }, 1)
 }
 goog.exportSymbol("FadeIn", FadeIn);
+function BlackScreen(a, b) {
+  var d = new Kinetic.Rect({x:0, y:0, width:window.innerWidth, height:window.innerHeight, fill:"#000000", alpha:0});
+  m_static.add(d);
+  d.setZIndex(-100);
+  var c = function(a) {
+    d.setAlpha(d.getAlpha() + 0.2);
+    d.getAlpha() < 1 ? Timeout(function() {
+      c(a)
+    }, 1) : (d.setAlpha(1), a())
+  }, e = function(a) {
+    d.setAlpha(d.getAlpha() - 0.1);
+    d.getAlpha() > 0 ? Timeout(function() {
+      e(a)
+    }, 1) : (d.setAlpha(1), a())
+  };
+  c(function() {
+  });
+  Timeout(function() {
+    e(function() {
+      m_static.remove(d);
+      b()
+    })
+  }, a)
+}
+goog.exportSymbol("FadeIn", FadeIn);
+function Timeout(a, b) {
+  var d = new Date, c = function(a, d, h) {
+    d.valueOf() - a.valueOf() >= b ? h() : setTimeout(function() {
+      c(a, new Date, h)
+    }, 0)
+  };
+  setTimeout(function() {
+    c(d, new Date, a)
+  }, 0)
+}
+goog.exportSymbol("Timeout", Timeout);
 owg.gg.Player = {};
 function Player(a) {
   this.playerName = a;
@@ -893,7 +929,7 @@ function LandmarkChallenge(a, b, d, c, e) {
 LandmarkChallenge.prototype = new Challenge(0);
 LandmarkChallenge.prototype.constructor = LandmarkChallenge;
 LandmarkChallenge.prototype.Activate = function() {
-  var a = null, b = null, d = null, c = null, e = this, a = new Button01(m_ui, "btn1", m_centerX - 310, window.innerHeight - 239, 300, 69, this.options[0], 15);
+  var a = null, b = null, d = null, c = null, a = new Button01(m_ui, "btn1", m_centerX - 310, window.innerHeight - 239, 300, 69, this.options[0], 15);
   a.onClickEvent = this.onOption1;
   b = new Button01(m_ui, "btn2", m_centerX + 10, window.innerHeight - 239, 300, 69, this.options[1], 15);
   b.onClickEvent = this.onOption2;
@@ -907,12 +943,6 @@ LandmarkChallenge.prototype.Activate = function() {
   this.buttonArray.push(c);
   this.screenText = new ScreenText(m_ui, this.text, m_centerX, window.innerHeight - 255, 20, "center");
   this.clock = new Clock(m_ui, 50, 75, 60);
-  this.clock.onTimeoutEvent = function() {
-    e.callback()
-  };
-  this.clock.Start();
-  FadeIn(function() {
-  });
   a = Math.floor(40 / (this.views.length - 1)) * 1E3;
   b = ogGetScene(m_context);
   ogSetFlightDuration(b, a);
@@ -920,7 +950,16 @@ LandmarkChallenge.prototype.Activate = function() {
   ogSetPosition(a, this.views[0].longitude, this.views[0].latitude, this.views[0].elevation);
   ogSetOrientation(a, this.views[0].yaw, this.views[0].pitch, this.views[0].roll);
   ogSetInPositionFunction(m_context, this.FlightCallback);
-  this.FlightCallback()
+  var e = this;
+  BlackScreen(4E3, function() {
+    FadeIn(function() {
+      e.clock.onTimeoutEvent = function() {
+        e.callback()
+      };
+      e.clock.Start();
+      e.FlightCallback()
+    })
+  })
 };
 LandmarkChallenge.prototype.Destroy = function(a) {
   if(!this.destroyed) {
@@ -1053,17 +1092,19 @@ PickingChallenge.prototype.Activate = function() {
   this.okayBtn.onMouseOverEvent = this.MouseOverOkBtn;
   this.okayBtn.onMouseOutEvent = this.MouseOutOkBtn;
   this.clock = new Clock(m_ui, 50, 75, 60);
-  this.clock.onTimeoutEvent = function() {
-    a.callback()
-  };
-  this.clock.Start();
-  FadeIn(function() {
-  });
   var b = ogGetScene(m_context), b = ogGetActiveCamera(b);
   ogSetPosition(b, 8.225578, 46.8248707, 28E4);
   ogSetOrientation(b, 0, -90, 0);
   ogSetInPositionFunction(m_context, this.FlightCallback);
-  this.ogFrameLayer = ogAddImageLayer(m_globe, {url:[m_datahost], layer:"ch_boundaries", service:"owg"})
+  this.ogFrameLayer = ogAddImageLayer(m_globe, {url:[m_datahost], layer:"ch_boundaries", service:"owg"});
+  BlackScreen(4E3, function() {
+    FadeIn(function() {
+      a.clock.onTimeoutEvent = function() {
+        a.callback()
+      };
+      a.clock.Start()
+    })
+  })
 };
 PickingChallenge.prototype.Destroy = function(a) {
   if(!this.destroyed) {

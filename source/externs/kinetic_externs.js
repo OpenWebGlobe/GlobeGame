@@ -45,7 +45,9 @@ var Kinetic = {
     "Shape":
     {
        "setAlpha": function() {},
-       "setScale": function() {}
+       "getScale": function() {},
+       "setScale": function() {},
+       "setZIndex": function() {}
     },
     "Rect": function () {},
     "Circle": function () {},

@@ -95,7 +95,7 @@ LandmarkChallenge.prototype.Activate = function()
     var btn2 = null;
     var btn3 = null;
     var btn4 = null;
-    var that = this;
+
     btn1 = new Button01(m_ui, "btn1", m_centerX-310, window.innerHeight-239, 300, 69, this.options[0], 15);
     btn1.onClickEvent = this.onOption1;
     btn2 = new Button01(m_ui, "btn2", m_centerX+10, window.innerHeight-239, 300, 69, this.options[1], 15);
@@ -110,9 +110,6 @@ LandmarkChallenge.prototype.Activate = function()
     this.buttonArray.push(btn4);
     this.screenText = new ScreenText(m_ui, this.text,m_centerX, window.innerHeight-255, 20, "center");
     this.clock = new Clock(m_ui, 50, 75, 60);
-    this.clock.onTimeoutEvent = function(){that.callback()};
-    this.clock.Start();
-    FadeIn(function() {});
     var flightduration = Math.floor(40/(this.views.length-1))*1000;
     var scene = ogGetScene(m_context);
     ogSetFlightDuration(scene,flightduration);
@@ -120,7 +117,17 @@ LandmarkChallenge.prototype.Activate = function()
     ogSetPosition(camId,this.views[0].longitude,this.views[0].latitude, this.views[0].elevation);
     ogSetOrientation(camId,this.views[0]["yaw"],this.views[0]["pitch"], this.views[0]["roll"]);
     ogSetInPositionFunction(m_context,this.FlightCallback);
-    this.FlightCallback();
+    var that = this;
+    BlackScreen(4000,
+        function(){
+            FadeIn(function() {
+                that.clock.onTimeoutEvent = function(){that.callback()};
+                that.clock.Start();
+
+                that.FlightCallback();
+            });
+        }
+    );
 };
 //-----------------------------------------------------------------------------
 /**
