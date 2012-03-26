@@ -169,6 +169,7 @@ function PickingChallenge(baseScore, title, pos)
             var mx = pos.x-10;
             var my = pos.y-10;
             that.pickPos = ogPickGlobe(scene, pos.x, pos.y);
+            m_sounds["pick"].play();
             if(that.posPin != null)
                 that.posPin.SetVisible(false);
             if(that.flystate == true)

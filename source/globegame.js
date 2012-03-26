@@ -43,6 +43,9 @@ goog.require('owg.gg.GameData');
 var m_images = {};
 var m_loadedImages = 0;
 var m_numImages = 0;
+var m_sounds = {};
+var m_loadedSounds = 0;
+var m_numSounds = 0;
 var m_context = null;
 var m_globe = null;
 var m_stage = null;
@@ -129,18 +132,32 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
             pin_yellow: "art/pin_yellow.png",
             nw_logo: "art/nw_logo.png"
         };
+        // Preload sounds
+        var sounds = {
+            pick: "sfx/pick.wav",
+            correct: "sfx/correct.wav",
+            wrong: "sfx/wrong.wav",
+            coins: "sfx/coins.wav",
+            highscores: "sfx/highscores.mp3",
+            track01: "sfx/track01.mp3"
+        };
+
 
         that.LoadLanguage(function()
         {
-            that.LoadImages(sources, function(){
-                /* nw logo */
-                var nw_logo = new Kinetic.Shape({drawFunc:function(){
-                    var ctx = this.getContext();
-                    ctx.drawImage(m_images["nw_logo"], 0, window.innerHeight-82, 670, 82);
-                }});
-                m_static.add(nw_logo);
+            that.LoadSounds(sounds, function(){
+                that.LoadImages(sources, function(){
+                    /* nw logo */
+                    var nw_logo = new Kinetic.Shape({drawFunc:function(){
+                        var ctx = this.getContext();
+                        ctx.drawImage(m_images["nw_logo"], 0, window.innerHeight-82, 670, 82);
+                    }});
+                    m_static.add(nw_logo);
+                    m_sounds["track01"].volume = 0.25;
+                    m_sounds["track01"].play();
 
-                that.EnterIdle();
+                    that.EnterIdle();
+                });
             });
         });
     });
@@ -364,6 +381,31 @@ GlobeGame.prototype.LoadImages = function(sources, callback){
             }
          };
         m_images[src].src = sources[src];
+    }
+};
+
+//-----------------------------------------------------------------------------
+/**
+ * @description preload sounds
+ * @param {Object.<string>} sounds
+ * @param {(function()|null)} callback
+ */
+GlobeGame.prototype.LoadSounds = function(sounds, callback){
+    // get num of sources
+    var that = this;
+    for (var src in sounds) {
+        m_numSounds++;
+    }
+    for (var src in sounds) {
+        m_sounds[src] = document.createElement('audio');
+        m_sounds[src].setAttribute('src', sounds[src]);
+        m_sounds[src].load();
+        m_sounds[src].addEventListener("canplay", function() {
+            if (++m_loadedSounds >= m_numSounds) {
+                if(callback != null)
+                    callback();
+            }
+        },true);
     }
 };
 

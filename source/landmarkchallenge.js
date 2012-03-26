@@ -189,6 +189,7 @@ LandmarkChallenge.prototype.PickOption = function(option, timeleft) {
     this.buttonArray[3].SetEnabled(false);
     var that = this;
     if (this.correctOption == option) {
+        m_sounds["correct"].play();
         if(m_player)
         {
             m_player.ScorePoints(this.baseScore, "");
@@ -203,6 +204,7 @@ LandmarkChallenge.prototype.PickOption = function(option, timeleft) {
             that.callback();
         }, 2000);
     } else {
+        m_sounds["wrong"].play();
         this.buttonArray[option - 1].SetEnabled(true);
         this.buttonArray[this.correctOption - 1].SetEnabled(true);
         this.buttonArray[option - 1].SetState(4);

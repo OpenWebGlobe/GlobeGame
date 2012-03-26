@@ -308,10 +308,10 @@ goog.getCssName = function(a, b) {
     return goog.cssNameMapping_[a] || a
   }, c;
   c = goog.cssNameMapping_ ? goog.cssNameMappingStyle_ == "BY_WHOLE" ? d : function(a) {
-    for(var a = a.split("-"), c = [], b = 0;b < a.length;b++) {
-      c.push(d(a[b]))
+    for(var a = a.split("-"), b = [], c = 0;c < a.length;c++) {
+      b.push(d(a[c]))
     }
-    return c.join("-")
+    return b.join("-")
   } : function(a) {
     return a
   };
@@ -985,7 +985,8 @@ LandmarkChallenge.prototype.PickOption = function(a, b) {
   this.buttonArray[2].SetEnabled(!1);
   this.buttonArray[3].SetEnabled(!1);
   var d = this;
-  this.correctOption == a ? (m_player && (m_player.ScorePoints(this.baseScore, ""), m_player.ScorePoints(Math.floor(b / 5), m_locale.timebonus), b > 50 && m_player.ScorePoints(20, m_locale.speedbonus)), this.buttonArray[a - 1].SetEnabled(!0), this.buttonArray[a - 1].SetState(3)) : (this.buttonArray[a - 1].SetEnabled(!0), this.buttonArray[this.correctOption - 1].SetEnabled(!0), this.buttonArray[a - 1].SetState(4), this.buttonArray[this.correctOption - 1].SetState(5));
+  this.correctOption == a ? (m_sounds.correct.play(), m_player && (m_player.ScorePoints(this.baseScore, ""), m_player.ScorePoints(Math.floor(b / 5), m_locale.timebonus), b > 50 && m_player.ScorePoints(20, m_locale.speedbonus)), this.buttonArray[a - 1].SetEnabled(!0), this.buttonArray[a - 1].SetState(3)) : (m_sounds.wrong.play(), this.buttonArray[a - 1].SetEnabled(!0), this.buttonArray[this.correctOption - 1].SetEnabled(!0), this.buttonArray[a - 1].SetState(4), this.buttonArray[this.correctOption - 
+  1].SetState(5));
   setTimeout(function() {
     d.callback()
   }, 2E3)
@@ -1059,6 +1060,7 @@ function PickingChallenge(a, b, d) {
       c.zoomState = !1;
       var b = m_stage.getMousePosition();
       c.pickPos = ogPickGlobe(a, b.x, b.y);
+      m_sounds.pick.play();
       c.posPin != null && c.posPin.SetVisible(!1);
       c.flystate == !0 && ogStopFlyTo(a);
       c.ZoomOut()
@@ -1235,7 +1237,7 @@ TouchKeyboard.prototype.Destroy = function() {
   this.spaceButton.Destroy()
 };
 owg.gg.GlobeGame = {};
-var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_context = null, m_globe = null, m_stage = null, m_ui = null, m_static = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "de", m_datahost = "http://localhost", m_locale = [], m_player = null, m_score = null, m_gameData = null, m_globeGame = null;
+var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_sounds = {}, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_stage = null, m_ui = null, m_static = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "de", m_datahost = "http://localhost", m_locale = [], m_player = null, m_score = null, m_gameData = null, m_globeGame = null;
 function GlobeGame(a, b) {
   this.state = GlobeGame.STATE.IDLE;
   b && (m_datahost = b);
@@ -1251,14 +1253,19 @@ GlobeGame.STATE = {IDLE:0, CHALLENGE:1, HIGHSCORE:2};
 GlobeGame.prototype.Init = function(a, b) {
   var d = this;
   m_gameData = new GameData(function() {
-    var a = {btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", btn_02:"art/btn_02.png", btn_02_c:"art/btn_02_c.png", btn_02_h:"art/btn_02_h.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png", nw_logo:"art/nw_logo.png"};
+    var a = {btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", btn_02:"art/btn_02.png", btn_02_c:"art/btn_02_c.png", btn_02_h:"art/btn_02_h.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png", nw_logo:"art/nw_logo.png"}, b = {pick:"sfx/pick.wav", 
+    correct:"sfx/correct.wav", wrong:"sfx/wrong.wav", coins:"sfx/coins.wav", highscores:"sfx/highscores.mp3", track01:"sfx/track01.mp3"};
     d.LoadLanguage(function() {
-      d.LoadImages(a, function() {
-        var a = new Kinetic.Shape({drawFunc:function() {
-          this.getContext().drawImage(m_images.nw_logo, 0, window.innerHeight - 82, 670, 82)
-        }});
-        m_static.add(a);
-        d.EnterIdle()
+      d.LoadSounds(b, function() {
+        d.LoadImages(a, function() {
+          var a = new Kinetic.Shape({drawFunc:function() {
+            this.getContext().drawImage(m_images.nw_logo, 0, window.innerHeight - 82, 670, 82)
+          }});
+          m_static.add(a);
+          m_sounds.track01.volume = 0.25;
+          m_sounds.track01.play();
+          d.EnterIdle()
+        })
       })
     })
   });
@@ -1353,6 +1360,16 @@ GlobeGame.prototype.LoadImages = function(a, b) {
     m_images[d] = new Image, m_images[d].onload = function() {
       ++m_loadedImages >= m_numImages && b != null && b()
     }, m_images[d].src = a[d]
+  }
+};
+GlobeGame.prototype.LoadSounds = function(a, b) {
+  for(var d in a) {
+    m_numSounds++
+  }
+  for(d in a) {
+    m_sounds[d] = document.createElement("audio"), m_sounds[d].setAttribute("src", a[d]), m_sounds[d].load(), m_sounds[d].addEventListener("canplay", function() {
+      ++m_loadedSounds >= m_numSounds && b != null && b()
+    }, !0)
   }
 };
 GlobeGame.prototype.LoadLanguage = function(a) {
