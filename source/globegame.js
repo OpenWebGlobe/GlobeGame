@@ -507,8 +507,8 @@ GlobeGame.prototype.NextChallenge = function()
     }
     else
     {
+        setTimeout(function(){m_globeGame.EnterHighscore()}, 1500);
         BlackScreen(3500, function(){
-            m_globeGame.EnterHighscore();
         });
     }
 };

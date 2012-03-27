@@ -1499,9 +1499,10 @@ GlobeGame.prototype.NextChallenge = function() {
   m_qCount += 1;
   m_qCount <= 10 ? (m_globeGame.currentChallenge = m_gameData.PickChallenge(), m_globeGame.currentChallenge.RegisterCallback(m_globeGame.ProcessChallenge), m_globeGame.currentChallenge.Prepare(1E3), BlackScreen(3500, function() {
     m_globeGame.InitQuiz()
-  })) : BlackScreen(3500, function() {
+  })) : (setTimeout(function() {
     m_globeGame.EnterHighscore()
-  })
+  }, 1500), BlackScreen(3500, function() {
+  }))
 };
 GlobeGame.prototype.StopFlyTo = function() {
   var a = ogGetScene(m_context);
