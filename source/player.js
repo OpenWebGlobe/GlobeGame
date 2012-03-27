@@ -47,7 +47,7 @@ function Player(name)
  */
 Player.prototype.ScorePoints = function(amount, description)
 {
-    var text = new FlyingText(m_static, "+"+amount+" "+m_locale["points"]+" "+ description, "#00FF00");
+    var text = new FlyingText(m_static, "+"+amount+" "+m_locale["points"]+" "+ description, "#FFEE11");
     this.playerScore += amount;
 };
 

@@ -44,6 +44,7 @@ function Challenge(type)
     var that = this;
     this.eventDestroyed = function() {};
     this.callback = function() {};
+    this.Prepare = function() {};
     this.Activate = function() {};
     this.Destroy = function(event) {};
     this.OnDestroy = function() {};

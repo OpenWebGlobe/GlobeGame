@@ -89,45 +89,52 @@ LandmarkChallenge.prototype.constructor=LandmarkChallenge;
 /**
  * @description activate challenge
  */
-LandmarkChallenge.prototype.Activate = function()
+LandmarkChallenge.prototype.Prepare = function(delay)
 {
     var btn1 = null;
     var btn2 = null;
     var btn3 = null;
     var btn4 = null;
 
-    btn1 = new Button01(m_ui, "btn1", m_centerX-310, window.innerHeight-239, 300, 69, this.options[0], 15);
-    btn1.onClickEvent = this.onOption1;
-    btn2 = new Button01(m_ui, "btn2", m_centerX+10, window.innerHeight-239, 300, 69, this.options[1], 15);
-    btn2.onClickEvent = this.onOption2;
-    btn3 = new Button01(m_ui, "btn3", m_centerX-310, window.innerHeight-150, 300, 69, this.options[2], 15);
-    btn3.onClickEvent = this.onOption3;
-    btn4 = new Button01(m_ui, "btn4", m_centerX+10, window.innerHeight-150, 300, 69, this.options[3], 15);
-    btn4.onClickEvent = this.onOption4;
-    this.buttonArray.push(btn1);
-    this.buttonArray.push(btn2);
-    this.buttonArray.push(btn3);
-    this.buttonArray.push(btn4);
-    this.screenText = new ScreenText(m_ui, this.text,m_centerX, window.innerHeight-255, 20, "center");
-    this.clock = new Clock(m_ui, 50, 75, 60);
-    var flightduration = Math.floor(40/(this.views.length-1))*1000;
-    var scene = ogGetScene(m_context);
-    ogSetFlightDuration(scene,flightduration);
-    var camId = ogGetActiveCamera(scene);
-    ogSetPosition(camId,this.views[0].longitude,this.views[0].latitude, this.views[0].elevation);
-    ogSetOrientation(camId,this.views[0]["yaw"],this.views[0]["pitch"], this.views[0]["roll"]);
-    ogSetInPositionFunction(m_context,this.FlightCallback);
     var that = this;
-    BlackScreen(4000,
-        function(){
-            FadeIn(function() {
-                that.clock.onTimeoutEvent = function(){that.callback()};
-                that.clock.Start();
+    setTimeout(function()
+    {
+        btn1 = new Button01(m_ui, "btn1", m_centerX-310, window.innerHeight-239, 300, 69, that.options[0], 15);
+        btn1.onClickEvent = that.onOption1;
+        btn2 = new Button01(m_ui, "btn2", m_centerX+10, window.innerHeight-239, 300, 69, that.options[1], 15);
+        btn2.onClickEvent = that.onOption2;
+        btn3 = new Button01(m_ui, "btn3", m_centerX-310, window.innerHeight-150, 300, 69, that.options[2], 15);
+        btn3.onClickEvent = that.onOption3;
+        btn4 = new Button01(m_ui, "btn4", m_centerX+10, window.innerHeight-150, 300, 69, that.options[3], 15);
+        btn4.onClickEvent = that.onOption4;
+        that.buttonArray.push(btn1);
+        that.buttonArray.push(btn2);
+        that.buttonArray.push(btn3);
+        that.buttonArray.push(btn4);
+        that.screenText = new ScreenText(m_ui, that.text,m_centerX, window.innerHeight-255, 26, "center");
+        that.clock = new Clock(m_ui, 50, 75, 60);
+        var flightduration = Math.floor(40/(that.views.length-1))*1000;
+        var scene = ogGetScene(m_context);
+        ogSetFlightDuration(scene,flightduration);
+        var camId = ogGetActiveCamera(scene);
+        ogSetPosition(camId,that.views[0].longitude,that.views[0].latitude, that.views[0].elevation);
+        ogSetOrientation(camId,that.views[0]["yaw"],that.views[0]["pitch"], that.views[0]["roll"]);
+        ogSetInPositionFunction(m_context,that.FlightCallback);
+    }, delay);
+};
+//-----------------------------------------------------------------------------
+/**
+ * @description activate challenge
+ */
+LandmarkChallenge.prototype.Activate = function()
+{
+    var that = this;
+    FadeIn(function() {
+        that.clock.onTimeoutEvent = function(){that.callback()};
+        that.clock.Start();
 
-                that.FlightCallback();
-            });
-        }
-    );
+        that.FlightCallback();
+    });
 };
 //-----------------------------------------------------------------------------
 /**
@@ -221,6 +228,7 @@ LandmarkChallenge.prototype.PickOption = function(option, timeleft) {
 };
 
 goog.exportSymbol('LandmarkChallenge', LandmarkChallenge);
+goog.exportProperty(LandmarkChallenge.prototype, 'Prepare', LandmarkChallenge.prototype.Prepare);
 goog.exportProperty(LandmarkChallenge.prototype, 'Activate', LandmarkChallenge.prototype.Activate);
 goog.exportProperty(LandmarkChallenge.prototype, 'Destroy', LandmarkChallenge.prototype.Destroy);
 goog.exportProperty(LandmarkChallenge.prototype, 'OnDestroy', LandmarkChallenge.prototype.OnDestroy);

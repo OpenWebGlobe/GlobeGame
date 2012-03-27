@@ -43,46 +43,43 @@ function FlyingText(layer, text, fontcolor)
     this.scalefactor = 1.0;
     this.alpha = 1.0;
     this.layer = layer;
+    var x0 = (window.innerWidth/2);
+    var y0 = window.innerHeight/2-50;
     var that = this;
-    var rY = m_hInc*45;
+    var rY = m_hInc*60;
     m_hInc += 1;
     if(m_hInc >= 3)
         m_hInc = 0;
 
-    this.Step = function(step)
-    {
-        step += 1;
-        that.alpha = that.alpha -0.01;
-        that.scalefactor = that.scalefactor + 0.01;
+    var t0= new Date();
+    var t1;
+    this.shape = new Kinetic.Shape({drawFunc:function(){
+        t1 = new Date();
+        var delta = t1.valueOf() - t0.valueOf();
+        that.alpha = 1.0 - (delta/3500);
+        that.scalefactor = 1.0 +(delta/3500);
         if(that.alpha <= 0.0)
         {
             that.layer.remove(that.shape);
         }
         else
         {
-            Timeout(function(){
-                that.Step(step);
-            }, 5);
+            var ctx = this.getContext();
+            ctx.beginPath(); // !!!
+            ctx.font = "32pt LuckiestGuy";
+            ctx.fillStyle = that.fontcolor;
+            var tX = x0/that.scalefactor;
+            var tY = (y0-200+rY)/that.scalefactor;
+            ctx.textAlign = "center";
+            ctx.fillText(that.text, tX, tY);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "#000"; // stroke color
+            ctx.strokeText(that.text, tX, tY);
+            this.setScale(that.scalefactor,that.scalefactor);
+            this.setAlpha(that.alpha);
         }
-    };
-
-    this.shape = new Kinetic.Shape({drawFunc:function(){
-        var ctx = this.getContext();
-        ctx.beginPath(); // !!!
-        ctx.font = "28pt LuckiestGuy";
-        ctx.fillStyle = that.fontcolor;
-        var tX = (window.innerWidth/2)/that.scalefactor;
-        var tY = (window.innerHeight/2-200+rY)/that.scalefactor;
-        ctx.textAlign = "center";
-        ctx.fillText(that.text, tX, tY);
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = "#000"; // stroke color
-        ctx.strokeText(that.text, tX, tY);
-        this.setScale(that.scalefactor,that.scalefactor);
-        this.setAlpha(that.alpha);
     }});
     layer.add(this.shape);
-    that.Step(0);
 }
 goog.exportSymbol('FlyingText', FlyingText);
 //-----------------------------------------------------------------------------
@@ -103,41 +100,37 @@ function Coins(layer, score)
     this.alpha = 1.0;
     this.layer = layer;
     var that = this;
+    var inc = 0;
     m_sounds["coins"].play();
-
-    this.Step = function(step)
-    {
-        step += 1;
-        that.alpha = that.alpha -0.02;
+    var t0 = new Date();
+    var t1;
+    this.shape = new Kinetic.Shape({drawFunc:function(){
+        t1 = new Date();
+        var delta = t1.valueOf() - t0.valueOf();
+        that.alpha = 1 -(delta/3500);
+        inc += (delta / 300);
         if(that.alpha <= 0.0)
         {
             that.layer.remove(that.shape);
         }
         else
         {
-            Timeout(function(){
-                that.Step(step);
-            }, 5);
+            var ctx = this.getContext();
+            ctx.beginPath(); // !!!
+            ctx.font = "40pt LuckiestGuy";
+            ctx.fillStyle = "#FE3";
+            var tX = 155-inc;
+            var tY = 75;
+            ctx.textAlign = "left";
+            ctx.fillText("+"+that.score, tX, tY);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "#000"; // stroke color
+            ctx.strokeText("+"+that.score, tX, tY);
+            ctx.drawImage(m_images["coins"], 248-inc, 20, 80, 100);
+            this.setAlpha(that.alpha);
         }
-    };
-
-    this.shape = new Kinetic.Shape({drawFunc:function(){
-        var ctx = this.getContext();
-        ctx.beginPath(); // !!!
-        ctx.font = "35pt LuckiestGuy";
-        ctx.fillStyle = "#FE3";
-        var tX = 35;
-        var tY = 70;
-        ctx.textAlign = "left";
-        ctx.fillText("+"+that.score, tX, tY);
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = "#000"; // stroke color
-        ctx.strokeText("+"+that.score, tX, tY);
-        ctx.drawImage(m_images["coins"], 122, 10, 80, 100);
-        this.setAlpha(that.alpha);
     }});
     layer.add(this.shape);
-    that.Step(0);
 }
 goog.exportSymbol('Coins', Coins);
 //-----------------------------------------------------------------------------
@@ -147,11 +140,18 @@ goog.exportSymbol('Coins', Coins);
  */
 function FadeOut(callback)
 {
-    Timeout(function(){
-        m_ui.setAlpha(m_ui.getAlpha()-0.1);
+    var t0 = new Date();
+    var t1;
+    var _fadeOut = function()
+    {
+        t1 = new Date();
+        var delta = t1.valueOf() - t0.valueOf();
+        var alpha = 1.0 - (delta/1000);
+        m_ui.setAlpha(alpha);
         if(m_ui.getAlpha() > 0.0)
-        { FadeOut(callback);} else { m_ui.setAlpha(0.0); callback();}
-    }, 1);
+        { setTimeout(function(){_fadeOut();}, 0);} else { m_ui.setAlpha(0.0); callback();}
+    };
+    _fadeOut();
 }
 goog.exportSymbol('FadeOut', FadeOut);
 //-----------------------------------------------------------------------------
@@ -161,11 +161,18 @@ goog.exportSymbol('FadeOut', FadeOut);
  */
 function FadeIn(callback)
 {
-    Timeout(function(){
-        m_ui.setAlpha(m_ui.getAlpha()+0.1);
+    var t0 = new Date();
+    var t1;
+    var _fadeIn = function()
+    {
+        t1 = new Date();
+        var delta = t1.valueOf() - t0.valueOf();
+        var alpha = 1.0 - (delta/2000);
+        m_ui.setAlpha(alpha);
         if(m_ui.getAlpha() < 1.0)
-        { FadeIn(callback);} else { m_ui.setAlpha(1.0); callback();}
-    }, 1);
+        { setTimeout(function(){_fadeIn(); }, 0);} else { m_ui.setAlpha(1.0); callback();}
+    };
+    _fadeIn();
 }
 goog.exportSymbol('FadeIn', FadeIn);//-----------------------------------------------------------------------------
 /**
@@ -185,30 +192,37 @@ function BlackScreen(duration, callback)
     });
     m_static.add(blackScreen);
     blackScreen.setZIndex(-100);
-    var recurIn = function(cback){
-        blackScreen.setAlpha(blackScreen.getAlpha()+0.2);
-        if(blackScreen.getAlpha() < 1.0)
+    var t0 = new Date();
+    var t1;
+    var recurIn = function(){
+        t1 = new Date();
+        var delta = t1.valueOf() - t0.valueOf();
+        var alpha = 0.0 + (delta/800);
+        blackScreen.setAlpha(alpha);
+        if(alpha < 1.0)
         {
-            Timeout(function(){recurIn(cback);},1);
+            setTimeout(function(){recurIn();},0);
         } else
         {
-            blackScreen.setAlpha(1.0); cback();
+            blackScreen.setAlpha(1.0);
         }
     };
     var recurOut = function(cback){
-        blackScreen.setAlpha(blackScreen.getAlpha()-0.1);
-        if(blackScreen.getAlpha() > 0.0)
+        t1 = new Date();
+        var delta = t1.valueOf() - t0.valueOf();
+        var alpha = 1.0 - (delta/1000);
+        blackScreen.setAlpha(alpha);
+        if(alpha > 0.0)
         {
-            Timeout(function(){recurOut(cback);},1);
+            setTimeout(function(){recurOut(cback);},0);
         } else
         {
             blackScreen.setAlpha(1.0); cback();
         }
     };
-    recurIn(function(){
-
-    });
-    Timeout(function(){
+    recurIn();
+    setTimeout(function(){
+        t0 = new Date();
         recurOut(function(){
             m_static.remove(blackScreen);
             callback();

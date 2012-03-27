@@ -402,11 +402,16 @@ Clock.prototype.Countdown = function()
         else
         {
             that.running = false;
+            m_sounds["wrong"].play();
             that.onTimeoutEvent(); }
     }, 1000);
     if(this.running)
     {
         this.seconds = this.seconds -1;
+        if(this.seconds <= 10)
+        {
+            m_sounds["ping2"].play();
+        }
     }
 };
 //-----------------------------------------------------------------------------
@@ -485,7 +490,7 @@ function ScreenText(layer, text, x, y, fontsize, align)
         ctx.font = that.fontsize+"pt TitanOne";
         ctx.textAlign = that.align;
         ctx.fillText(that.text, that.x, that.y);
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
         ctx.strokeStyle = "#000"; // stroke color
         ctx.strokeText(that.text,  that.x, that.y);
     }});

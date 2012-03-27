@@ -66,6 +66,7 @@ var m_lang = "de";
 var m_datahost = "http://localhost";
 var m_locale = [];
 var m_player = null;
+var m_qCount = 0;
 /** @type {GlobeGame.STATE} */
 var m_state = GlobeGame.STATE.IDLE;
 var m_score = null;
@@ -90,7 +91,7 @@ function GlobeGame(canvasDiv, datapath)
     {
         m_datahost = datapath;
     }
-    this.qCount = 0;
+    m_qCount = 0;
     this.currentChallenge = null;
     this.callbacks = [];
     var that = this;
@@ -134,6 +135,7 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
             pin_yellow: "art/pin_yellow.png",
             nw_logo: "art/nw_logo.png",
             logo: "art/logo.png",
+            logo_sm: "art/logo_sm.png",
             coins: "art/coins.png"
         };
         // Preload sounds
@@ -144,8 +146,12 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
             coins: "sfx/coins.wav",
             highscores: "sfx/highscores.mp3",
             track01: "sfx/track01.mp3",
+            track02: "sfx/track02.mp3",
+            track03: "sfx/track03.mp3",
+            track04: "sfx/track04.mp3",
             swoosh: "sfx/swoosh.wav",
-            ping1: "sfx/ping1.wav"
+            ping1: "sfx/ping1.wav",
+            ping2: "sfx/ping2.wav"
         };
 
         var loadingText = new ScreenText(m_ui, "Loading language...",m_centerX, m_centerY, 25, "center");
@@ -159,26 +165,42 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
                     /* nw logo */
                     var statics = new Kinetic.Shape({drawFunc:function(){
                         var ctx = this.getContext();
-                        ctx.drawImage(m_images["nw_logo"], 0, window.innerHeight-82, 670, 82);
+                        ctx.drawImage(m_images["nw_logo"], 1, window.innerHeight-58, 469, 57);
                         if(m_state != GlobeGame.STATE.CHALLENGE)
                         {
                             ctx.drawImage(m_images["logo"], window.innerWidth/2-352, 30, 705, 206);
                         }
+                        else
+                        {
+                            ctx.drawImage(m_images["logo_sm"], window.innerWidth-260, 4, 254, 50);
+                        }
                         ctx.textAlign = "right";
                         ctx.fillStyle = "#FFF";
-                        ctx.font = "13pt TitanOne";
-                        ctx.fillText("www.openwebglobe.org", window.innerWidth-10, window.innerHeight-10);
+                        ctx.font = "18pt TitanOne";
+                        ctx.fillText("www.openwebglobe.org", window.innerWidth-13, window.innerHeight-20);
                         ctx.lineWidth = 1;
                         ctx.strokeStyle = "#000"; // stroke color
-                        ctx.strokeText("www.openwebglobe.org", window.innerWidth-10, window.innerHeight-10);
+                        ctx.strokeText("www.openwebglobe.org", window.innerWidth-13, window.innerHeight-20);
                     }});
                     m_static.add(statics);
                     m_sounds["track01"].volume = 0.25;
                     m_sounds["track01"].addEventListener("ended", function() {
+                        m_sounds["track02"].play();
+                    },true);
+                    m_sounds["track02"].volume = 0.25;
+                    m_sounds["track02"].addEventListener("ended", function() {
+                        m_sounds["track03"].play();
+                    },true);
+                    m_sounds["track03"].volume = 0.25;
+                    m_sounds["track03"].addEventListener("ended", function() {
+                        m_sounds["track04"].play();
+                    },true);
+                    m_sounds["track04"].volume = 0.25;
+                    m_sounds["track04"].addEventListener("ended", function() {
                         m_sounds["track01"].play();
                     },true);
-                    m_sounds["track01"].play();
-
+                    var index = Math.floor(Math.random()*5);
+                    m_sounds["track0"+index].play();
                     that.EnterIdle();
                 });
             });
@@ -272,6 +294,7 @@ GlobeGame.prototype.EnterHighscore = function()
                 highscore.RegisterCallback(function(){
                     if(m_score)
                         m_score.Destroy();
+                    m_qCount = 0;
                     m_gameData = new GameData(function()
                     {
                         that.StopFlyTo();
@@ -473,14 +496,20 @@ GlobeGame.prototype.ProcessChallenge = function()
  */
 GlobeGame.prototype.NextChallenge = function()
 {
-    if(m_gameData.questions.length > 0){
+    m_qCount += 1;
+    if(m_qCount <= 10){
         m_globeGame.currentChallenge = m_gameData.PickChallenge();
         m_globeGame.currentChallenge.RegisterCallback(m_globeGame.ProcessChallenge);
-        m_globeGame.InitQuiz();
+        m_globeGame.currentChallenge.Prepare(1000);
+        BlackScreen(3500, function(){
+            m_globeGame.InitQuiz();
+        });
     }
     else
     {
-        m_globeGame.EnterHighscore();
+        BlackScreen(3500, function(){
+            m_globeGame.EnterHighscore();
+        });
     }
 };
 //-----------------------------------------------------------------------------

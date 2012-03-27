@@ -219,48 +219,55 @@ PickingChallenge.prototype = new Challenge(1);
 PickingChallenge.prototype.constructor=PickingChallenge;
 //-----------------------------------------------------------------------------
 /**
+ * @description preare this challenge
+ */
+PickingChallenge.prototype.Prepare = function(delay)
+{
+    var that = this;
+    setTimeout(function()
+    {
+        that.screenText = new ScreenText(m_ui, that.text,m_centerX, window.innerHeight-255, 26, "center");
+        that.pickOverlay = new Kinetic.Rect({
+            x: 0,
+            y: 0,
+            width: window.innerWidth,
+            height: window.innerHeight
+        });
+        that.pickOverlay.on("mousedown", that.OnMouseDown);
+        that.pickOverlay.on("mouseup", that.OnMouseUp);
+        that.pickOverlay.on("mousemove", that.OnMouseMove);
+        m_ui.add(that.pickOverlay);
+        that.okayBtn = new Button01(m_ui, "okbtn1", m_centerX-150, window.innerHeight-180, 300, 69, "OK", 15);
+        that.resultPin = new Pin(m_ui, m_images["pin_green"], -1, -1);
+        that.okayBtn.onClickEvent = that.OnOkay;
+        that.okayBtn.onMouseOverEvent = that.MouseOverOkBtn;
+        that.okayBtn.onMouseOutEvent = that.MouseOutOkBtn;
+
+        that.clock = new Clock(m_ui, 50, 75, 60);
+
+        var scene = ogGetScene(m_context);
+        var camId = ogGetActiveCamera(scene);
+        ogSetPosition(camId,8.225578,46.8248707, 280000.0);
+        ogSetOrientation(camId,0.0,-90.0, 0.0);
+
+        ogSetInPositionFunction(m_context,that.FlightCallback);
+        that.ogFrameLayer = ogAddImageLayer(m_globe, {
+            url: [m_datahost],
+            layer: "ch_boundaries",
+            service: "owg"
+        });
+    }, delay);
+};
+//-----------------------------------------------------------------------------
+/**
  * @description activate this challenge
  */
 PickingChallenge.prototype.Activate = function()
 {
-    this.screenText = new ScreenText(m_ui, this.text,m_centerX, window.innerHeight-255, 20, "center");
-    this.pickOverlay = new Kinetic.Rect({
-        x: 0,
-        y: 0,
-        width: window.innerWidth,
-        height: window.innerHeight
-    });
     var that = this;
-
-    this.pickOverlay.on("mousedown", this.OnMouseDown);
-    this.pickOverlay.on("mouseup", this.OnMouseUp);
-    this.pickOverlay.on("mousemove", this.OnMouseMove);
-    m_ui.add(this.pickOverlay);
-    this.okayBtn = new Button01(m_ui, "okbtn1", m_centerX-150, window.innerHeight-180, 300, 69, "OK", 15);
-    this.resultPin = new Pin(m_ui, m_images["pin_green"], -1, -1);
-    this.okayBtn.onClickEvent = this.OnOkay;
-    this.okayBtn.onMouseOverEvent = this.MouseOverOkBtn;
-    this.okayBtn.onMouseOutEvent = this.MouseOutOkBtn;
-
-    this.clock = new Clock(m_ui, 50, 75, 60);
-
-    var scene = ogGetScene(m_context);
-    var camId = ogGetActiveCamera(scene);
-    ogSetPosition(camId,8.225578,46.8248707, 280000.0);
-    ogSetOrientation(camId,0.0,-90.0, 0.0);
-
-    ogSetInPositionFunction(m_context,this.FlightCallback);
-    this.ogFrameLayer = ogAddImageLayer(m_globe, {
-        url: [m_datahost],
-        layer: "ch_boundaries",
-        service: "owg"
-    });
-    BlackScreen(4000,function()
-    {
-        FadeIn(function() {
-            that.clock.onTimeoutEvent = function(){that.callback()};
-            that.clock.Start();
-        });
+    FadeIn(function() {
+        that.clock.onTimeoutEvent = function(){that.callback()};
+        that.clock.Start();
     });
 };
 //-----------------------------------------------------------------------------
@@ -299,7 +306,9 @@ PickingChallenge.prototype.OnDestroy = function()
             that.okayBtn.Destroy();
 
             m_ui.remove(that.pickOverlay);
+            setTimeout(function(){
             ogRemoveImageLayer(that.ogFrameLayer);
+            },700);
             that.eventDestroyed();
         });
     } else
@@ -346,6 +355,7 @@ PickingChallenge.prototype.ZoomOut = function(ori)
 };
 
 goog.exportSymbol('PickingChallenge', PickingChallenge);
+goog.exportProperty(PickingChallenge.prototype, 'Prepare', PickingChallenge.prototype.Prepare);
 goog.exportProperty(PickingChallenge.prototype, 'Activate', PickingChallenge.prototype.Activate);
 goog.exportProperty(PickingChallenge.prototype, 'Destroy', PickingChallenge.prototype.Destroy);
 goog.exportProperty(PickingChallenge.prototype, 'OnDestroy', PickingChallenge.prototype.OnDestroy);
