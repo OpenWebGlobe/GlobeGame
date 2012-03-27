@@ -22,36 +22,36 @@ goog.setTestOnly = function(a) {
 if(!COMPILED) {
   goog.implicitNamespaces_ = {}
 }
-goog.exportPath_ = function(a, b, d) {
+goog.exportPath_ = function(a, b, c) {
   a = a.split(".");
-  d = d || goog.global;
-  !(a[0] in d) && d.execScript && d.execScript("var " + a[0]);
-  for(var c;a.length && (c = a.shift());) {
-    !a.length && goog.isDef(b) ? d[c] = b : d = d[c] ? d[c] : d[c] = {}
+  c = c || goog.global;
+  !(a[0] in c) && c.execScript && c.execScript("var " + a[0]);
+  for(var d;a.length && (d = a.shift());) {
+    !a.length && goog.isDef(b) ? c[d] = b : c = c[d] ? c[d] : c[d] = {}
   }
 };
 goog.getObjectByName = function(a, b) {
-  for(var d = a.split("."), c = b || goog.global, e;e = d.shift();) {
-    if(goog.isDefAndNotNull(c[e])) {
-      c = c[e]
+  for(var c = a.split("."), d = b || goog.global, e;e = c.shift();) {
+    if(goog.isDefAndNotNull(d[e])) {
+      d = d[e]
     }else {
       return null
     }
   }
-  return c
+  return d
 };
 goog.globalize = function(a, b) {
-  var d = b || goog.global, c;
-  for(c in a) {
-    d[c] = a[c]
+  var c = b || goog.global, d;
+  for(d in a) {
+    c[d] = a[d]
   }
 };
-goog.addDependency = function(a, b, d) {
+goog.addDependency = function(a, b, c) {
   if(!COMPILED) {
-    for(var c, a = a.replace(/\\/g, "/"), e = goog.dependencies_, f = 0;c = b[f];f++) {
-      e.nameToPath[c] = a, a in e.pathToNames || (e.pathToNames[a] = {}), e.pathToNames[a][c] = !0
+    for(var d, a = a.replace(/\\/g, "/"), e = goog.dependencies_, f = 0;d = b[f];f++) {
+      e.nameToPath[d] = a, a in e.pathToNames || (e.pathToNames[a] = {}), e.pathToNames[a][d] = !0
     }
-    for(c = 0;b = d[c];c++) {
+    for(d = 0;b = c[d];d++) {
       a in e.requires || (e.requires[a] = {}), e.requires[a][b] = !0
     }
   }
@@ -90,9 +90,9 @@ if(!COMPILED) {
     }else {
       if(goog.inHtmlDocument_()) {
         for(var a = goog.global.document.getElementsByTagName("script"), b = a.length - 1;b >= 0;--b) {
-          var d = a[b].src, c = d.lastIndexOf("?"), c = c == -1 ? d.length : c;
-          if(d.substr(c - 7, 7) == "base.js") {
-            goog.basePath = d.substr(0, c - 7);
+          var c = a[b].src, d = c.lastIndexOf("?"), d = d == -1 ? c.length : d;
+          if(c.substr(d - 7, 7) == "base.js") {
+            goog.basePath = c.substr(0, d - 7);
             break
           }
         }
@@ -105,11 +105,11 @@ if(!COMPILED) {
     return goog.inHtmlDocument_() ? (goog.global.document.write('<script type="text/javascript" src="' + a + '"><\/script>'), !0) : !1
   }, goog.writeScripts_ = function() {
     function a(f) {
-      if(!(f in c.written)) {
-        if(!(f in c.visited) && (c.visited[f] = !0, f in c.requires)) {
-          for(var e in c.requires[f]) {
-            if(e in c.nameToPath) {
-              a(c.nameToPath[e])
+      if(!(f in d.written)) {
+        if(!(f in d.visited) && (d.visited[f] = !0, f in d.requires)) {
+          for(var e in d.requires[f]) {
+            if(e in d.nameToPath) {
+              a(d.nameToPath[e])
             }else {
               if(!goog.getObjectByName(e)) {
                 throw Error("Undefined nameToPath for " + e);
@@ -117,12 +117,12 @@ if(!COMPILED) {
             }
           }
         }
-        f in d || (d[f] = !0, b.push(f))
+        f in c || (c[f] = !0, b.push(f))
       }
     }
-    var b = [], d = {}, c = goog.dependencies_, e;
+    var b = [], c = {}, d = goog.dependencies_, e;
     for(e in goog.included_) {
-      c.written[e] || a(e)
+      d.written[e] || a(e)
     }
     for(e = 0;e < b.length;e++) {
       if(b[e]) {
@@ -146,14 +146,14 @@ goog.typeOf = function(a) {
           return b
         }
       }
-      var d = Object.prototype.toString.call(a);
-      if(d == "[object Window]") {
+      var c = Object.prototype.toString.call(a);
+      if(c == "[object Window]") {
         return"object"
       }
-      if(d == "[object Array]" || typeof a.length == "number" && typeof a.splice != "undefined" && typeof a.propertyIsEnumerable != "undefined" && !a.propertyIsEnumerable("splice")) {
+      if(c == "[object Array]" || typeof a.length == "number" && typeof a.splice != "undefined" && typeof a.propertyIsEnumerable != "undefined" && !a.propertyIsEnumerable("splice")) {
         return"array"
       }
-      if(d == "[object Function]" || typeof a.call != "undefined" && typeof a.propertyIsEnumerable != "undefined" && !a.propertyIsEnumerable("call")) {
+      if(c == "[object Function]" || typeof a.call != "undefined" && typeof a.propertyIsEnumerable != "undefined" && !a.propertyIsEnumerable("call")) {
         return"function"
       }
     }else {
@@ -168,8 +168,8 @@ goog.typeOf = function(a) {
 };
 goog.propertyIsEnumerableCustom_ = function(a, b) {
   if(b in a) {
-    for(var d in a) {
-      if(d == b && Object.prototype.hasOwnProperty.call(a, b)) {
+    for(var c in a) {
+      if(c == b && Object.prototype.hasOwnProperty.call(a, b)) {
         return!0
       }
     }
@@ -234,9 +234,9 @@ goog.cloneObject = function(a) {
     if(a.clone) {
       return a.clone()
     }
-    var b = b == "array" ? [] : {}, d;
-    for(d in a) {
-      b[d] = goog.cloneObject(a[d])
+    var b = b == "array" ? [] : {}, c;
+    for(c in a) {
+      b[c] = goog.cloneObject(a[c])
     }
     return b
   }
@@ -246,17 +246,17 @@ goog.bindNative_ = function(a) {
   return a.call.apply(a.bind, arguments)
 };
 goog.bindJs_ = function(a, b) {
-  var d = b || goog.global;
+  var c = b || goog.global;
   if(arguments.length > 2) {
-    var c = Array.prototype.slice.call(arguments, 2);
+    var d = Array.prototype.slice.call(arguments, 2);
     return function() {
       var b = Array.prototype.slice.call(arguments);
-      Array.prototype.unshift.apply(b, c);
-      return a.apply(d, b)
+      Array.prototype.unshift.apply(b, d);
+      return a.apply(c, b)
     }
   }else {
     return function() {
-      return a.apply(d, arguments)
+      return a.apply(c, arguments)
     }
   }
 };
@@ -267,14 +267,14 @@ goog.bind = function() {
 goog.partial = function(a) {
   var b = Array.prototype.slice.call(arguments, 1);
   return function() {
-    var d = Array.prototype.slice.call(arguments);
-    d.unshift.apply(d, b);
-    return a.apply(this, d)
+    var c = Array.prototype.slice.call(arguments);
+    c.unshift.apply(c, b);
+    return a.apply(this, c)
   }
 };
 goog.mixin = function(a, b) {
-  for(var d in b) {
-    a[d] = b[d]
+  for(var c in b) {
+    a[c] = b[c]
   }
 };
 goog.now = Date.now || function() {
@@ -291,12 +291,12 @@ goog.globalEval = function(a) {
       if(goog.evalWorksForGlobals_) {
         goog.global.eval(a)
       }else {
-        var b = goog.global.document, d = b.createElement("script");
-        d.type = "text/javascript";
-        d.defer = !1;
-        d.appendChild(b.createTextNode(a));
-        b.body.appendChild(d);
-        b.body.removeChild(d)
+        var b = goog.global.document, c = b.createElement("script");
+        c.type = "text/javascript";
+        c.defer = !1;
+        c.appendChild(b.createTextNode(a));
+        b.body.appendChild(c);
+        b.body.removeChild(c)
       }
     }else {
       throw Error("goog.globalEval not available");
@@ -304,60 +304,60 @@ goog.globalEval = function(a) {
   }
 };
 goog.getCssName = function(a, b) {
-  var d = function(a) {
+  var c = function(a) {
     return goog.cssNameMapping_[a] || a
-  }, c;
-  c = goog.cssNameMapping_ ? goog.cssNameMappingStyle_ == "BY_WHOLE" ? d : function(a) {
-    for(var a = a.split("-"), b = [], c = 0;c < a.length;c++) {
-      b.push(d(a[c]))
+  }, d;
+  d = goog.cssNameMapping_ ? goog.cssNameMappingStyle_ == "BY_WHOLE" ? c : function(a) {
+    for(var a = a.split("-"), d = [], b = 0;b < a.length;b++) {
+      d.push(c(a[b]))
     }
-    return b.join("-")
+    return d.join("-")
   } : function(a) {
     return a
   };
-  return b ? a + "-" + c(b) : c(a)
+  return b ? a + "-" + d(b) : d(a)
 };
 goog.setCssNameMapping = function(a, b) {
   goog.cssNameMapping_ = a;
   goog.cssNameMappingStyle_ = b
 };
 goog.getMsg = function(a, b) {
-  var d = b || {}, c;
-  for(c in d) {
-    var e = ("" + d[c]).replace(/\$/g, "$$$$"), a = a.replace(RegExp("\\{\\$" + c + "\\}", "gi"), e)
+  var c = b || {}, d;
+  for(d in c) {
+    var e = ("" + c[d]).replace(/\$/g, "$$$$"), a = a.replace(RegExp("\\{\\$" + d + "\\}", "gi"), e)
   }
   return a
 };
-goog.exportSymbol = function(a, b, d) {
-  goog.exportPath_(a, b, d)
+goog.exportSymbol = function(a, b, c) {
+  goog.exportPath_(a, b, c)
 };
-goog.exportProperty = function(a, b, d) {
-  a[b] = d
+goog.exportProperty = function(a, b, c) {
+  a[b] = c
 };
 goog.inherits = function(a, b) {
-  function d() {
+  function c() {
   }
-  d.prototype = b.prototype;
+  c.prototype = b.prototype;
   a.superClass_ = b.prototype;
-  a.prototype = new d;
+  a.prototype = new c;
   a.prototype.constructor = a
 };
 goog.base = function(a, b) {
-  var d = arguments.callee.caller;
-  if(d.superClass_) {
-    return d.superClass_.constructor.apply(a, Array.prototype.slice.call(arguments, 1))
+  var c = arguments.callee.caller;
+  if(c.superClass_) {
+    return c.superClass_.constructor.apply(a, Array.prototype.slice.call(arguments, 1))
   }
-  for(var c = Array.prototype.slice.call(arguments, 2), e = !1, f = a.constructor;f;f = f.superClass_ && f.superClass_.constructor) {
-    if(f.prototype[b] === d) {
+  for(var d = Array.prototype.slice.call(arguments, 2), e = !1, f = a.constructor;f;f = f.superClass_ && f.superClass_.constructor) {
+    if(f.prototype[b] === c) {
       e = !0
     }else {
       if(e) {
-        return f.prototype[b].apply(a, c)
+        return f.prototype[b].apply(a, d)
       }
     }
   }
-  if(a[b] === d) {
-    return a.constructor.prototype[b].apply(a, c)
+  if(a[b] === c) {
+    return a.constructor.prototype[b].apply(a, d)
   }else {
     throw Error("goog.base called from a method of one name to a method of a different name");
   }
@@ -368,18 +368,49 @@ goog.scope = function(a) {
 var owg = {gg:{}};
 owg.gg.FlyingText = {};
 var m_hInc = 0;
-function FlyingText(a, b, d) {
+function FlyingText(a, b, c) {
   this.text = b;
-  this.fontcolor = d;
+  this.fontcolor = c;
   this.alpha = this.scalefactor = 1;
   this.layer = a;
-  var c = this, e = m_hInc * 45;
+  var d = this, e = m_hInc * 45;
   m_hInc += 1;
   m_hInc >= 3 && (m_hInc = 0);
   this.Step = function(a) {
     a += 1;
-    c.alpha -= 0.01;
-    c.scalefactor += 0.01;
+    d.alpha -= 0.01;
+    d.scalefactor += 0.01;
+    d.alpha <= 0 ? d.layer.remove(d.shape) : Timeout(function() {
+      d.Step(a)
+    }, 5)
+  };
+  this.shape = new Kinetic.Shape({drawFunc:function() {
+    var a = this.getContext();
+    a.beginPath();
+    a.font = "28pt LuckiestGuy";
+    a.fillStyle = d.fontcolor;
+    var b = window.innerWidth / 2 / d.scalefactor, c = (window.innerHeight / 2 - 200 + e) / d.scalefactor;
+    a.textAlign = "center";
+    a.fillText(d.text, b, c);
+    a.lineWidth = 3;
+    a.strokeStyle = "#000";
+    a.strokeText(d.text, b, c);
+    this.setScale(d.scalefactor, d.scalefactor);
+    this.setAlpha(d.alpha)
+  }});
+  a.add(this.shape);
+  d.Step(0)
+}
+goog.exportSymbol("FlyingText", FlyingText);
+function Coins(a, b) {
+  this.score = b;
+  this.alpha = 1;
+  this.layer = a;
+  var c = this;
+  m_sounds.coins.play();
+  this.Step = function(a) {
+    a += 1;
+    c.alpha -= 0.02;
     c.alpha <= 0 ? c.layer.remove(c.shape) : Timeout(function() {
       c.Step(a)
     }, 5)
@@ -387,21 +418,20 @@ function FlyingText(a, b, d) {
   this.shape = new Kinetic.Shape({drawFunc:function() {
     var a = this.getContext();
     a.beginPath();
-    a.font = "28pt LuckiestGuy";
-    a.fillStyle = c.fontcolor;
-    var b = window.innerWidth / 2 / c.scalefactor, d = (window.innerHeight / 2 - 200 + e) / c.scalefactor;
-    a.textAlign = "center";
-    a.fillText(c.text, b, d);
+    a.font = "35pt LuckiestGuy";
+    a.fillStyle = "#FE3";
+    a.textAlign = "left";
+    a.fillText("+" + c.score, 35, 70);
     a.lineWidth = 3;
     a.strokeStyle = "#000";
-    a.strokeText(c.text, b, d);
-    this.setScale(c.scalefactor, c.scalefactor);
+    a.strokeText("+" + c.score, 35, 70);
+    a.drawImage(m_images.coins, 122, 10, 80, 100);
     this.setAlpha(c.alpha)
   }});
   a.add(this.shape);
   c.Step(0)
 }
-goog.exportSymbol("FlyingText", FlyingText);
+goog.exportSymbol("Coins", Coins);
 function FadeOut(a) {
   Timeout(function() {
     m_ui.setAlpha(m_ui.getAlpha() - 0.1);
@@ -417,38 +447,38 @@ function FadeIn(a) {
 }
 goog.exportSymbol("FadeIn", FadeIn);
 function BlackScreen(a, b) {
-  var d = new Kinetic.Rect({x:0, y:0, width:window.innerWidth, height:window.innerHeight, fill:"#000000", alpha:0});
-  m_static.add(d);
-  d.setZIndex(-100);
-  var c = function(a) {
-    d.setAlpha(d.getAlpha() + 0.2);
-    d.getAlpha() < 1 ? Timeout(function() {
-      c(a)
-    }, 1) : (d.setAlpha(1), a())
+  var c = new Kinetic.Rect({x:0, y:0, width:window.innerWidth, height:window.innerHeight, fill:"#000000", alpha:0});
+  m_static.add(c);
+  c.setZIndex(-100);
+  var d = function(a) {
+    c.setAlpha(c.getAlpha() + 0.2);
+    c.getAlpha() < 1 ? Timeout(function() {
+      d(a)
+    }, 1) : (c.setAlpha(1), a())
   }, e = function(a) {
-    d.setAlpha(d.getAlpha() - 0.1);
-    d.getAlpha() > 0 ? Timeout(function() {
+    c.setAlpha(c.getAlpha() - 0.1);
+    c.getAlpha() > 0 ? Timeout(function() {
       e(a)
-    }, 1) : (d.setAlpha(1), a())
+    }, 1) : (c.setAlpha(1), a())
   };
-  c(function() {
+  d(function() {
   });
   Timeout(function() {
     e(function() {
-      m_static.remove(d);
+      m_static.remove(c);
       b()
     })
   }, a)
 }
 goog.exportSymbol("FadeIn", FadeIn);
 function Timeout(a, b) {
-  var d = new Date, c = function(a, d, h) {
-    d.valueOf() - a.valueOf() >= b ? h() : setTimeout(function() {
-      c(a, new Date, h)
+  var c = new Date, d = function(a, c, h) {
+    c.valueOf() - a.valueOf() >= b ? h() : setTimeout(function() {
+      d(a, new Date, h)
     }, 0)
   };
   setTimeout(function() {
-    c(d, new Date, a)
+    d(c, new Date, a)
   }, 0)
 }
 goog.exportSymbol("Timeout", Timeout);
@@ -470,9 +500,9 @@ owg.gg.ScreenText = {};
 owg.gg.Pin = {};
 owg.gg.Clock = {};
 owg.gg.ScoreCount = {};
-function Button01(a, b, d, c, e, f, h, j) {
-  this.x = d;
-  this.y = c;
+function Button01(a, b, c, d, e, f, h, j) {
+  this.x = c;
+  this.y = d;
   this.width = e;
   this.height = f;
   this.state = 0;
@@ -494,16 +524,16 @@ function Button01(a, b, d, c, e, f, h, j) {
   var g = this;
   this.shape = new Kinetic.Shape({drawFunc:function() {
     var a = this.getContext(), b = 0;
-    g.enabled == !1 ? a.drawImage(m_images.btn_01_d, d, c, e, f) : g.state == 0 ? a.drawImage(m_images.btn_01, d, c, e, f) : g.state == 1 ? a.drawImage(m_images.btn_01_h, d, c, e, f) : g.state == 2 ? (a.drawImage(m_images.btn_01_c, d, c, e, f), b = 2) : g.state == 3 ? a.drawImage(m_images.btn_01_t, d, c, e, f) : g.state == 4 ? a.drawImage(m_images.btn_01_f, d, c, e, f) : g.state == 5 && a.drawImage(m_images.btn_01_o, d, c, e, f);
+    g.enabled == !1 ? a.drawImage(m_images.btn_01_d, c, d, e, f) : g.state == 0 ? a.drawImage(m_images.btn_01, c, d, e, f) : g.state == 1 ? a.drawImage(m_images.btn_01_h, c, d, e, f) : g.state == 2 ? (a.drawImage(m_images.btn_01_c, c, d, e, f), b = 2) : g.state == 3 ? a.drawImage(m_images.btn_01_t, c, d, e, f) : g.state == 4 ? a.drawImage(m_images.btn_01_f, c, d, e, f) : g.state == 5 && a.drawImage(m_images.btn_01_o, c, d, e, f);
     a.beginPath();
-    a.rect(d, c, e, f);
+    a.rect(c, d, e, f);
     a.closePath();
     a.font = j + "pt TitanOne";
     a.fillStyle = "#FFF";
     var h = a.measureText(g.caption).width;
     a.measureText(g.caption);
-    var k = d + b, b = c + 3 * (f / 5) + b;
-    h <= e && (k = d + (e - h) / 2);
+    var k = c + b, b = d + 3 * (f / 5) + b;
+    h <= e && (k = c + (e - h) / 2);
     a.fillText(g.caption, k, b);
     a.lineWidth = 1;
     a.strokeStyle = "#000";
@@ -545,9 +575,9 @@ goog.exportSymbol("Button01", Button01);
 goog.exportProperty(Button01.prototype, "SetEnabled", Button01.prototype.SetEnabled);
 goog.exportProperty(Button01.prototype, "SetState", Button01.prototype.SetState);
 goog.exportProperty(Button01.prototype, "Destroy", Button01.prototype.Destroy);
-function Button02(a, b, d, c, e, f, h, j, g) {
-  this.x = d;
-  this.y = c;
+function Button02(a, b, c, d, e, f, h, j, g) {
+  this.x = c;
+  this.y = d;
   this.width = e;
   this.height = f;
   this.state = 0;
@@ -569,16 +599,16 @@ function Button02(a, b, d, c, e, f, h, j, g) {
   var i = this;
   this.shape = new Kinetic.Shape({drawFunc:function() {
     var a = this.getContext(), b = 0;
-    i.state == 0 ? a.drawImage(m_images.btn_02, d, c, e, f) : i.state == 1 ? a.drawImage(m_images.btn_02_h, d, c, e, f) : i.state == 2 && (a.drawImage(m_images.btn_02_c, d, c, e, f), b = 2);
+    i.state == 0 ? a.drawImage(m_images.btn_02, c, d, e, f) : i.state == 1 ? a.drawImage(m_images.btn_02_h, c, d, e, f) : i.state == 2 && (a.drawImage(m_images.btn_02_c, c, d, e, f), b = 2);
     a.beginPath();
-    a.rect(d, c, e, f);
+    a.rect(c, d, e, f);
     a.closePath();
     a.font = j + "pt TitanOne";
     a.fillStyle = "#FFF";
     var h = a.measureText(i.caption).width;
     a.measureText(i.caption);
-    var g = d + b, b = c + 3 * (f / 5) + b;
-    h <= e && (g = d + (e - h) / 2);
+    var g = c + b, b = d + 3 * (f / 5) + b;
+    h <= e && (g = c + (e - h) / 2);
     a.fillText(i.caption, g, b);
     a.lineWidth = 1;
     a.strokeStyle = "#000";
@@ -612,11 +642,11 @@ Button02.prototype.Destroy = function() {
 };
 goog.exportSymbol("Button02", Button02);
 goog.exportProperty(Button02.prototype, "Destroy", Button02.prototype.Destroy);
-function Clock(a, b, d, c) {
+function Clock(a, b, c, d) {
   this.layer = a;
   this.x = b;
-  this.y = d;
-  this.seconds = c;
+  this.y = c;
+  this.seconds = d;
   this.visible = !0;
   this.obsolete = !1;
   var e = 2 / 60, f = this;
@@ -625,24 +655,24 @@ function Clock(a, b, d, c) {
   };
   this.shape = new Kinetic.Shape({drawFunc:function() {
     if(f.visible == !0) {
-      var a = this.getContext(), c = e * f.seconds - 0.5;
-      a.drawImage(m_images.clock, b, d, 220, 260);
+      var a = this.getContext(), d = e * f.seconds - 0.5;
+      a.drawImage(m_images.clock, b, c, 220, 260);
       a.beginPath();
-      a.arc(b + 110, d + 153, 84, c * Math.PI, 1.5 * Math.PI, !1);
-      a.lineTo(b + 110, d + 153);
+      a.arc(b + 110, c + 153, 84, d * Math.PI, 1.5 * Math.PI, !1);
+      a.lineTo(b + 110, c + 153);
       a.closePath();
-      c = a.createPattern(m_images.dial, "no-repeat");
-      a.fillStyle = c;
-      a.translate(b + 25, d + 65);
+      d = a.createPattern(m_images.dial, "no-repeat");
+      a.fillStyle = d;
+      a.translate(b + 25, c + 65);
       a.fill();
       a.fillStyle = f.seconds > 10 ? "#FFF" : "#F00";
       a.font = "40pt TitanOne";
       a.textAlign = "center";
-      c = "" + f.seconds;
-      a.fillText(c, 85, 110);
+      d = "" + f.seconds;
+      a.fillText(d, 85, 110);
       a.lineWidth = 3;
       a.strokeStyle = "#000";
-      a.strokeText(c, 85, 110)
+      a.strokeText(d, 85, 110)
     }
   }});
   a.add(this.shape)
@@ -688,10 +718,10 @@ goog.exportProperty(Clock.prototype, "Destroy", Clock.prototype.Destroy);
 goog.exportProperty(Clock.prototype, "OnDestroy", Clock.prototype.OnDestroy);
 goog.exportProperty(Clock.prototype, "SetVisible", Clock.prototype.SetVisible);
 goog.exportProperty(Clock.prototype, "GetSeconds", Clock.prototype.GetSeconds);
-function ScreenText(a, b, d, c, e, f) {
+function ScreenText(a, b, c, d, e, f) {
   this.text = b;
-  this.x = d;
-  this.y = c;
+  this.x = c;
+  this.y = d;
   this.fontsize = e;
   this.align = f;
   this.layer = a;
@@ -714,22 +744,23 @@ ScreenText.prototype.Destroy = function() {
 };
 goog.exportSymbol("ScreenText", ScreenText);
 goog.exportProperty(ScreenText.prototype, "Destroy", ScreenText.prototype.Destroy);
-function MessageDialog(a, b, d, c) {
+function MessageDialog(a, b, c, d, e, f) {
   this.message = b;
   this.layer = a;
   this.okayButton = null;
-  var e = this;
+  var h = this;
   this.Callback = function() {
   };
   this.OnOkay = function() {
-    e.Destroy();
-    e.Callback()
+    m_sounds.ping1.play();
+    h.Destroy();
+    h.Callback()
   };
   this.shape = new Kinetic.Shape({drawFunc:function() {
     var a = this.getContext();
     a.beginPath();
-    a.rect(window.innerWidth / 2 - d / 2, window.innerHeight / 2 - c / 2, d, c);
-    var b = a.createLinearGradient(window.innerWidth / 2, window.innerHeight / 2 - c / 2, window.innerWidth / 2, window.innerHeight / 2 + c / 2);
+    a.rect(c - e / 2, d - f / 2, e, f);
+    var b = a.createLinearGradient(c, d - f / 2, c, d + f / 2);
     b.addColorStop(0, "#555");
     b.addColorStop(1, "#CCC");
     a.fillStyle = b;
@@ -741,14 +772,14 @@ function MessageDialog(a, b, d, c) {
     a.fillStyle = "#FFF";
     a.font = "18pt TitanOne";
     a.textAlign = "center";
-    a.fillText(e.message, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 80);
+    a.fillText(h.message, c, d - f / 2 + 80);
     a.lineWidth = 1;
     a.strokeStyle = "#000";
-    a.strokeText(e.message, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 80)
+    a.strokeText(h.message, c, d - f / 2 + 80)
   }});
   a.add(this.shape);
-  this.okayButton = new Button01(m_ui, "dialog", window.innerWidth / 2 - 150, window.innerHeight / 2 + c / 2 - 100, 300, 69, "OK", 15);
-  this.okayButton.onClickEvent = this.OnOkay
+  this.okayButton = new Button01(m_ui, "dialog", c - 150, d + f / 2 - 100, 300, 69, "OK", 15);
+  this.okayButton.onClickEvent = h.OnOkay
 }
 MessageDialog.prototype.RegisterCallback = function(a) {
   this.Callback = a
@@ -766,10 +797,10 @@ function ScoreCount(a) {
     var a = this.getContext();
     a.beginPath();
     a.rect(10, 10, 225, 50);
-    var d = a.createLinearGradient(10, 10, 10, 50);
-    d.addColorStop(0, "#555");
-    d.addColorStop(1, "#CCC");
-    a.fillStyle = d;
+    var c = a.createLinearGradient(10, 10, 10, 50);
+    c.addColorStop(0, "#555");
+    c.addColorStop(1, "#CCC");
+    a.fillStyle = c;
     a.fill();
     a.lineWidth = 3;
     a.strokeStyle = "#FFF";
@@ -790,11 +821,11 @@ ScoreCount.prototype.Destroy = function() {
 };
 goog.exportSymbol("ScoreCount", ScoreCount);
 goog.exportProperty(ScoreCount.prototype, "Destroy", ScoreCount.prototype.Destroy);
-function Pin(a, b, d, c) {
+function Pin(a, b, c, d) {
   this.layer = a;
   var e = this;
-  this.x = d;
-  this.y = c;
+  this.x = c;
+  this.y = d;
   this.visible = !0;
   this.shape = new Kinetic.Shape({drawFunc:function() {
     if(e.visible == !0) {
@@ -819,7 +850,7 @@ goog.exportSymbol("Pin", Pin);
 goog.exportProperty(Pin.prototype, "SetPos", Pin.prototype.SetPos);
 goog.exportProperty(Pin.prototype, "SetVisible", Pin.prototype.SetVisible);
 goog.exportProperty(Pin.prototype, "Destroy", Pin.prototype.Destroy);
-function HighScoreDialog(a, b, d, c, e) {
+function HighScoreDialog(a, b, c, d, e) {
   this.list = b;
   this.layer = a;
   this.okayButton = null;
@@ -833,8 +864,8 @@ function HighScoreDialog(a, b, d, c, e) {
   this.shape = new Kinetic.Shape({drawFunc:function() {
     var a = this.getContext();
     a.beginPath();
-    a.rect(window.innerWidth / 2 - d / 2, window.innerHeight / 2 - c / 2, d, c);
-    var b = a.createLinearGradient(window.innerWidth / 2, window.innerHeight / 2 - c / 2, window.innerWidth / 2, window.innerHeight / 2 + c / 2);
+    a.rect(window.innerWidth / 2 - c / 2, window.innerHeight / 2 - d / 2, c, d);
+    var b = a.createLinearGradient(window.innerWidth / 2, window.innerHeight / 2 - d / 2, window.innerWidth / 2, window.innerHeight / 2 + d / 2);
     b.addColorStop(0, "#555");
     b.addColorStop(1, "#CCC");
     a.fillStyle = b;
@@ -847,19 +878,19 @@ function HighScoreDialog(a, b, d, c, e) {
     a.strokeStyle = "#000";
     a.fillStyle = "#FF0";
     a.font = "25pt TitanOne";
-    a.fillText(m_locale.highscores, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 45);
-    a.strokeText(m_locale.highscores, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 45);
+    a.fillText(m_locale.highscores, window.innerWidth / 2, window.innerHeight / 2 - d / 2 + 45);
+    a.strokeText(m_locale.highscores, window.innerWidth / 2, window.innerHeight / 2 - d / 2 + 45);
     a.font = "15pt TitanOne";
     for(b = 1;b <= f.list.length;b++) {
       a.fillStyle = b == 1 ? "#FFAA33" : e.playerName == f.list[b - 1][0] && e.playerScore == f.list[b - 1][2] ? "#0FF" : "#FFF";
       var g = b + ". " + f.list[b - 1][0] + "  " + f.list[b - 1][2];
-      a.fillText(g, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 75 + b * 22);
+      a.fillText(g, window.innerWidth / 2, window.innerHeight / 2 - d / 2 + 75 + b * 22);
       a.lineWidth = 1;
-      a.strokeText(g, window.innerWidth / 2, window.innerHeight / 2 - c / 2 + 75 + b * 22)
+      a.strokeText(g, window.innerWidth / 2, window.innerHeight / 2 - d / 2 + 75 + b * 22)
     }
   }});
   a.add(this.shape);
-  this.okayButton = new Button01(m_ui, "dialog", window.innerWidth / 2 - 150, window.innerHeight / 2 + c / 2 - 100, 300, 69, m_locale.playagain, 15);
+  this.okayButton = new Button01(m_ui, "dialog", window.innerWidth / 2 - 150, window.innerHeight / 2 + d / 2 - 100, 300, 69, m_locale.playagain, 15);
   this.okayButton.onClickEvent = this.OnOkay
 }
 HighScoreDialog.prototype.RegisterCallback = function(a) {
@@ -894,11 +925,11 @@ function Challenge(a) {
 }
 goog.exportSymbol("Challenge", Challenge);
 owg.gg.LandmarkChallenge = {};
-function LandmarkChallenge(a, b, d, c, e) {
-  this.correctOption = d;
+function LandmarkChallenge(a, b, c, d, e) {
+  this.correctOption = c;
   this.options = b;
   this.baseScore = a;
-  this.views = c;
+  this.views = d;
   this.flystate = 1;
   this.text = e;
   this.stop = !1;
@@ -929,18 +960,18 @@ function LandmarkChallenge(a, b, d, c, e) {
 LandmarkChallenge.prototype = new Challenge(0);
 LandmarkChallenge.prototype.constructor = LandmarkChallenge;
 LandmarkChallenge.prototype.Activate = function() {
-  var a = null, b = null, d = null, c = null, a = new Button01(m_ui, "btn1", m_centerX - 310, window.innerHeight - 239, 300, 69, this.options[0], 15);
+  var a = null, b = null, c = null, d = null, a = new Button01(m_ui, "btn1", m_centerX - 310, window.innerHeight - 239, 300, 69, this.options[0], 15);
   a.onClickEvent = this.onOption1;
   b = new Button01(m_ui, "btn2", m_centerX + 10, window.innerHeight - 239, 300, 69, this.options[1], 15);
   b.onClickEvent = this.onOption2;
-  d = new Button01(m_ui, "btn3", m_centerX - 310, window.innerHeight - 150, 300, 69, this.options[2], 15);
-  d.onClickEvent = this.onOption3;
-  c = new Button01(m_ui, "btn4", m_centerX + 10, window.innerHeight - 150, 300, 69, this.options[3], 15);
-  c.onClickEvent = this.onOption4;
+  c = new Button01(m_ui, "btn3", m_centerX - 310, window.innerHeight - 150, 300, 69, this.options[2], 15);
+  c.onClickEvent = this.onOption3;
+  d = new Button01(m_ui, "btn4", m_centerX + 10, window.innerHeight - 150, 300, 69, this.options[3], 15);
+  d.onClickEvent = this.onOption4;
   this.buttonArray.push(a);
   this.buttonArray.push(b);
-  this.buttonArray.push(d);
   this.buttonArray.push(c);
+  this.buttonArray.push(d);
   this.screenText = new ScreenText(m_ui, this.text, m_centerX, window.innerHeight - 255, 20, "center");
   this.clock = new Clock(m_ui, 50, 75, 60);
   a = Math.floor(40 / (this.views.length - 1)) * 1E3;
@@ -984,11 +1015,27 @@ LandmarkChallenge.prototype.PickOption = function(a, b) {
   this.buttonArray[1].SetEnabled(!1);
   this.buttonArray[2].SetEnabled(!1);
   this.buttonArray[3].SetEnabled(!1);
-  var d = this;
-  this.correctOption == a ? (m_sounds.correct.play(), m_player && (m_player.ScorePoints(this.baseScore, ""), m_player.ScorePoints(Math.floor(b / 5), m_locale.timebonus), b > 50 && m_player.ScorePoints(20, m_locale.speedbonus)), this.buttonArray[a - 1].SetEnabled(!0), this.buttonArray[a - 1].SetState(3)) : (m_sounds.wrong.play(), this.buttonArray[a - 1].SetEnabled(!0), this.buttonArray[this.correctOption - 1].SetEnabled(!0), this.buttonArray[a - 1].SetState(4), this.buttonArray[this.correctOption - 
-  1].SetState(5));
+  var c = this;
+  if(this.correctOption == a) {
+    m_sounds.correct.play();
+    if(m_player) {
+      var d = 0;
+      m_player.ScorePoints(this.baseScore, "");
+      d += this.baseScore;
+      m_player.ScorePoints(Math.floor(b / 5), m_locale.timebonus);
+      d += Math.floor(b / 5);
+      b > 50 && (m_player.ScorePoints(20, m_locale.speedbonus), d += 20);
+      Timeout(function() {
+        new Coins(m_ui, d)
+      }, 1E3)
+    }
+    this.buttonArray[a - 1].SetEnabled(!0);
+    this.buttonArray[a - 1].SetState(3)
+  }else {
+    m_sounds.wrong.play(), this.buttonArray[a - 1].SetEnabled(!0), this.buttonArray[this.correctOption - 1].SetEnabled(!0), this.buttonArray[a - 1].SetState(4), this.buttonArray[this.correctOption - 1].SetState(5)
+  }
   setTimeout(function() {
-    d.callback()
+    c.callback()
   }, 2E3)
 };
 goog.exportSymbol("LandmarkChallenge", LandmarkChallenge);
@@ -998,25 +1045,26 @@ goog.exportProperty(LandmarkChallenge.prototype, "OnDestroy", LandmarkChallenge.
 goog.exportProperty(LandmarkChallenge.prototype, "PickOption", LandmarkChallenge.prototype.PickOption);
 goog.exportProperty(LandmarkChallenge.prototype, "RegisterCallback", LandmarkChallenge.prototype.RegisterCallback);
 owg.gg.PickingChallenge = {};
-function PickingChallenge(a, b, d) {
+function PickingChallenge(a, b, c) {
   this.screenText = null;
   this.baseScore = a;
   this.text = b;
-  var c = this;
+  var d = this;
   this.zoomState = this.flystate = !1;
   this.pickPos = [null, 0, 0, 0];
-  this.solutionPos = d;
+  this.solutionPos = c;
   this.pickOverlay = this.okayBtn = this.distancText = this.line = this.resultPin = this.posPin = null;
   this.mouseLock = !1;
   this.distanceLine = this.ogFrameLayer = this.clock = null;
   this.OnOkay = function() {
-    var a = ogGetScene(m_context), b = ogToCartesian(a, c.solutionPos[0], c.solutionPos[1], c.solutionPos[2]), d = ogWorldToWindow(a, b[0], b[1], b[2]), j = ogCalcDistanceWGS84(c.solutionPos[0], c.solutionPos[1], c.pickPos[1], c.pickPos[2]), j = Math.round(j / 1E3 * Math.pow(10, 1)) / Math.pow(10, 1);
-    c.resultPin.SetPos(d[0], d[1]);
-    if(c.posPin) {
-      c.distanceLine = new Kinetic.Shape({drawFunc:function() {
+    var a = ogGetScene(m_context), b = ogToCartesian(a, d.solutionPos[0], d.solutionPos[1], d.solutionPos[2]), c = ogWorldToWindow(a, b[0], b[1], b[2]), j = ogCalcDistanceWGS84(d.solutionPos[0], d.solutionPos[1], d.pickPos[1], d.pickPos[2]), j = Math.round(j / 1E3 * Math.pow(10, 1)) / Math.pow(10, 1);
+    d.resultPin.SetPos(c[0], c[1]);
+    m_sounds.ping1.play();
+    if(d.posPin) {
+      d.distanceLine = new Kinetic.Shape({drawFunc:function() {
         var a = this.getContext();
-        a.moveTo(d[0], d[1]);
-        a.lineTo(c.posPin.x, c.posPin.y);
+        a.moveTo(c[0], c[1]);
+        a.lineTo(d.posPin.x, d.posPin.y);
         a.lineWidth = 3;
         a.strokeStyle = "#DD6600";
         a.stroke();
@@ -1024,58 +1072,69 @@ function PickingChallenge(a, b, d) {
         a.fillStyle = "#FF0";
         a.font = "16pt TitanOne";
         a.textAlign = "left";
-        a.fillText(j + "km", d[0], d[1]);
+        a.fillText(j + "km", c[0], c[1]);
         a.lineWidth = 2;
         a.strokeStyle = "#000";
-        a.strokeText(j + "km", d[0], d[1])
-      }}), m_ui.add(c.distanceLine)
+        a.strokeText(j + "km", c[0], c[1])
+      }}), m_ui.add(d.distanceLine)
     }
-    m_player && j < 50 && (m_player.ScorePoints(Math.floor(c.baseScore / 50 * (50 - j)), m_locale.estimation), m_player.ScorePoints(Math.floor(c.clock.seconds / 5), m_locale.timebonus), c.clock.seconds > 50 && m_player.ScorePoints(20, m_locale.speedbonus));
+    if(m_player && j < 50) {
+      var g = 0;
+      m_player.ScorePoints(Math.floor(d.baseScore / 50 * (50 - j)), m_locale.estimation);
+      g += Math.floor(d.baseScore / 50 * (50 - j));
+      m_player.ScorePoints(Math.floor(d.clock.seconds / 5), m_locale.timebonus);
+      g += Math.floor(d.clock.seconds / 5);
+      d.clock.seconds > 50 && (m_player.ScorePoints(20, m_locale.speedbonus), g += 20);
+      Timeout(function() {
+        new Coins(m_ui, g)
+      }, 1E3)
+    }
     setTimeout(function() {
-      c.callback()
+      d.callback()
     }, 2500)
   };
   this.MouseOverOkBtn = function() {
-    c.mouseLock = !0
+    d.mouseLock = !0
   };
   this.MouseOutOkBtn = function() {
-    c.mouseLock = !1
+    d.mouseLock = !1
   };
   this.OnMouseDown = function() {
-    if(c.mouseLock == !1) {
+    if(d.mouseLock == !1) {
       var a = m_stage.getMousePosition(), b = ogGetScene(m_context);
-      c.posPin && c.posPin.SetPos(a.x, a.y);
-      c.flystate == !0 && ogStopFlyTo(b);
-      var d = ogGetOrientation(b), b = ogPickGlobe(b, a.x, a.y);
-      c.ZoomIn(b, d);
-      if(c.posPin == null) {
-        c.posPin = new Pin(m_ui, m_images.pin_blue, a.x, a.y)
+      d.posPin && d.posPin.SetPos(a.x, a.y);
+      d.flystate == !0 && ogStopFlyTo(b);
+      var c = ogGetOrientation(b), b = ogPickGlobe(b, a.x, a.y);
+      d.ZoomIn(b, c);
+      m_sounds.swoosh.play();
+      if(d.posPin == null) {
+        d.posPin = new Pin(m_ui, m_images.pin_blue, a.x, a.y)
       }
-      c.zoomState = !0
+      d.zoomState = !0
     }
   };
   this.OnMouseUp = function() {
-    if(c.mouseLock == !1) {
+    if(d.mouseLock == !1) {
       var a = ogGetScene(m_context);
-      c.zoomState = !1;
+      d.zoomState = !1;
       var b = m_stage.getMousePosition();
-      c.pickPos = ogPickGlobe(a, b.x, b.y);
+      d.pickPos = ogPickGlobe(a, b.x, b.y);
       m_sounds.pick.play();
-      c.posPin != null && c.posPin.SetVisible(!1);
-      c.flystate == !0 && ogStopFlyTo(a);
-      c.ZoomOut()
+      d.posPin != null && d.posPin.SetVisible(!1);
+      d.flystate == !0 && ogStopFlyTo(a);
+      d.ZoomOut()
     }
   };
   this.OnMouseMove = function() {
-    if(c.zoomState == !0) {
+    if(d.zoomState == !0) {
       var a = m_stage.getMousePosition();
-      c.posPin != null && c.posPin.SetPos(a.x, a.y)
+      d.posPin != null && d.posPin.SetPos(a.x, a.y)
     }
   };
   this.FlightCallback = function() {
-    c.flystate = !1;
-    var a = ogGetScene(m_context), a = ogWorldToWindow(a, c.pickPos[4], c.pickPos[5], c.pickPos[6]);
-    c.posPin != null && (c.posPin.SetVisible(!0), c.posPin.SetPos(a[0], a[1]))
+    d.flystate = !1;
+    var a = ogGetScene(m_context), a = ogWorldToWindow(a, d.pickPos[4], d.pickPos[5], d.pickPos[6]);
+    d.posPin != null && (d.posPin.SetVisible(!0), d.posPin.SetPos(a[0], a[1]))
   }
 }
 PickingChallenge.prototype = new Challenge(1);
@@ -1150,20 +1209,20 @@ owg.gg.GameData = {};
 function GameData(a) {
   this.questions = [];
   var b = this;
-  jQuery.getJSON("data/challenges_" + m_lang + ".json", function(d) {
-    var c = [];
-    jQuery.each(d, function(a, b) {
+  jQuery.getJSON("data/challenges_" + m_lang + ".json", function(c) {
+    var d = [];
+    jQuery.each(c, function(a, b) {
       if(b.Type == 0) {
-        var d = b.BaseScore, j = b.Title, d = new LandmarkChallenge(d, b.Options, b.CorrectOption, b.Views, j);
-        c.push(d)
+        var c = b.BaseScore, j = b.Title, c = new LandmarkChallenge(c, b.Options, b.CorrectOption, b.Views, j);
+        d.push(c)
       }else {
         if(b.Type == 1) {
-          var g = b.Longitude, i = b.Latitude, l = b.Elevation, d = b.BaseScore, j = b.Title, d = new PickingChallenge(d, j, [g, i, l]);
-          c.push(d)
+          var g = b.Longitude, i = b.Latitude, l = b.Elevation, c = b.BaseScore, j = b.Title, c = new PickingChallenge(c, j, [g, i, l]);
+          d.push(c)
         }
       }
     });
-    b.questions = c;
+    b.questions = d;
     a && a()
   })
 }
@@ -1175,21 +1234,21 @@ GameData.prototype.PickChallenge = function() {
 goog.exportSymbol("GameData", GameData);
 goog.exportProperty(GameData.prototype, "PickChallenge", GameData.prototype.PickChallenge);
 owg.gg.TouchKeyboard = {};
-function TouchKeyboard(a, b, d, c, e, f) {
+function TouchKeyboard(a, b, c, d, e, f) {
   this.caption = e;
   this.callback = f;
   this.layer = a;
-  this.x = d;
-  this.y = c;
-  this.oX = d + 8;
-  this.oY = c + 38;
+  this.x = c;
+  this.y = d;
+  this.oX = c + 8;
+  this.oY = d + 38;
   this.input = "";
   var h = this;
   this.shape = new Kinetic.Shape({drawFunc:function() {
     var a = this.getContext();
     a.beginPath();
     a.rect(h.x, h.y, 853, 390);
-    var b = a.createLinearGradient(d, c, d, c + 390);
+    var b = a.createLinearGradient(c, d, c, d + 390);
     b.addColorStop(0, "#555");
     b.addColorStop(1, "#CCC");
     a.fillStyle = b;
@@ -1200,10 +1259,10 @@ function TouchKeyboard(a, b, d, c, e, f) {
     a.textAlign = "left";
     a.fillStyle = "#FFF";
     a.font = "16pt TitanOne";
-    a.fillText(e + h.input + "_", d + 20, c + 30);
+    a.fillText(e + h.input + "_", c + 20, d + 30);
     a.lineWidth = 1;
     a.strokeStyle = "#000";
-    a.strokeText(e + h.input + "_", d + 20, c + 30)
+    a.strokeText(e + h.input + "_", c + 20, d + 30)
   }});
   a.add(this.shape);
   this.Append = function(a) {
@@ -1237,9 +1296,9 @@ TouchKeyboard.prototype.Destroy = function() {
   this.spaceButton.Destroy()
 };
 owg.gg.GlobeGame = {};
-var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_sounds = {}, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_stage = null, m_ui = null, m_static = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "de", m_datahost = "http://localhost", m_locale = [], m_player = null, m_score = null, m_gameData = null, m_globeGame = null;
+GlobeGame.STATE = {IDLE:0, CHALLENGE:1, HIGHSCORE:2};
+var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_sounds = {}, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_stage = null, m_ui = null, m_static = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "de", m_datahost = "http://localhost", m_locale = [], m_player = null, m_state = GlobeGame.STATE.IDLE, m_score = null, m_gameData = null, m_globeGame = null;
 function GlobeGame(a, b) {
-  this.state = GlobeGame.STATE.IDLE;
   b && (m_datahost = b);
   this.qCount = 0;
   this.currentChallenge = null;
@@ -1249,22 +1308,36 @@ function GlobeGame(a, b) {
   m_ui = new Kinetic.Layer;
   m_static = new Kinetic.Layer
 }
-GlobeGame.STATE = {IDLE:0, CHALLENGE:1, HIGHSCORE:2};
 GlobeGame.prototype.Init = function(a, b) {
-  var d = this;
+  var c = this;
   m_gameData = new GameData(function() {
-    var a = {btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", btn_02:"art/btn_02.png", btn_02_c:"art/btn_02_c.png", btn_02_h:"art/btn_02_h.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png", nw_logo:"art/nw_logo.png"}, b = {pick:"sfx/pick.wav", 
-    correct:"sfx/correct.wav", wrong:"sfx/wrong.wav", coins:"sfx/coins.wav", highscores:"sfx/highscores.mp3", track01:"sfx/track01.mp3"};
-    d.LoadLanguage(function() {
-      d.LoadSounds(b, function() {
-        d.LoadImages(a, function() {
+    var a = {btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", btn_02:"art/btn_02.png", btn_02_c:"art/btn_02_c.png", btn_02_h:"art/btn_02_h.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png", nw_logo:"art/nw_logo.png", logo:"art/logo.png", 
+    coins:"art/coins.png"}, b = {pick:"sfx/pick.wav", correct:"sfx/correct.wav", wrong:"sfx/wrong.wav", coins:"sfx/coins.wav", highscores:"sfx/highscores.mp3", track01:"sfx/track01.mp3", swoosh:"sfx/swoosh.wav", ping1:"sfx/ping1.wav"}, f = new ScreenText(m_ui, "Loading language...", m_centerX, m_centerY, 25, "center");
+    c.LoadLanguage(function() {
+      f.text = "Loading sounds...";
+      c.LoadSounds(b, function() {
+        f.text = "Loading images...";
+        c.LoadImages(a, function() {
+          f.Destroy();
           var a = new Kinetic.Shape({drawFunc:function() {
-            this.getContext().drawImage(m_images.nw_logo, 0, window.innerHeight - 82, 670, 82)
+            var a = this.getContext();
+            a.drawImage(m_images.nw_logo, 0, window.innerHeight - 82, 670, 82);
+            m_state != GlobeGame.STATE.CHALLENGE && a.drawImage(m_images.logo, window.innerWidth / 2 - 352, 30, 705, 206);
+            a.textAlign = "right";
+            a.fillStyle = "#FFF";
+            a.font = "13pt TitanOne";
+            a.fillText("www.openwebglobe.org", window.innerWidth - 10, window.innerHeight - 10);
+            a.lineWidth = 1;
+            a.strokeStyle = "#000";
+            a.strokeText("www.openwebglobe.org", window.innerWidth - 10, window.innerHeight - 10)
           }});
           m_static.add(a);
           m_sounds.track01.volume = 0.25;
+          m_sounds.track01.addEventListener("ended", function() {
+            m_sounds.track01.play()
+          }, !0);
           m_sounds.track01.play();
-          d.EnterIdle()
+          c.EnterIdle()
         })
       })
     })
@@ -1280,14 +1353,15 @@ GlobeGame.prototype.Init = function(a, b) {
   m_stage.add(m_static);
   m_stage.add(m_ui);
   m_stage.onFrame(function(b) {
-    d.OnCanvasRender(b);
+    c.OnCanvasRender(b);
     a(b)
   });
   m_stage.start()
 };
 GlobeGame.prototype.EnterIdle = function() {
   var a = this;
-  (new MessageDialog(m_ui, m_locale.start, 500, 250)).RegisterCallback(function() {
+  m_state = GlobeGame.STATE.IDLE;
+  (new MessageDialog(m_ui, m_locale.start, window.innerWidth / 2, window.innerHeight - 200, 500, 220)).RegisterCallback(function() {
     a.StopFlyTo();
     m_ui.setAlpha(0);
     a.EnterChallenge()
@@ -1295,7 +1369,7 @@ GlobeGame.prototype.EnterIdle = function() {
   this.FlyAround()
 };
 GlobeGame.prototype.EnterChallenge = function() {
-  this.state = GlobeGame.STATE.CHALLENGE;
+  m_state = GlobeGame.STATE.CHALLENGE;
   m_player = new Player("");
   m_score = new ScoreCount(m_ui);
   this.ProcessChallenge()
@@ -1303,10 +1377,12 @@ GlobeGame.prototype.EnterChallenge = function() {
 GlobeGame.prototype.EnterHighscore = function() {
   var a = this;
   m_ui.setAlpha(1);
+  m_state = GlobeGame.STATE.HIGHSCORE;
   this.FlyAround();
-  var b = new TouchKeyboard(m_ui, "keys", window.innerWidth / 2 - 426, window.innerHeight / 2 - 195, m_locale.entername, function(d) {
-    m_player.playerName = d;
+  var b = new TouchKeyboard(m_ui, "keys", window.innerWidth / 2 - 426, window.innerHeight / 2 - 195, m_locale.entername, function(c) {
+    m_player.playerName = c;
     b.Destroy();
+    m_sounds.highscores.play();
     jQuery.get("db.php?action=append&name=" + m_player.playerName + "&score=" + m_player.playerScore, function(b) {
       b = eval(b);
       (new HighScoreDialog(m_ui, b, 500, 650, m_player)).RegisterCallback(function() {
@@ -1324,13 +1400,13 @@ GlobeGame.prototype.FlyAround = function() {
   var a = ogGetScene(m_context), b = ogGetActiveCamera(a);
   ogSetPosition(b, 8.006896018981934, 46.27399444580078, 1E7);
   ogSetOrientation(b, 0, -90, 0);
-  var d = [{longitude:8.006896018981934, latitude:46.27399444580078, elevation:6440.3505859375, yaw:0.6147540983606554, pitch:-17.74590163934426, roll:0}, {longitude:8.078167915344238, latitude:46.43217849731445, elevation:3730.73583984375, yaw:-12.663934426229508, pitch:-5.737704918032784, roll:0}, {longitude:8.09277629852295, latitude:46.60940170288086, elevation:7909.09912109375, yaw:-50.9016393442623, pitch:-28.442622950819672, roll:0}, {longitude:7.97355318069458, latitude:46.78914260864258, 
-  elevation:1968.3804931640625, yaw:-108.60655737704916, pitch:-18.360655737704917, roll:0}, {longitude:8.006896018981934, latitude:46.27399444580078, elevation:1E7, yaw:0, pitch:-90, roll:0}], c = 0;
+  var c = [{longitude:8.006896018981934, latitude:46.27399444580078, elevation:6440.3505859375, yaw:0.6147540983606554, pitch:-17.74590163934426, roll:0}, {longitude:8.078167915344238, latitude:46.43217849731445, elevation:3730.73583984375, yaw:-12.663934426229508, pitch:-5.737704918032784, roll:0}, {longitude:8.09277629852295, latitude:46.60940170288086, elevation:7909.09912109375, yaw:-50.9016393442623, pitch:-28.442622950819672, roll:0}, {longitude:7.97355318069458, latitude:46.78914260864258, 
+  elevation:1968.3804931640625, yaw:-108.60655737704916, pitch:-18.360655737704917, roll:0}, {longitude:8.006896018981934, latitude:46.27399444580078, elevation:1E7, yaw:0, pitch:-90, roll:0}], d = 0;
   ogSetFlightDuration(a, 2E4);
   b = function() {
-    var b = d[c];
+    var b = c[d];
     ogFlyTo(a, b.longitude, b.latitude, b.elevation, b.yaw, b.pitch, b.roll);
-    c >= 4 ? c = 0 : c += 1
+    d >= 4 ? d = 0 : d += 1
   };
   ogSetInPositionFunction(m_context, b);
   b()
@@ -1353,21 +1429,21 @@ GlobeGame.prototype.UnregisterCycleCallback = function(a) {
   }
 };
 GlobeGame.prototype.LoadImages = function(a, b) {
-  for(var d in a) {
+  for(var c in a) {
     m_numImages++
   }
-  for(d in a) {
-    m_images[d] = new Image, m_images[d].onload = function() {
+  for(c in a) {
+    m_images[c] = new Image, m_images[c].onload = function() {
       ++m_loadedImages >= m_numImages && b != null && b()
-    }, m_images[d].src = a[d]
+    }, m_images[c].src = a[c]
   }
 };
 GlobeGame.prototype.LoadSounds = function(a, b) {
-  for(var d in a) {
+  for(var c in a) {
     m_numSounds++
   }
-  for(d in a) {
-    m_sounds[d] = document.createElement("audio"), m_sounds[d].setAttribute("src", a[d]), m_sounds[d].load(), m_sounds[d].addEventListener("canplay", function() {
+  for(c in a) {
+    m_sounds[c] = document.createElement("audio"), m_sounds[c].setAttribute("src", a[c]), m_sounds[c].load(), m_sounds[c].addEventListener("canplay", function() {
       ++m_loadedSounds >= m_numSounds && b != null && b()
     }, !0)
   }

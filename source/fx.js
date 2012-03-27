@@ -87,6 +87,61 @@ function FlyingText(layer, text, fontcolor)
 goog.exportSymbol('FlyingText', FlyingText);
 //-----------------------------------------------------------------------------
 /**
+ * @class Coins
+ * @constructor
+ *
+ * @description splash coins
+ *
+ * @author Robert Wüest robert.wst@gmail.ch
+ *
+ * @param {Object} layer
+ * @param {number} score
+ */
+function Coins(layer, score)
+{
+    this.score = score;
+    this.alpha = 1.0;
+    this.layer = layer;
+    var that = this;
+    m_sounds["coins"].play();
+
+    this.Step = function(step)
+    {
+        step += 1;
+        that.alpha = that.alpha -0.02;
+        if(that.alpha <= 0.0)
+        {
+            that.layer.remove(that.shape);
+        }
+        else
+        {
+            Timeout(function(){
+                that.Step(step);
+            }, 5);
+        }
+    };
+
+    this.shape = new Kinetic.Shape({drawFunc:function(){
+        var ctx = this.getContext();
+        ctx.beginPath(); // !!!
+        ctx.font = "35pt LuckiestGuy";
+        ctx.fillStyle = "#FE3";
+        var tX = 35;
+        var tY = 70;
+        ctx.textAlign = "left";
+        ctx.fillText("+"+that.score, tX, tY);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#000"; // stroke color
+        ctx.strokeText("+"+that.score, tX, tY);
+        ctx.drawImage(m_images["coins"], 122, 10, 80, 100);
+        this.setAlpha(that.alpha);
+    }});
+    layer.add(this.shape);
+    that.Step(0);
+}
+goog.exportSymbol('Coins', Coins);
+//-----------------------------------------------------------------------------
+/**
  * @description screen fade out return with callback
  * @param {function()} callback
  */

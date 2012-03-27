@@ -76,6 +76,7 @@ function PickingChallenge(baseScore, title, pos)
         var distance = ogCalcDistanceWGS84(that.solutionPos[0], that.solutionPos[1], that.pickPos[1], that.pickPos[2]);
         distance = Math.round((distance/1000)*Math.pow(10,1))/Math.pow(10,1);
         that.resultPin.SetPos(screenPos[0], screenPos[1]);
+        m_sounds["ping1"].play();
         if(that.posPin)
         {
             that.distanceLine = new Kinetic.Shape({drawFunc:function(){
@@ -101,12 +102,16 @@ function PickingChallenge(baseScore, title, pos)
         {
             if(distance < 50.0)
             {
-                m_player.ScorePoints(Math.floor((that.baseScore/50.0)*(50.0-distance)),m_locale["estimation"]);
-                m_player.ScorePoints(Math.floor(that.clock.seconds/5), m_locale["timebonus"]);
+                var score = 0;
+                m_player.ScorePoints(Math.floor((that.baseScore/50.0)*(50.0-distance)),m_locale["estimation"]); score +=Math.floor((that.baseScore/50.0)*(50.0-distance));
+                m_player.ScorePoints(Math.floor(that.clock.seconds/5), m_locale["timebonus"]);score += Math.floor(that.clock.seconds/5);
                 if(that.clock.seconds > 50)
                 {
-                    m_player.ScorePoints(20, m_locale["speedbonus"]);
+                    m_player.ScorePoints(20, m_locale["speedbonus"]);score+=20;
                 }
+                Timeout(function(){
+                    var coins = new Coins(m_ui, score);
+                }, 1000);
             }
         }
         setTimeout(function(){
@@ -148,6 +153,7 @@ function PickingChallenge(baseScore, title, pos)
             var ori = ogGetOrientation(scene);
             var result = ogPickGlobe(scene, pos.x, pos.y);
             that.ZoomIn(result, ori);
+            m_sounds["swoosh"].play();
             if(that.posPin == null)
             {
                 that.posPin = new Pin(m_ui, m_images["pin_blue"], pos.x, pos.y);

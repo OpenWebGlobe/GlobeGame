@@ -141,6 +141,7 @@ function Button01(layer, name, x, y, width, height, caption, fontsize)
     });
     this.shape.on("mouseup", function(){
         if(that.enabled){
+
             that.onMouseUpEvent();
             if(that.state < 3)
             {that.state = 1;
@@ -515,7 +516,7 @@ goog.exportProperty(ScreenText.prototype, 'Destroy', ScreenText.prototype.Destro
  * @param {number} width
  * @param {number} height
  */
-function MessageDialog(layer, message, width, height)
+function MessageDialog(layer, message, x, y,width, height)
 {
     this.message = message;
     this.layer = layer;
@@ -526,6 +527,7 @@ function MessageDialog(layer, message, width, height)
     this.Callback = function(){};
     this.OnOkay = function()
     {
+        m_sounds["ping1"].play();
         that.Destroy();
         that.Callback();
     };
@@ -533,8 +535,8 @@ function MessageDialog(layer, message, width, height)
     this.shape = new Kinetic.Shape({drawFunc:function(){
         var ctx = this.getContext();
         ctx.beginPath();
-        ctx.rect((window.innerWidth/2)-(width/2), (window.innerHeight/2)-(height/2), width, height);
-        var grad = ctx.createLinearGradient(window.innerWidth/2, (window.innerHeight/2)-(height/2), window.innerWidth/2, (window.innerHeight/2)+(height/2));
+        ctx.rect(x-(width/2), y-(height/2), width, height);
+        var grad = ctx.createLinearGradient(x, y-(height/2), x, y+(height/2));
         grad.addColorStop(0, "#555"); // light blue
         grad.addColorStop(1, "#CCC"); // dark blue
         ctx.fillStyle = grad;
@@ -546,16 +548,15 @@ function MessageDialog(layer, message, width, height)
         ctx.fillStyle = "#FFF";
         ctx.font = "18pt TitanOne";
         ctx.textAlign = "center";
-        ctx.fillText(that.message, window.innerWidth/2, window.innerHeight/2-(height/2)+80);
+        ctx.fillText(that.message, x, y-(height/2)+80);
         ctx.lineWidth = 1;
         ctx.strokeStyle = "#000"; // stroke color
-        ctx.strokeText(that.message, window.innerWidth/2, window.innerHeight/2-(height/2)+80);
+        ctx.strokeText(that.message, x, y-(height/2)+80);
 
     }});
     layer.add(this.shape);
-    this.okayButton = new Button01(m_ui, "dialog", window.innerWidth/2-150, window.innerHeight/2+(height/2)-100, 300, 69, "OK", 15);
-    this.okayButton.onClickEvent = this.OnOkay;
-
+    this.okayButton = new Button01(m_ui, "dialog", x-150, y+(height/2)-100, 300, 69, "OK", 15);
+    this.okayButton.onClickEvent = that.OnOkay;
 }
 //-----------------------------------------------------------------------------
 /**

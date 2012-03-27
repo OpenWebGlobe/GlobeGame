@@ -192,11 +192,16 @@ LandmarkChallenge.prototype.PickOption = function(option, timeleft) {
         m_sounds["correct"].play();
         if(m_player)
         {
-            m_player.ScorePoints(this.baseScore, "");
-            m_player.ScorePoints(Math.floor(timeleft / 5), m_locale["timebonus"]);
+            var score = 0;
+            m_player.ScorePoints(this.baseScore, ""); score += this.baseScore;
+            m_player.ScorePoints(Math.floor(timeleft / 5), m_locale["timebonus"]);score +=Math.floor(timeleft / 5);
             if (timeleft > 50) {
                 m_player.ScorePoints(20, m_locale["speedbonus"]);
+                score += 20;
             }
+            Timeout(function(){
+                var coins = new Coins(m_ui, score);
+            }, 1000);
         }
         this.buttonArray[option - 1].SetEnabled(true);
         this.buttonArray[option - 1].SetState(3);

@@ -37,10 +37,19 @@ goog.require('owg.gg.Challenge');
 goog.require('owg.gg.LandmarkChallenge');
 goog.require('owg.gg.PickingChallenge');
 goog.require('owg.gg.GameData');
+//-----------------------------------------------------------------------------
+/**
+ * @enum {number}
+ */
+GlobeGame.STATE = {
+    IDLE: 0,
+    CHALLENGE: 1,
+    HIGHSCORE: 2
+};
 /**
  * Members
  * */
-var m_images = {};
+ var m_images = {};
 var m_loadedImages = 0;
 var m_numImages = 0;
 var m_sounds = {};
@@ -57,6 +66,8 @@ var m_lang = "de";
 var m_datahost = "http://localhost";
 var m_locale = [];
 var m_player = null;
+/** @type {GlobeGame.STATE} */
+var m_state = GlobeGame.STATE.IDLE;
 var m_score = null;
 /** @type {GameData} */
 var m_gameData = null;
@@ -75,7 +86,6 @@ var m_globeGame = null;
  */
 function GlobeGame(canvasDiv, datapath)
 {
-    this.state = GlobeGame.STATE.IDLE;
     if(datapath)
     {
         m_datahost = datapath;
@@ -89,15 +99,7 @@ function GlobeGame(canvasDiv, datapath)
     m_ui = new Kinetic.Layer();
     m_static = new Kinetic.Layer();
 }
-//-----------------------------------------------------------------------------
-/**
- * @enum {number}
- */
-GlobeGame.STATE = {
-    IDLE: 0,
-    CHALLENGE: 1,
-    HIGHSCORE: 2
-};
+
 //-----------------------------------------------------------------------------
 /**
  * @description init game and preload data
@@ -130,7 +132,9 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
             pin_red: "art/pin_red.png",
             pin_green: "art/pin_green.png",
             pin_yellow: "art/pin_yellow.png",
-            nw_logo: "art/nw_logo.png"
+            nw_logo: "art/nw_logo.png",
+            logo: "art/logo.png",
+            coins: "art/coins.png"
         };
         // Preload sounds
         var sounds = {
@@ -139,21 +143,40 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
             wrong: "sfx/wrong.wav",
             coins: "sfx/coins.wav",
             highscores: "sfx/highscores.mp3",
-            track01: "sfx/track01.mp3"
+            track01: "sfx/track01.mp3",
+            swoosh: "sfx/swoosh.wav",
+            ping1: "sfx/ping1.wav"
         };
 
-
+        var loadingText = new ScreenText(m_ui, "Loading language...",m_centerX, m_centerY, 25, "center");
         that.LoadLanguage(function()
         {
+            loadingText.text = "Loading sounds...";
             that.LoadSounds(sounds, function(){
+                loadingText.text = "Loading images...";
                 that.LoadImages(sources, function(){
+                    loadingText.Destroy();
                     /* nw logo */
-                    var nw_logo = new Kinetic.Shape({drawFunc:function(){
+                    var statics = new Kinetic.Shape({drawFunc:function(){
                         var ctx = this.getContext();
                         ctx.drawImage(m_images["nw_logo"], 0, window.innerHeight-82, 670, 82);
+                        if(m_state != GlobeGame.STATE.CHALLENGE)
+                        {
+                            ctx.drawImage(m_images["logo"], window.innerWidth/2-352, 30, 705, 206);
+                        }
+                        ctx.textAlign = "right";
+                        ctx.fillStyle = "#FFF";
+                        ctx.font = "13pt TitanOne";
+                        ctx.fillText("www.openwebglobe.org", window.innerWidth-10, window.innerHeight-10);
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = "#000"; // stroke color
+                        ctx.strokeText("www.openwebglobe.org", window.innerWidth-10, window.innerHeight-10);
                     }});
-                    m_static.add(nw_logo);
+                    m_static.add(statics);
                     m_sounds["track01"].volume = 0.25;
+                    m_sounds["track01"].addEventListener("ended", function() {
+                        m_sounds["track01"].play();
+                    },true);
                     m_sounds["track01"].play();
 
                     that.EnterIdle();
@@ -204,7 +227,8 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
 GlobeGame.prototype.EnterIdle = function()
 {
     var that = this;
-    var startMessage = new MessageDialog(m_ui, m_locale.start, 500, 250);
+    m_state = GlobeGame.STATE.IDLE;
+    var startMessage = new MessageDialog(m_ui, m_locale.start, window.innerWidth/2, window.innerHeight-200, 500, 220);
     startMessage.RegisterCallback(function(){
         that.StopFlyTo();
         m_ui.setAlpha(0.0);
@@ -218,7 +242,7 @@ GlobeGame.prototype.EnterIdle = function()
  */
 GlobeGame.prototype.EnterChallenge = function()
 {
-    this.state = GlobeGame.STATE.CHALLENGE;
+    m_state = GlobeGame.STATE.CHALLENGE;
     m_player = new Player("");
     m_score = new ScoreCount(m_ui);
     this.ProcessChallenge();
@@ -231,11 +255,13 @@ GlobeGame.prototype.EnterHighscore = function()
 {
     var that = this;
     m_ui.setAlpha(1.0);
+    m_state = GlobeGame.STATE.HIGHSCORE;
     this.FlyAround();
     var keyboard = new TouchKeyboard(m_ui,"keys",(window.innerWidth/2)-426,(window.innerHeight/2)-195, m_locale["entername"],
         function(name){
             m_player.playerName = name;
             keyboard.Destroy();
+            m_sounds["highscores"].play();
 
             jQuery.get('db.php?action=append&name='+m_player.playerName+'&score='+m_player.playerScore, function(data) {
 
