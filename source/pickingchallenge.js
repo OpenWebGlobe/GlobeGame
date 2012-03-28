@@ -224,7 +224,7 @@ PickingChallenge.prototype.constructor=PickingChallenge;
 PickingChallenge.prototype.Prepare = function(delay)
 {
     var that = this;
-    setTimeout(function()
+    var prepFunc = function()
     {
         that.screenText = new ScreenText(m_ui, that.text,m_centerX, window.innerHeight-255, 26, "center");
         that.pickOverlay = new Kinetic.Rect({
@@ -256,7 +256,15 @@ PickingChallenge.prototype.Prepare = function(delay)
             layer: "ch_boundaries",
             service: "owg"
         });
-    }, delay);
+    };
+    setTimeout(prepFunc, delay);
+    if(delay > 0)
+    {
+        setTimeout(prepFunc, delay);
+    }else
+    {
+        prepFunc();
+    }
 };
 //-----------------------------------------------------------------------------
 /**

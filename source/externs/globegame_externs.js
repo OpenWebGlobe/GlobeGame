@@ -7,6 +7,7 @@ var Pin = {
 var LandmarkChallenge =
 {
     "Activate": {},
+    "Prepare": {},
     "Destroy": {},
     "draftmode": {}
 };
@@ -14,6 +15,7 @@ var LandmarkChallenge =
 var PickingChallenge =
 {
     "Activate": {},
+    "Prepare": {},
     "Destroy": {},
     "draftmode": {}
 };

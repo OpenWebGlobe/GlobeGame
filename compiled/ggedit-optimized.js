@@ -454,6 +454,7 @@ function Update() {
   var a = jQuery.parseJSON(document.getElementById("output").innerHTML);
   m_cType == 0 ? m_challenge = new LandmarkChallenge(a.BaseScore, a.Options, a.CorrectOption, a.Views, a.Title) : (m_stage.remove(m_static), m_challenge = new PickingChallenge(a.BaseScore, a.Title, [a.Longitude, a.Latitude, a.Elevation]));
   m_challenge.draftmode = !0;
+  m_challenge.Prepare(0);
   m_challenge.Activate()
 }
 function ClearViews() {

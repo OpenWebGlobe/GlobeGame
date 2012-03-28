@@ -97,7 +97,7 @@ LandmarkChallenge.prototype.Prepare = function(delay)
     var btn4 = null;
 
     var that = this;
-    setTimeout(function()
+    var prepFunc = function()
     {
         btn1 = new Button01(m_ui, "btn1", m_centerX-310, window.innerHeight-239, 300, 69, that.options[0], 15);
         btn1.onClickEvent = that.onOption1;
@@ -120,7 +120,14 @@ LandmarkChallenge.prototype.Prepare = function(delay)
         ogSetPosition(camId,that.views[0].longitude,that.views[0].latitude, that.views[0].elevation);
         ogSetOrientation(camId,that.views[0]["yaw"],that.views[0]["pitch"], that.views[0]["roll"]);
         ogSetInPositionFunction(m_context,that.FlightCallback);
-    }, delay);
+    };
+    if(delay > 0)
+    {
+        setTimeout(prepFunc, delay);
+    }else
+    {
+        prepFunc();
+    }
 };
 //-----------------------------------------------------------------------------
 /**

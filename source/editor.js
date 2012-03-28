@@ -286,6 +286,7 @@ function Update()
     {
         m_challenge = new LandmarkChallenge(val["BaseScore"], val["Options"], val["CorrectOption"], val["Views"], val["Title"]);
         m_challenge.draftmode = true;
+        m_challenge.Prepare(0);
         m_challenge.Activate();
     }else
     {
@@ -293,6 +294,7 @@ function Update()
         var pos = [ val["Longitude"], val["Latitude"], val["Elevation"] ];
         m_challenge = new PickingChallenge(val["BaseScore"], val["Title"], pos);
         m_challenge.draftmode = true;
+        m_challenge.Prepare(0);
         m_challenge.Activate();
     }
 }

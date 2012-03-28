@@ -976,8 +976,7 @@ function LandmarkChallenge(a, b, c, d, f) {
 LandmarkChallenge.prototype = new Challenge(0);
 LandmarkChallenge.prototype.constructor = LandmarkChallenge;
 LandmarkChallenge.prototype.Prepare = function(a) {
-  var b = null, c = null, d = null, f = null, e = this;
-  setTimeout(function() {
+  var b = null, c = null, d = null, f = null, e = this, g = function() {
     b = new Button01(m_ui, "btn1", m_centerX - 310, window.innerHeight - 239, 300, 69, e.options[0], 15);
     b.onClickEvent = e.onOption1;
     c = new Button01(m_ui, "btn2", m_centerX + 10, window.innerHeight - 239, 300, 69, e.options[1], 15);
@@ -992,13 +991,14 @@ LandmarkChallenge.prototype.Prepare = function(a) {
     e.buttonArray.push(f);
     e.screenText = new ScreenText(m_ui, e.text, m_centerX, window.innerHeight - 255, 26, "center");
     e.clock = new Clock(m_ui, 50, 75, 60);
-    var a = Math.floor(40 / (e.views.length - 1)) * 1E3, j = ogGetScene(m_context);
-    ogSetFlightDuration(j, a);
-    a = ogGetActiveCamera(j);
+    var a = Math.floor(40 / (e.views.length - 1)) * 1E3, g = ogGetScene(m_context);
+    ogSetFlightDuration(g, a);
+    a = ogGetActiveCamera(g);
     ogSetPosition(a, e.views[0].longitude, e.views[0].latitude, e.views[0].elevation);
     ogSetOrientation(a, e.views[0].yaw, e.views[0].pitch, e.views[0].roll);
     ogSetInPositionFunction(m_context, e.FlightCallback)
-  }, a)
+  };
+  a > 0 ? setTimeout(g, a) : g()
 };
 LandmarkChallenge.prototype.Activate = function() {
   var a = this;
@@ -1159,8 +1159,7 @@ function PickingChallenge(a, b, c) {
 PickingChallenge.prototype = new Challenge(1);
 PickingChallenge.prototype.constructor = PickingChallenge;
 PickingChallenge.prototype.Prepare = function(a) {
-  var b = this;
-  setTimeout(function() {
+  var b = this, c = function() {
     b.screenText = new ScreenText(m_ui, b.text, m_centerX, window.innerHeight - 255, 26, "center");
     b.pickOverlay = new Kinetic.Rect({x:0, y:0, width:window.innerWidth, height:window.innerHeight});
     b.pickOverlay.on("mousedown", b.OnMouseDown);
@@ -1178,7 +1177,9 @@ PickingChallenge.prototype.Prepare = function(a) {
     ogSetOrientation(a, 0, -90, 0);
     ogSetInPositionFunction(m_context, b.FlightCallback);
     b.ogFrameLayer = ogAddImageLayer(m_globe, {url:[m_datahost], layer:"ch_boundaries", service:"owg"})
-  }, a)
+  };
+  setTimeout(c, a);
+  a > 0 ? setTimeout(c, a) : c()
 };
 PickingChallenge.prototype.Activate = function() {
   var a = this;
