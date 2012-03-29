@@ -107,12 +107,12 @@ if(!COMPILED) {
     function a(e) {
       if(!(e in d.written)) {
         if(!(e in d.visited) && (d.visited[e] = !0, e in d.requires)) {
-          for(var g in d.requires[e]) {
-            if(g in d.nameToPath) {
-              a(d.nameToPath[g])
+          for(var f in d.requires[e]) {
+            if(f in d.nameToPath) {
+              a(d.nameToPath[f])
             }else {
-              if(!goog.getObjectByName(g)) {
-                throw Error("Undefined nameToPath for " + g);
+              if(!goog.getObjectByName(f)) {
+                throw Error("Undefined nameToPath for " + f);
               }
             }
           }
@@ -835,6 +835,32 @@ ScoreCount.prototype.Destroy = function() {
 };
 goog.exportSymbol("ScoreCount", ScoreCount);
 goog.exportProperty(ScoreCount.prototype, "Destroy", ScoreCount.prototype.Destroy);
+function ProgressCount(a, b) {
+  this.layer = a;
+  this.qCount = 0;
+  this.qMax = b;
+  var c = this;
+  this.shape = new Kinetic.Shape({drawFunc:function() {
+    var a = this.getContext();
+    a.fillStyle = "#FFF";
+    a.font = "26pt TitanOne";
+    a.textAlign = "left";
+    a.fillText(c.qCount + "/" + c.qMax, 245, 47);
+    a.lineWidth = 2;
+    a.strokeStyle = "#000";
+    a.strokeText(c.qCount + "/" + c.qMax, 245, 47)
+  }});
+  a.add(this.shape)
+}
+ProgressCount.prototype.Inc = function() {
+  this.qCount += 1
+};
+ProgressCount.prototype.Destroy = function() {
+  this.layer.remove(this.shape)
+};
+goog.exportSymbol("ProgressCount", ProgressCount);
+goog.exportProperty(ProgressCount.prototype, "Destroy", ProgressCount.prototype.Destroy);
+goog.exportProperty(ProgressCount.prototype, "Inc", ProgressCount.prototype.Inc);
 function Pin(a, b, c, d) {
   this.layer = a;
   var f = this;
@@ -1074,7 +1100,7 @@ function PickingChallenge(a, b, c) {
   this.solutionPos = c;
   this.pickOverlay = this.okayBtn = this.distancText = this.line = this.resultPin = this.posPin = null;
   this.mouseLock = !1;
-  this.distanceLine = this.ogFrameLayer = this.clock = null;
+  this.hint = this.distanceLine = this.ogFrameLayer = this.clock = null;
   this.OnOkay = function() {
     var a = ogGetScene(m_context), b = ogToCartesian(a, d.solutionPos[0], d.solutionPos[1], d.solutionPos[2]), c = ogWorldToWindow(a, b[0], b[1], b[2]), j = ogCalcDistanceWGS84(d.solutionPos[0], d.solutionPos[1], d.pickPos[1], d.pickPos[2]), j = Math.round(j / 1E3 * Math.pow(10, 1)) / Math.pow(10, 1);
     d.resultPin.SetPos(c[0], c[1]);
@@ -1119,6 +1145,9 @@ function PickingChallenge(a, b, c) {
     d.mouseLock = !1
   };
   this.OnMouseDown = function() {
+    if(d.hint) {
+      m_ui.remove(d.hint), d.hint = null
+    }
     if(d.mouseLock == !1) {
       var a = m_stage.getMousePosition(), b = ogGetScene(m_context);
       d.posPin && d.posPin.SetPos(a.x, a.y);
@@ -1171,6 +1200,18 @@ PickingChallenge.prototype.Prepare = function(a) {
     b.okayBtn.onClickEvent = b.OnOkay;
     b.okayBtn.onMouseOverEvent = b.MouseOverOkBtn;
     b.okayBtn.onMouseOutEvent = b.MouseOutOkBtn;
+    b.hint = new Kinetic.Shape({drawFunc:function() {
+      var a = this.getContext();
+      a.beginPath();
+      a.font = "22pt TitanOne";
+      a.fillStyle = "#0FF";
+      a.textAlign = "center";
+      a.fillText(m_locale.pickhint, window.innerWidth / 2, window.innerHeight / 2);
+      a.lineWidth = 3;
+      a.strokeStyle = "#000";
+      a.strokeText(m_locale.pickhint, window.innerWidth / 2, window.innerHeight / 2)
+    }});
+    m_ui.add(b.hint);
     b.clock = new Clock(m_ui, 50, 75, 60);
     var a = ogGetScene(m_context), a = ogGetActiveCamera(a);
     ogSetPosition(a, 8.225578, 46.8248707, 28E4);
@@ -1178,8 +1219,9 @@ PickingChallenge.prototype.Prepare = function(a) {
     ogSetInPositionFunction(m_context, b.FlightCallback);
     b.ogFrameLayer = ogAddImageLayer(m_globe, {url:[m_datahost], layer:"ch_boundaries", service:"owg"})
   };
-  setTimeout(c, a);
-  a > 0 ? setTimeout(c, a) : c()
+  a > 0 ? setTimeout(function() {
+    c()
+  }, a) : c()
 };
 PickingChallenge.prototype.Activate = function() {
   var a = this;
@@ -1199,6 +1241,7 @@ PickingChallenge.prototype.Destroy = function(a) {
 PickingChallenge.prototype.OnDestroy = function() {
   this.clock.Destroy();
   var a = this;
+  this.hint && m_ui.remove(a.hint);
   this.draftmode ? (a.screenText.Destroy(), a.resultPin.Destroy(), a.posPin && (a.posPin.Destroy(), a.distanceLine && m_ui.remove(a.distanceLine)), a.okayBtn.Destroy(), m_ui.remove(a.pickOverlay), ogRemoveImageLayer(a.ogFrameLayer), a.eventDestroyed()) : FadeOut(function() {
     a.screenText.Destroy();
     a.resultPin.Destroy();
@@ -1215,7 +1258,7 @@ PickingChallenge.prototype.ZoomIn = function(a) {
   this.flystate = !0;
   var b = ogGetScene(m_context);
   ogSetFlightDuration(b, 1E3);
-  ogFlyToLookAtPosition(b, a[1], a[2], a[3], 2E4, 0, -90, 0)
+  ogFlyToLookAtPosition(b, a[1], a[2], a[3], 26E3, 0, -90, 0)
 };
 PickingChallenge.prototype.ZoomOut = function() {
   this.flystate = !0;
@@ -1323,7 +1366,7 @@ TouchKeyboard.prototype.Destroy = function() {
 };
 owg.gg.GlobeGame = {};
 GlobeGame.STATE = {IDLE:0, CHALLENGE:1, HIGHSCORE:2};
-var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_sounds = {}, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_stage = null, m_ui = null, m_static = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "de", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_state = GlobeGame.STATE.IDLE, m_score = null, m_gameData = null, m_globeGame = null;
+var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_sounds = {}, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_stage = null, m_ui = null, m_static = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "de", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 10, m_progress = null, m_state = GlobeGame.STATE.IDLE, m_score = null, m_gameData = null, m_globeGame = null;
 function GlobeGame(a, b) {
   b && (m_datahost = b);
   m_qCount = 0;
@@ -1374,7 +1417,7 @@ GlobeGame.prototype.Init = function(a, b) {
           m_sounds.track04.addEventListener("ended", function() {
             m_sounds.track01.play()
           }, !0);
-          m_sounds["track0" + Math.floor(Math.random() * 5)].play();
+          m_sounds["track0" + Math.floor(Math.random() * 4)].play();
           c.EnterIdle()
         })
       })
@@ -1410,10 +1453,12 @@ GlobeGame.prototype.EnterChallenge = function() {
   m_state = GlobeGame.STATE.CHALLENGE;
   m_player = new Player("");
   m_score = new ScoreCount(m_ui);
+  m_progress = new ProgressCount(m_ui, m_qMax);
   this.ProcessChallenge()
 };
 GlobeGame.prototype.EnterHighscore = function() {
   var a = this;
+  m_progress && m_progress.Destroy();
   m_ui.setAlpha(1);
   m_state = GlobeGame.STATE.HIGHSCORE;
   this.FlyAround();
@@ -1456,8 +1501,7 @@ GlobeGame.prototype.CycleCallback = function() {
   }
 };
 GlobeGame.prototype.InitQuiz = function() {
-  this.currentChallenge.Activate();
-  this.state = 2
+  this.currentChallenge.Activate()
 };
 GlobeGame.prototype.RegisterCycleCallback = function(a, b) {
   this.callbacks.push([a, b])
@@ -1498,7 +1542,8 @@ GlobeGame.prototype.ProcessChallenge = function() {
 };
 GlobeGame.prototype.NextChallenge = function() {
   m_qCount += 1;
-  m_qCount <= 10 ? (m_globeGame.currentChallenge = m_gameData.PickChallenge(), m_globeGame.currentChallenge.RegisterCallback(m_globeGame.ProcessChallenge), m_globeGame.currentChallenge.Prepare(1E3), BlackScreen(3500, function() {
+  m_progress.Inc();
+  m_qCount <= m_qMax ? (m_globeGame.currentChallenge = m_gameData.PickChallenge(), m_globeGame.currentChallenge.RegisterCallback(m_globeGame.ProcessChallenge), m_globeGame.currentChallenge.Prepare(1E3), BlackScreen(3500, function() {
     m_globeGame.InitQuiz()
   })) : (setTimeout(function() {
     m_globeGame.EnterHighscore()

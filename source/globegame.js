@@ -67,6 +67,8 @@ var m_datahost = "http://localhost";
 var m_locale = [];
 var m_player = null;
 var m_qCount = 0;
+var m_qMax = 10;
+var m_progress = null;
 /** @type {GlobeGame.STATE} */
 var m_state = GlobeGame.STATE.IDLE;
 var m_score = null;
@@ -199,7 +201,7 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
                     m_sounds["track04"].addEventListener("ended", function() {
                         m_sounds["track01"].play();
                     },true);
-                    var index = Math.floor(Math.random()*5);
+                    var index = Math.floor(Math.random()*4);
                     m_sounds["track0"+index].play();
                     that.EnterIdle();
                 });
@@ -267,7 +269,9 @@ GlobeGame.prototype.EnterChallenge = function()
     m_state = GlobeGame.STATE.CHALLENGE;
     m_player = new Player("");
     m_score = new ScoreCount(m_ui);
+    m_progress = new ProgressCount(m_ui, m_qMax);
     this.ProcessChallenge();
+
 };
 //-----------------------------------------------------------------------------
 /**
@@ -276,6 +280,8 @@ GlobeGame.prototype.EnterChallenge = function()
 GlobeGame.prototype.EnterHighscore = function()
 {
     var that = this;
+    if(m_progress)
+        m_progress.Destroy();
     m_ui.setAlpha(1.0);
     m_state = GlobeGame.STATE.HIGHSCORE;
     this.FlyAround();
@@ -382,7 +388,6 @@ GlobeGame.prototype.CycleCallback = function()
 GlobeGame.prototype.InitQuiz = function()
 {
     this.currentChallenge.Activate();
-    this.state = 2;
 };
 //-----------------------------------------------------------------------------
 /**
@@ -497,7 +502,8 @@ GlobeGame.prototype.ProcessChallenge = function()
 GlobeGame.prototype.NextChallenge = function()
 {
     m_qCount += 1;
-    if(m_qCount <= 10){
+    m_progress.Inc();
+    if(m_qCount <= m_qMax){
         m_globeGame.currentChallenge = m_gameData.PickChallenge();
         m_globeGame.currentChallenge.RegisterCallback(m_globeGame.ProcessChallenge);
         m_globeGame.currentChallenge.Prepare(1000);

@@ -637,6 +637,57 @@ goog.exportSymbol('ScoreCount', ScoreCount);
 goog.exportProperty(ScoreCount.prototype, 'Destroy', ScoreCount.prototype.Destroy);
 //-----------------------------------------------------------------------------
 /**
+ * @class ProgressCount
+ * @constructor
+ *
+ * @description draw ProgressCount widget
+ *
+ * @author Robert Wüest robert.wst@gmail.ch
+ *
+ * @param {Object} layer
+ */
+function ProgressCount(layer, qMax)
+{
+    this.layer = layer;
+    this.qCount = 0;
+    this.qMax = qMax;
+    var that = this;
+
+    this.shape = new Kinetic.Shape({drawFunc:function(){
+        var ctx = this.getContext();
+        ctx.fillStyle = "#FFF";
+        ctx.font = "26pt TitanOne";
+        ctx.textAlign = "left";
+        ctx.fillText(that.qCount + "/" + that.qMax, 245, 47);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#000"; // stroke color
+        ctx.strokeText(that.qCount + "/" + that.qMax, 245, 47);
+
+    }});
+    layer.add(this.shape);
+}
+
+//-----------------------------------------------------------------------------
+/**
+ * @description destroy the widget
+ */
+ProgressCount.prototype.Inc = function()
+{
+    this.qCount +=1;
+};
+//-----------------------------------------------------------------------------
+/**
+ * @description destroy the widget
+ */
+ProgressCount.prototype.Destroy = function()
+{
+    this.layer.remove(this.shape);
+};
+goog.exportSymbol('ProgressCount', ProgressCount);
+goog.exportProperty(ProgressCount.prototype, 'Destroy', ProgressCount.prototype.Destroy);
+goog.exportProperty(ProgressCount.prototype, 'Inc', ProgressCount.prototype.Inc);
+//-----------------------------------------------------------------------------
+/**
  * @class Pin
  * @constructor
  *

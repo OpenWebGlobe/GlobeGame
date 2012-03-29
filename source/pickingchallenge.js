@@ -62,6 +62,7 @@ function PickingChallenge(baseScore, title, pos)
     this.clock = null;
     this.ogFrameLayer = null;
     this.distanceLine = null;
+    this.hint = null;
 
     /* Inline functions */
     //-----------------------------------------------------------------------------
@@ -140,6 +141,11 @@ function PickingChallenge(baseScore, title, pos)
      */
     this.OnMouseDown = function()
     {
+        if(that.hint)
+        {
+            m_ui.remove(that.hint);
+            that.hint = null;
+        }
         if(that.mouseLock == false)
         {
             var pos = m_stage.getMousePosition();
@@ -242,6 +248,18 @@ PickingChallenge.prototype.Prepare = function(delay)
         that.okayBtn.onClickEvent = that.OnOkay;
         that.okayBtn.onMouseOverEvent = that.MouseOverOkBtn;
         that.okayBtn.onMouseOutEvent = that.MouseOutOkBtn;
+        that.hint = new Kinetic.Shape({drawFunc: function(){
+            var ctx = this.getContext();
+            ctx.beginPath(); // !!!
+            ctx.font = "22pt TitanOne";
+            ctx.fillStyle = "#0FF";
+            ctx.textAlign = "center";
+            ctx.fillText(m_locale["pickhint"],  window.innerWidth/2, window.innerHeight/2);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "#000"; // stroke color
+            ctx.strokeText(m_locale["pickhint"], window.innerWidth/2, window.innerHeight/2);
+        }});
+        m_ui.add(that.hint);
 
         that.clock = new Clock(m_ui, 50, 75, 60);
 
@@ -257,10 +275,9 @@ PickingChallenge.prototype.Prepare = function(delay)
             service: "owg"
         });
     };
-    setTimeout(prepFunc, delay);
     if(delay > 0)
     {
-        setTimeout(prepFunc, delay);
+        setTimeout(function(){prepFunc(); }, delay);
     }else
     {
         prepFunc();
@@ -300,6 +317,10 @@ PickingChallenge.prototype.Destroy = function(event)
 PickingChallenge.prototype.OnDestroy = function()
 {   this.clock.Destroy();
     var that = this;
+    if(this.hint)
+    {
+        m_ui.remove(that.hint);
+    }
     if(!this.draftmode)
     {
         FadeOut(function(){
@@ -347,7 +368,7 @@ PickingChallenge.prototype.ZoomIn = function(pos, ori)
     this.flystate = true;
     var scene = ogGetScene(m_context);
     ogSetFlightDuration(scene,1000);
-    ogFlyToLookAtPosition(scene,pos[1],pos[2], pos[3],20000,0.00,-90.0, 0.0);
+    ogFlyToLookAtPosition(scene,pos[1],pos[2], pos[3],26000,0.00,-90.0, 0.0);
 };
 //-----------------------------------------------------------------------------
 /**
