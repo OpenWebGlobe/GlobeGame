@@ -201,7 +201,7 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
                     m_sounds["track04"].addEventListener("ended", function() {
                         m_sounds["track01"].play();
                     },true);
-                    var index = Math.floor(Math.random()*4);
+                    var index = Math.floor(Math.random()*4+1);
                     m_sounds["track0"+index].play();
                     that.EnterIdle();
                 });
