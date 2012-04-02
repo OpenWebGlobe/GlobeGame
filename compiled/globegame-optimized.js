@@ -1278,8 +1278,8 @@ owg.gg.GameData = {};
 function GameData(a) {
   this.questions = [];
   var b = this;
-  jQuery.getJSON("data/challenges_" + m_lang + ".json", function(c) {
-    var d = [];
+  jQuery.get("getChallenges.php?lang=" + m_lang, function(c) {
+    var c = jQuery.parseJSON(c), d = [];
     jQuery.each(c, function(a, b) {
       if(b.Type == 0) {
         var c = b.BaseScore, j = b.Title, c = new LandmarkChallenge(c, b.Options, b.CorrectOption, b.Views, j);

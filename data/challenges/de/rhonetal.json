@@ -1,0 +1,44 @@
+{
+        "Type": 0,
+        "BaseScore": 100,
+        "Title": "Welches Tal wird hier gesucht?",
+        "CorrectOption": 1,
+        "Options": ["Rhonetal", "St. Galler Rheintal", "Domleschg", "Valle Maggia"],
+        "Views": [
+            { "longitude": 7.020564556121826,
+                "latitude": 46.174644470214844,
+                "elevation": 1412.229248046875,
+                "yaw": 151.4916201117319,
+                "pitch": -8.949720670391061,
+                "roll": 0
+            },
+            { "longitude": 7.058945655822754,
+                "latitude": 46.11919021606445,
+                "elevation": 1412.229248046875,
+                "yaw": 78.4860335195531,
+                "pitch": -2.3128491620111724,
+                "roll": 0
+            },
+            { "longitude": 7.271801948547363,
+                "latitude": 46.19640350341797,
+                "elevation": 1412.229248046875,
+                "yaw": 49.474860335195565,
+                "pitch": -6.687150837988828,
+                "roll": 0
+            },
+            { "longitude": 7.508640289306641,
+                "latitude": 46.187416076660156,
+                "elevation": 14657.44140625,
+                "yaw": 43.59217877094975,
+                "pitch": -24.78770949720671,
+                "roll": 0
+            },
+            { "longitude": 7.85946798324585,
+                "latitude": 46.20303726196289,
+                "elevation": 23294.693359375,
+                "yaw": -84.62011173184354,
+                "pitch": -24.184357541899445,
+                "roll": 0
+            }
+        ]
+    }

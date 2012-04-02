@@ -39,12 +39,13 @@ function GameData(callback)
 {
     // load question array
     this.questions = [];
-    var that = this;
-    jQuery.getJSON('data/challenges_'+m_lang+'.json', function(data) {
+    var that = this
 
+    jQuery.get('getChallenges.php?lang='+m_lang, function(data) {
+        var jsonData = jQuery.parseJSON(data);
         var items = [];
         /** @type {{Type:number}} */
-        jQuery.each(data, function(key, val) {
+        jQuery.each(jsonData, function(key, val) {
             if(val.Type == 0)
             {
                 var baseScore = /** @type {number} */val.BaseScore;

@@ -1,0 +1,30 @@
+{
+        "Type": 0,
+        "BaseScore": 25,
+        "Title": "Welche schweizer Stadt ist hier zu sehen?",
+        "CorrectOption": 1,
+        "Options": ["Basel", "Solothurn", "Schaffhausen", "Bern"],
+        "Views": [
+            { "longitude": 7.588670253753662,
+                "latitude": 47.556880950927734,
+                "elevation": 486.9309387207031,
+                "yaw": 11.980891719745225,
+                "pitch": -32.1592356687898,
+                "roll": 0
+            },
+            { "longitude": 7.586132049560547,
+                "latitude": 47.55845642089844,
+                "elevation": 1110.6102294921875,
+                "yaw": 28.490445859872615,
+                "pitch": -71.19745222929936,
+                "roll": 0
+            },
+            { "longitude": 7.5950541496276855,
+                "latitude": 47.54943084716797,
+                "elevation": 3830.189453125,
+                "yaw": 28.490445859872615,
+                "pitch": -71.19745222929936,
+                "roll": 0
+            }
+        ]
+    }

@@ -1,0 +1,37 @@
+{
+        "Type": 0,
+        "BaseScore": 100,
+        "Title": "Welcher Gipfel der Schweiz wird hier gesucht?",
+        "CorrectOption": 2,
+        "Options": ["Finsteraarhorn", "Matterhorn", "Dufourspitze", "Zinalrothorn"],
+        "Views": [
+            { "longitude": 7.652095794677734,
+                "latitude": 45.97658157348633,
+                "elevation": 4953.4521484375,
+                "yaw": -271.53658536585357,
+                "pitch": -59.54268292682927,
+                "roll": 0
+            },
+            { "longitude": 7.6511430740356445,
+                "latitude": 45.95311737060547,
+                "elevation": 7242.8037109375,
+                "yaw": -338.5426829268292,
+                "pitch": -57.01829268292684,
+                "roll": 0
+            },
+            { "longitude": 7.684052467346191,
+                "latitude": 45.96586990356445,
+                "elevation": 5714.068359375,
+                "yaw": -413.45121951219505,
+                "pitch": -44.725609756097576,
+                "roll": 0
+            },
+            { "longitude": 7.7028326988220215,
+                "latitude": 45.97958755493164,
+                "elevation": 3825.180908203125,
+                "yaw": -451.4817073170731,
+                "pitch": -3.6219512195122063,
+                "roll": 0
+            }
+        ]
+    }
