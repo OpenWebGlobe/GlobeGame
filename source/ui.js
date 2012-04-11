@@ -803,7 +803,21 @@ function HighScoreDialog(layer, list, width, height, player)
         ctx.font = "25pt TitanOne";
         ctx.fillText(m_locale["highscores"], window.innerWidth/2, window.innerHeight/2-(height/2)+45);
         ctx.strokeText(m_locale["highscores"], window.innerWidth/2, window.innerHeight/2-(height/2)+45);
+        ctx.font = "12pt TitanOne";
+        ctx.lineWidth = 1;
+        ctx.fillStyle = "#FFF";
+        ctx.textAlign = "left";
+        ctx.fillText("Swizz-Quiz Entwicklung:", 20, window.innerHeight-110);
+        ctx.strokeText("Swizz-Quiz Entwicklung:", 20, window.innerHeight-110);
+        ctx.fillText("Institut Vermessung und Geoinformation", 20, window.innerHeight-95);
+        ctx.strokeText("Institut Vermessung und Geoinformation", 20, window.innerHeight-95)
+        ctx.fillText("Robert Wüest (robert.wueest@fhnw.ch)", 26, window.innerHeight-78);
+        ctx.strokeText("Robert Wüest (robert.wueest@fhnw.ch)", 26, window.innerHeight-78);
+        ctx.fillText("Martin Christen (martin.christen@fhnw.ch)", 26, window.innerHeight-65);
+        ctx.strokeText("Martin Christen (martin.christen@fhnw.ch)", 26, window.innerHeight-65);
         ctx.font = "15pt TitanOne";
+        ctx.textAlign = "center";
+        ctx.lineWidth = 2;
         for(var i = 1; i <= that.list.length; i++)
         {
             if(i == 1) {ctx.fillStyle = "#FFAA33";} else if(player.playerName == that.list[i-1][0] && player.playerScore == that.list[i-1][2])

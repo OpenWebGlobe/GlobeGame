@@ -107,12 +107,12 @@ if(!COMPILED) {
     function a(e) {
       if(!(e in d.written)) {
         if(!(e in d.visited) && (d.visited[e] = !0, e in d.requires)) {
-          for(var f in d.requires[e]) {
-            if(f in d.nameToPath) {
-              a(d.nameToPath[f])
+          for(var g in d.requires[e]) {
+            if(g in d.nameToPath) {
+              a(d.nameToPath[g])
             }else {
-              if(!goog.getObjectByName(f)) {
-                throw Error("Undefined nameToPath for " + f);
+              if(!goog.getObjectByName(g)) {
+                throw Error("Undefined nameToPath for " + g);
               }
             }
           }
@@ -920,7 +920,21 @@ function HighScoreDialog(a, b, c, d, f) {
     a.font = "25pt TitanOne";
     a.fillText(m_locale.highscores, window.innerWidth / 2, window.innerHeight / 2 - d / 2 + 45);
     a.strokeText(m_locale.highscores, window.innerWidth / 2, window.innerHeight / 2 - d / 2 + 45);
+    a.font = "12pt TitanOne";
+    a.lineWidth = 1;
+    a.fillStyle = "#FFF";
+    a.textAlign = "left";
+    a.fillText("Swizz-Quiz Entwicklung:", 20, window.innerHeight - 110);
+    a.strokeText("Swizz-Quiz Entwicklung:", 20, window.innerHeight - 110);
+    a.fillText("Institut Vermessung und Geoinformation", 20, window.innerHeight - 95);
+    a.strokeText("Institut Vermessung und Geoinformation", 20, window.innerHeight - 95);
+    a.fillText("Robert W\u00fcest (robert.wueest@fhnw.ch)", 26, window.innerHeight - 78);
+    a.strokeText("Robert W\u00fcest (robert.wueest@fhnw.ch)", 26, window.innerHeight - 78);
+    a.fillText("Martin Christen (martin.christen@fhnw.ch)", 26, window.innerHeight - 65);
+    a.strokeText("Martin Christen (martin.christen@fhnw.ch)", 26, window.innerHeight - 65);
     a.font = "15pt TitanOne";
+    a.textAlign = "center";
+    a.lineWidth = 2;
     for(b = 1;b <= e.list.length;b++) {
       a.fillStyle = b == 1 ? "#FFAA33" : f.playerName == e.list[b - 1][0] && f.playerScore == e.list[b - 1][2] ? "#0FF" : "#FFF";
       var h = b + ". " + e.list[b - 1][0] + "  " + e.list[b - 1][2];
