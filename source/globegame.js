@@ -164,7 +164,7 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
                 loadingText.text = "Loading images...";
                 that.LoadImages(sources, function(){
                     loadingText.Destroy();
-                    /* nw logo */
+                    /* nw logo & swisstopo copyright */
                     var statics = new Kinetic.Shape({drawFunc:function(){
                         var ctx = this.getContext();
                         ctx.drawImage(m_images["nw_logo"], 1, window.innerHeight-58, 469, 57);
@@ -179,11 +179,20 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
                         ctx.textAlign = "right";
                         ctx.fillStyle = "#FFF";
                         ctx.font = "18pt TitanOne";
-                        ctx.fillText("www.openwebglobe.org", window.innerWidth-13, window.innerHeight-20);
+                        ctx.fillText("www.openwebglobe.org", window.innerWidth-13, window.innerHeight-30);
                         ctx.lineWidth = 1;
                         ctx.strokeStyle = "#000"; // stroke color
-                        ctx.strokeText("www.openwebglobe.org", window.innerWidth-13, window.innerHeight-20);
+                        ctx.strokeText("www.openwebglobe.org", window.innerWidth-13, window.innerHeight-30);
+
+                        ctx.fillStyle = "#FFF";
+                        ctx.font = "13pt TitanOne";
+                        ctx.fillText("SWISSIMAGE, DHM25 © swisstopo JD100033", window.innerWidth-13, window.innerHeight-10);
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = "#000"; // stroke color
+                        ctx.strokeText("SWISSIMAGE, DHM25 © swisstopo JD100033", window.innerWidth-13, window.innerHeight-10);
+
                     }});
+
                     m_static.add(statics);
                     m_sounds["track01"].volume = 0.25;
                     m_sounds["track01"].addEventListener("ended", function() {

@@ -1271,13 +1271,13 @@ PickingChallenge.prototype.OnDestroy = function() {
 PickingChallenge.prototype.ZoomIn = function(a) {
   this.flystate = !0;
   var b = ogGetScene(m_context);
-  ogSetFlightDuration(b, 1E3);
+  ogSetFlightDuration(b, 500);
   ogFlyToLookAtPosition(b, a[1], a[2], a[3], 26E3, 0, -90, 0)
 };
 PickingChallenge.prototype.ZoomOut = function() {
   this.flystate = !0;
   var a = ogGetScene(m_context);
-  ogSetFlightDuration(a, 800);
+  ogSetFlightDuration(a, 350);
   ogFlyTo(a, 8.225578, 46.8248707, 28E4, 0, -90, 0)
 };
 goog.exportSymbol("PickingChallenge", PickingChallenge);
@@ -1409,10 +1409,16 @@ GlobeGame.prototype.Init = function(a, b) {
             a.textAlign = "right";
             a.fillStyle = "#FFF";
             a.font = "18pt TitanOne";
-            a.fillText("www.openwebglobe.org", window.innerWidth - 13, window.innerHeight - 20);
+            a.fillText("www.openwebglobe.org", window.innerWidth - 13, window.innerHeight - 30);
             a.lineWidth = 1;
             a.strokeStyle = "#000";
-            a.strokeText("www.openwebglobe.org", window.innerWidth - 13, window.innerHeight - 20)
+            a.strokeText("www.openwebglobe.org", window.innerWidth - 13, window.innerHeight - 30);
+            a.fillStyle = "#FFF";
+            a.font = "13pt TitanOne";
+            a.fillText("SWISSIMAGE, DHM25 \u00a9 swisstopo JD100033", window.innerWidth - 13, window.innerHeight - 10);
+            a.lineWidth = 1;
+            a.strokeStyle = "#000";
+            a.strokeText("SWISSIMAGE, DHM25 \u00a9 swisstopo JD100033", window.innerWidth - 13, window.innerHeight - 10)
           }});
           m_static.add(a);
           m_sounds.track01.volume = 0.25;

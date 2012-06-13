@@ -367,7 +367,7 @@ PickingChallenge.prototype.ZoomIn = function(pos, ori)
 {
     this.flystate = true;
     var scene = ogGetScene(m_context);
-    ogSetFlightDuration(scene,1000);
+    ogSetFlightDuration(scene,500);
     ogFlyToLookAtPosition(scene,pos[1],pos[2], pos[3],26000,0.00,-90.0, 0.0);
 };
 //-----------------------------------------------------------------------------
@@ -379,7 +379,7 @@ PickingChallenge.prototype.ZoomOut = function(ori)
 {
     this.flystate = true;
     var scene = ogGetScene(m_context);
-    ogSetFlightDuration(scene,800);
+    ogSetFlightDuration(scene,350);
     ogFlyTo(scene,8.225578,46.8248707, 280000.0,0.00,-90.0, 0.0);
 };
 
