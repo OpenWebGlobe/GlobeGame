@@ -9,8 +9,6 @@ goog.addDependency('../../../../source/externs/owg_externs.js', [], []);
 goog.addDependency('../../../../source/fx.js', ['owg.gg.FlyingText'], []);
 goog.addDependency('../../../../source/gamedata.js', ['owg.gg.GameData'], ['owg.gg.Challenge', 'owg.gg.LandmarkChallenge', 'owg.gg.PickingChallenge']);
 goog.addDependency('../../../../source/globegame.js', ['owg.gg.GlobeGame'], ['owg.gg.Button01', 'owg.gg.Button02', 'owg.gg.Challenge', 'owg.gg.Clock', 'owg.gg.FlyingText', 'owg.gg.GameData', 'owg.gg.LandmarkChallenge', 'owg.gg.MessageDialog', 'owg.gg.PickingChallenge', 'owg.gg.Pin', 'owg.gg.Player', 'owg.gg.ScoreCount', 'owg.gg.ScreenText', 'owg.gg.TouchKeyboard']);
-goog.addDependency('../../../../source/jquery-1.7.1.min.js', [], []);
-goog.addDependency('../../../../source/kineticjs.js', [], []);
 goog.addDependency('../../../../source/landmarkchallenge.js', ['owg.gg.LandmarkChallenge'], ['owg.gg.Button01', 'owg.gg.Challenge', 'owg.gg.Clock', 'owg.gg.FlyingText', 'owg.gg.ScreenText']);
 goog.addDependency('../../../../source/pickingchallenge.js', ['owg.gg.PickingChallenge'], ['owg.gg.Button01', 'owg.gg.Challenge', 'owg.gg.Clock', 'owg.gg.FlyingText', 'owg.gg.Pin', 'owg.gg.ScreenText']);
 goog.addDependency('../../../../source/player.js', ['owg.gg.Player'], ['owg.gg.FlyingText']);
