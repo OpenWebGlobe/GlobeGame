@@ -1009,7 +1009,8 @@ function LandmarkChallenge(a, b, c, d, f) {
     if(e.stop != !0 && e.flystate < e.views.length) {
       var a = e.views[e.flystate], b = ogGetScene(m_context);
       e.flystate += 1;
-      ogFlyTo(b, a.longitude, a.latitude, a.elevation, a.yaw, a.pitch, a.roll)
+      ogFlyTo(b, a.longitude, a.latitude, a.elevation, a.yaw, a.pitch, a.roll);
+      m_flystate = GlobeGame.FLYSTATE.FLYAROUND
     }
   }
 }
@@ -1272,13 +1273,15 @@ PickingChallenge.prototype.ZoomIn = function(a) {
   this.flystate = !0;
   var b = ogGetScene(m_context);
   ogSetFlightDuration(b, 500);
-  ogFlyToLookAtPosition(b, a[1], a[2], a[3], 26E3, 0, -90, 0)
+  ogFlyToLookAtPosition(b, a[1], a[2], a[3], 26E3, 0, -90, 0);
+  m_flystate = GlobeGame.FLYSTATE.FLYAROUND
 };
 PickingChallenge.prototype.ZoomOut = function() {
   this.flystate = !0;
   var a = ogGetScene(m_context);
   ogSetFlightDuration(a, 350);
-  ogFlyTo(a, 8.225578, 46.8248707, 28E4, 0, -90, 0)
+  ogFlyTo(a, 8.225578, 46.8248707, 28E4, 0, -90, 0);
+  m_flystate = GlobeGame.FLYSTATE.FLYAROUND
 };
 goog.exportSymbol("PickingChallenge", PickingChallenge);
 goog.exportProperty(PickingChallenge.prototype, "Prepare", PickingChallenge.prototype.Prepare);
@@ -1380,7 +1383,9 @@ TouchKeyboard.prototype.Destroy = function() {
 };
 owg.gg.GlobeGame = {};
 GlobeGame.STATE = {IDLE:0, CHALLENGE:1, HIGHSCORE:2};
-var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_sounds = {}, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_stage = null, m_ui = null, m_static = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "de", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 10, m_progress = null, m_state = GlobeGame.STATE.IDLE, m_score = null, m_gameData = null, m_globeGame = null;
+GlobeGame.FLYSTATE = {IDLE:0, FLYAROUND:1};
+var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_sounds = {}, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_stage = null, m_ui = null, m_static = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "de", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 10, m_progress = null, m_state = GlobeGame.STATE.IDLE, m_flystate = GlobeGame.FLYSTATE.IDLE, m_score = null, m_gameData = null, m_globeGame = 
+null, m_debug = !1, m_loaded = !1;
 function GlobeGame(a, b) {
   b && (m_datahost = b);
   m_qCount = 0;
@@ -1401,44 +1406,50 @@ GlobeGame.prototype.Init = function(a, b) {
       c.LoadSounds(b, function() {
         e.text = "Loading images...";
         c.LoadImages(a, function() {
-          e.Destroy();
-          var a = new Kinetic.Shape({drawFunc:function() {
-            var a = this.getContext();
-            a.drawImage(m_images.nw_logo, 1, window.innerHeight - 58, 469, 57);
-            m_state != GlobeGame.STATE.CHALLENGE ? a.drawImage(m_images.logo, window.innerWidth / 2 - 352, 30, 705, 206) : a.drawImage(m_images.logo_sm, window.innerWidth - 260, 4, 254, 50);
-            a.textAlign = "right";
-            a.fillStyle = "#FFF";
-            a.font = "18pt TitanOne";
-            a.fillText("www.openwebglobe.org", window.innerWidth - 13, window.innerHeight - 30);
-            a.lineWidth = 1;
-            a.strokeStyle = "#000";
-            a.strokeText("www.openwebglobe.org", window.innerWidth - 13, window.innerHeight - 30);
-            a.fillStyle = "#FFF";
-            a.font = "13pt TitanOne";
-            a.fillText("SWISSIMAGE, DHM25 \u00a9 swisstopo JD100033", window.innerWidth - 13, window.innerHeight - 10);
-            a.lineWidth = 1;
-            a.strokeStyle = "#000";
-            a.strokeText("SWISSIMAGE, DHM25 \u00a9 swisstopo JD100033", window.innerWidth - 13, window.innerHeight - 10)
-          }});
-          m_static.add(a);
-          m_sounds.track01.volume = 0.25;
-          m_sounds.track01.addEventListener("ended", function() {
-            m_sounds.track02.play()
-          }, !0);
-          m_sounds.track02.volume = 0.25;
-          m_sounds.track02.addEventListener("ended", function() {
-            m_sounds.track03.play()
-          }, !0);
-          m_sounds.track03.volume = 0.25;
-          m_sounds.track03.addEventListener("ended", function() {
-            m_sounds.track04.play()
-          }, !0);
-          m_sounds.track04.volume = 0.25;
-          m_sounds.track04.addEventListener("ended", function() {
-            m_sounds.track01.play()
-          }, !0);
-          m_sounds["track0" + Math.floor(Math.random() * 4 + 1)].play();
-          c.EnterIdle()
+          if(!m_loaded) {
+            m_loaded = !0;
+            e.Destroy();
+            var a = new Kinetic.Shape({drawFunc:function() {
+              var a = this.getContext();
+              a.drawImage(m_images.nw_logo, 1, window.innerHeight - 58, 469, 57);
+              m_state != GlobeGame.STATE.CHALLENGE ? a.drawImage(m_images.logo, window.innerWidth / 2 - 352, 30, 705, 206) : a.drawImage(m_images.logo_sm, window.innerWidth - 260, 4, 254, 50);
+              a.textAlign = "right";
+              a.fillStyle = "#FFF";
+              a.font = "18pt TitanOne";
+              a.fillText("www.openwebglobe.org", window.innerWidth - 13, window.innerHeight - 30);
+              a.lineWidth = 1;
+              a.strokeStyle = "#000";
+              a.strokeText("www.openwebglobe.org", window.innerWidth - 13, window.innerHeight - 30);
+              a.fillStyle = "#FFF";
+              a.font = "13pt TitanOne";
+              a.fillText("SWISSIMAGE, DHM25 \u00a9 swisstopo JD100033", window.innerWidth - 13, window.innerHeight - 10);
+              a.lineWidth = 1;
+              a.strokeStyle = "#000";
+              a.strokeText("SWISSIMAGE, DHM25 \u00a9 swisstopo JD100033", window.innerWidth - 13, window.innerHeight - 10);
+              if(m_debug) {
+                a.fillStyle = "#F00", a.font = "8pt TitanOne", a.textAlign = "left", a.fillText("State:" + m_state, 5, 80), a.fillText("Flystate:" + m_flystate, 5, 90)
+              }
+            }});
+            m_static.add(a);
+            m_sounds.track01.volume = 0.25;
+            m_sounds.track01.addEventListener("ended", function() {
+              m_sounds.track02.play()
+            }, !0);
+            m_sounds.track02.volume = 0.25;
+            m_sounds.track02.addEventListener("ended", function() {
+              m_sounds.track03.play()
+            }, !0);
+            m_sounds.track03.volume = 0.25;
+            m_sounds.track03.addEventListener("ended", function() {
+              m_sounds.track04.play()
+            }, !0);
+            m_sounds.track04.volume = 0.25;
+            m_sounds.track04.addEventListener("ended", function() {
+              m_sounds.track01.play()
+            }, !0);
+            m_sounds["track0" + Math.floor(Math.random() * 4 + 1)].play();
+            c.EnterIdle()
+          }
         })
       })
     })
@@ -1501,6 +1512,7 @@ GlobeGame.prototype.EnterHighscore = function() {
   })
 };
 GlobeGame.prototype.FlyAround = function() {
+  m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
   var a = ogGetScene(m_context), b = ogGetActiveCamera(a);
   ogSetPosition(b, 8.006896018981934, 46.27399444580078, 1E7);
   ogSetOrientation(b, 0, -90, 0);
@@ -1574,7 +1586,8 @@ GlobeGame.prototype.StopFlyTo = function() {
   var a = ogGetScene(m_context);
   ogSetInPositionFunction(m_context, function() {
   });
-  ogStopFlyTo(a)
+  ogStopFlyTo(a);
+  m_flystate = GlobeGame.FLYSTATE.IDLE
 };
 GlobeGame.prototype.OnCanvasRender = function() {
   m_stage.draw();

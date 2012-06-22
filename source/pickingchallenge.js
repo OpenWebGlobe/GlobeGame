@@ -369,6 +369,7 @@ PickingChallenge.prototype.ZoomIn = function(pos, ori)
     var scene = ogGetScene(m_context);
     ogSetFlightDuration(scene,500);
     ogFlyToLookAtPosition(scene,pos[1],pos[2], pos[3],26000,0.00,-90.0, 0.0);
+   m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
 };
 //-----------------------------------------------------------------------------
 /**
@@ -381,6 +382,7 @@ PickingChallenge.prototype.ZoomOut = function(ori)
     var scene = ogGetScene(m_context);
     ogSetFlightDuration(scene,350);
     ogFlyTo(scene,8.225578,46.8248707, 280000.0,0.00,-90.0, 0.0);
+   m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
 };
 
 goog.exportSymbol('PickingChallenge', PickingChallenge);

@@ -46,6 +46,12 @@ GlobeGame.STATE = {
     CHALLENGE: 1,
     HIGHSCORE: 2
 };
+
+GlobeGame.FLYSTATE =
+{
+   IDLE: 0,
+   FLYAROUND: 1
+}
 /**
  * Members
  * */
@@ -71,11 +77,14 @@ var m_qMax = 10;
 var m_progress = null;
 /** @type {GlobeGame.STATE} */
 var m_state = GlobeGame.STATE.IDLE;
+var m_flystate = GlobeGame.FLYSTATE.IDLE;
 var m_score = null;
 /** @type {GameData} */
 var m_gameData = null;
 /** @type {GlobeGame} */
 var m_globeGame = null;
+var m_debug = false;
+var m_loaded = false;
 
 /**
  * @class GlobeGame
@@ -163,56 +172,72 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
             that.LoadSounds(sounds, function(){
                 loadingText.text = "Loading images...";
                 that.LoadImages(sources, function(){
-                    loadingText.Destroy();
-                    /* nw logo & swisstopo copyright */
-                    var statics = new Kinetic.Shape({drawFunc:function(){
-                        var ctx = this.getContext();
-                        ctx.drawImage(m_images["nw_logo"], 1, window.innerHeight-58, 469, 57);
-                        if(m_state != GlobeGame.STATE.CHALLENGE)
-                        {
-                            ctx.drawImage(m_images["logo"], window.innerWidth/2-352, 30, 705, 206);
-                        }
-                        else
-                        {
-                            ctx.drawImage(m_images["logo_sm"], window.innerWidth-260, 4, 254, 50);
-                        }
-                        ctx.textAlign = "right";
-                        ctx.fillStyle = "#FFF";
-                        ctx.font = "18pt TitanOne";
-                        ctx.fillText("www.openwebglobe.org", window.innerWidth-13, window.innerHeight-30);
-                        ctx.lineWidth = 1;
-                        ctx.strokeStyle = "#000"; // stroke color
-                        ctx.strokeText("www.openwebglobe.org", window.innerWidth-13, window.innerHeight-30);
+                    if(!m_loaded)
+                    {
+                        m_loaded = true;
+                        loadingText.Destroy();
+                        /* nw logo & swisstopo copyright */
+                        var statics = new Kinetic.Shape({drawFunc:function(){
+                            var ctx = this.getContext();
+                            ctx.drawImage(m_images["nw_logo"], 1, window.innerHeight-58, 469, 57);
+                            if(m_state != GlobeGame.STATE.CHALLENGE)
+                            {
+                                ctx.drawImage(m_images["logo"], window.innerWidth/2-352, 30, 705, 206);
+                            }
+                            else
+                            {
+                                ctx.drawImage(m_images["logo_sm"], window.innerWidth-260, 4, 254, 50);
+                            }
+                            ctx.textAlign = "right";
+                            ctx.fillStyle = "#FFF";
+                            ctx.font = "18pt TitanOne";
+                            ctx.fillText("www.openwebglobe.org", window.innerWidth-13, window.innerHeight-30);
+                            ctx.lineWidth = 1;
+                            ctx.strokeStyle = "#000"; // stroke color
+                            ctx.strokeText("www.openwebglobe.org", window.innerWidth-13, window.innerHeight-30);
 
-                        ctx.fillStyle = "#FFF";
-                        ctx.font = "13pt TitanOne";
-                        ctx.fillText("SWISSIMAGE, DHM25 © swisstopo JD100033", window.innerWidth-13, window.innerHeight-10);
-                        ctx.lineWidth = 1;
-                        ctx.strokeStyle = "#000"; // stroke color
-                        ctx.strokeText("SWISSIMAGE, DHM25 © swisstopo JD100033", window.innerWidth-13, window.innerHeight-10);
+                            ctx.fillStyle = "#FFF";
+                            ctx.font = "13pt TitanOne";
+                            ctx.fillText("SWISSIMAGE, DHM25 © swisstopo JD100033", window.innerWidth-13, window.innerHeight-10);
+                            ctx.lineWidth = 1;
+                            ctx.strokeStyle = "#000"; // stroke color
+                            ctx.strokeText("SWISSIMAGE, DHM25 © swisstopo JD100033", window.innerWidth-13, window.innerHeight-10);
 
-                    }});
+                           if(m_debug)
+                           {
+                              ctx.fillStyle = "#F00";
+                              ctx.font = "8pt TitanOne";
+                              ctx.textAlign = "left";
+                              ctx.fillText("State:" +m_state, 5, 80);
+                              ctx.fillText("Flystate:" +m_flystate, 5, 90);
+                           }
 
-                    m_static.add(statics);
-                    m_sounds["track01"].volume = 0.25;
-                    m_sounds["track01"].addEventListener("ended", function() {
-                        m_sounds["track02"].play();
-                    },true);
-                    m_sounds["track02"].volume = 0.25;
-                    m_sounds["track02"].addEventListener("ended", function() {
-                        m_sounds["track03"].play();
-                    },true);
-                    m_sounds["track03"].volume = 0.25;
-                    m_sounds["track03"].addEventListener("ended", function() {
-                        m_sounds["track04"].play();
-                    },true);
-                    m_sounds["track04"].volume = 0.25;
-                    m_sounds["track04"].addEventListener("ended", function() {
-                        m_sounds["track01"].play();
-                    },true);
-                    var index = Math.floor(Math.random()*4+1);
-                    m_sounds["track0"+index].play();
-                    that.EnterIdle();
+                        }});
+
+                        m_static.add(statics);
+
+                        m_sounds["track01"].volume = 0.25;
+                        m_sounds["track01"].addEventListener("ended", function() {
+                            m_sounds["track02"].play();
+                        },true);
+                        m_sounds["track02"].volume = 0.25;
+                        m_sounds["track02"].addEventListener("ended", function() {
+                            m_sounds["track03"].play();
+                        },true);
+                        m_sounds["track03"].volume = 0.25;
+                        m_sounds["track03"].addEventListener("ended", function() {
+                            m_sounds["track04"].play();
+                        },true);
+                        m_sounds["track04"].volume = 0.25;
+                        m_sounds["track04"].addEventListener("ended", function() {
+                            m_sounds["track01"].play();
+                        },true);
+                        var index = Math.floor(Math.random()*4+1);
+                        m_sounds["track0"+index].play();
+
+
+                        that.EnterIdle();
+                    }
                 });
             });
         });
@@ -326,6 +351,7 @@ GlobeGame.prototype.EnterHighscore = function()
  */
 GlobeGame.prototype.FlyAround = function()
 {
+   m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
     var scene = ogGetScene(m_context);
     var cam = ogGetActiveCamera(scene);
     ogSetPosition(cam,8.006896018981934,46.27399444580078,10000000);
@@ -536,6 +562,7 @@ GlobeGame.prototype.StopFlyTo = function()
     var scene = ogGetScene(m_context);
     ogSetInPositionFunction(m_context,function(){});
     ogStopFlyTo(scene);
+   m_flystate = GlobeGame.FLYSTATE.IDLE;
 };
 //-----------------------------------------------------------------------------
 /**

@@ -80,6 +80,7 @@ function LandmarkChallenge(baseScore, options, correctOption, views, title)
             var scene = ogGetScene(m_context);
             that.flystate +=1;
             ogFlyTo(scene,oView["longitude"],oView["latitude"], oView["elevation"],oView["yaw"],oView["pitch"],oView["roll"]);
+           m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
         }
     };
 }

@@ -26,9 +26,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script type="text/javascript" src="source/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="../WebViewer/compiled/owg-optimized.js"></script>
-    <script type="text/javascript" src="source/kineticjs.js"></script>
+    <script type="text/javascript" src="compiled/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="compiled/jquery-ui-1.8.18.custom.min.js"></script>
+    <script type="text/javascript" src="compiled/owg-optimized.js"></script>
+    <script type="text/javascript" src="compiled/kineticjs.js"></script>
     <script type="text/javascript" src="compiled/globegame-optimized.js"></script>
     <!--<script type="text/javascript" src="external/closure-library/closure/goog/base.js"></script>
     <script type="text/javascript" src="compiled/deps.js"></script>
@@ -36,7 +37,19 @@
     <script type="text/javascript" src="compiled/ggedit-optimized.js"></script>
     <!--<script type="text/javascript" src="compiled/deps_editor.js"></script>
     <script type="text/javascript">goog.require('owg.gg.Editor');</script>-->
-    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <link href="css/smoothness/jquery-ui.custom.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+       jQuery(function(){
+          // Tabs
+          jQuery('#tabContainer').tabs();
+          jQuery('#testbtn').button();
+          jQuery('#resetbtn').button();
+          jQuery('#save').button();
+          jQuery('#clearviews').button();
+          jQuery('#addview').button();
+       });
+     </script>
 </head>
 <body style="overflow:hidden;" onload="Init('http://10.42.2.37')">
 <div id="owg_div" style="float:left">
@@ -46,58 +59,67 @@
     </canvas>
 </div>
 <div style="background-color:#FFF;position:absolute; width: 350px; padding:5px; z-index: 101; float:right; right:0px">
-    <h2>OWG Spiel: Challenge Editor</h2><br/>
-    <input id="testbtn" class="edbutton" type="button" style="width:150px; height: 25px; visibility: visible" value="Test" onclick="ShowChallenge()"/>
-    <input id="resetbtn" class="edbutton" type="button" style="width:150px; height: 25px; visibility: hidden" value="Reset" onclick="HideChallenge()"/><br/>
-    <div id="details">
-    <input type="checkbox" onchange="TrafficLayer(this.checked)">OSM Layer einblenden</input><br/>
-    <b>Typ der Aufgabe: </b><select onkeydown="InputBoxKeyPressed(event)" id="ctype" onchange="TypeChanged(this.value)">
-        <option value="landmark">Wissensaufgabe</option>
-        <option value="picking">Orientierungsaufgabe</option>
-    </select><br/><hr/>
-    <b>Details:</b>
+    <h2>SwizzQuiz: Challenge Editor</h2><br/>
+    <div id="tabContainer">
+       <ul>
+          <li><a href="#tab_1">Details</a></li>
+          <li><a href="#tab_2">Code</a></li>
 
-    <div id="picking_div" style="visibility: hidden; position: absolute">
-        <table>
-            <tr>
-                <td>Punkte: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="qscore" type="number" value="100"/></td>
-            </tr>
-            <tr>
-                <td>Beschreibung: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="location" type="text" value="Test Title" /></td>
-            </tr>
-        </table>
-    </div>
-    <div id="landmark_div" style="visibility: visible">
-    <table>
-        <tr>
-            <td>Antwort 1: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="option1" type="text" value="Option1"/></td>
-        </tr>
-        <tr>
-            <td>Antwort 2: </td><td><input  onkeydown="InputBoxKeyPressed(event)" id="option2" type="text" value="Option2"/></td>
-        </tr>
-        <tr>
-            <td>Antwort 3: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="option3" type="text" value="Option3"/></td>
-        </tr>
-        <tr>
-            <td>Antwort 4: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="option4" type="text" value="Option4"/></td>
-        </tr>
-        <tr>
-            <td>L&ouml;sungsantwort(1-4): </td><td><input onkeydown="InputBoxKeyPressed(event)" id="correctoption" type="number" value="1"/></td>
-        </tr>
-        <tr>
-            <td>Punkte: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="basescore" type="number" value="100"/></td>
-        </tr>
-        <tr>
-            <td>Beschreibung: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="title" type="text" value="Test Title" /></td>
-        </tr>
-    </table>
-    <b>Ansichten verwalten:</b><br/>
-    <input class="edbutton" type="button" style="width:150px; height: 25px" value="Hinzuf&uuml;gen" onclick="AddView()"/><input class="edbutton" type="button" style="width:150px; height: 25px" value="Leeren" onclick="ClearViews()"/>
-    <br/>Current:<span id="current"></span></div><hr/>
-    <b>Ausgabe:</b>
-    <textarea id="output" onkeydown="InputBoxKeyPressed(event)" style="height:300px; width: 350px;background-color: #ffffee;" onclick="SelectAllText('output')"></textarea><br/>
-    <input id="save" class="edbutton" type="button" style="width:150px; height: 25px" value="Speichern" onclick="SaveToFile()"/>
-    </div>
+       </ul>
+       <div id="tab_1">
+          <button id="testbtn"  style="margin: 1px;width:150px; height: 25px; visibility: visible" onclick="ShowChallenge()">Test</button>
+          <button id="resetbtn" style="margin: 1px;width:150px; height: 25px; visibility: hidden" onclick="HideChallenge()">Reset</button><br/>
+          <input type="checkbox" onchange="TrafficLayer(this.checked)">OSM Layer einblenden</input><br/>
+          <b>Typ der Aufgabe: </b><select onkeydown="InputBoxKeyPressed(event)" id="ctype" onchange="TypeChanged(this.value)">
+              <option value="landmark">Wissensaufgabe</option>
+              <option value="picking">Orientierungsaufgabe</option>
+          </select><br/><hr/>
+          <b>Details:</b>
+
+          <div id="picking_div" style="visibility: hidden; position: absolute">
+              <table>
+                  <tr>
+                      <td>Punkte: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="qscore" type="number" value="100"/></td>
+                  </tr>
+                  <tr>
+                      <td>Beschreibung: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="location" type="text" value="Test Title" /></td>
+                  </tr>
+              </table>
+          </div>
+          <div id="landmark_div" style="visibility: visible">
+          <table>
+              <tr>
+                  <td>Antwort 1: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="option1" type="text" value="Option1"/></td>
+              </tr>
+              <tr>
+                  <td>Antwort 2: </td><td><input  onkeydown="InputBoxKeyPressed(event)" id="option2" type="text" value="Option2"/></td>
+              </tr>
+              <tr>
+                  <td>Antwort 3: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="option3" type="text" value="Option3"/></td>
+              </tr>
+              <tr>
+                  <td>Antwort 4: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="option4" type="text" value="Option4"/></td>
+              </tr>
+              <tr>
+                  <td>L&ouml;sungsantwort(1-4): </td><td><input onkeydown="InputBoxKeyPressed(event)" id="correctoption" type="number" value="1"/></td>
+              </tr>
+              <tr>
+                  <td>Punkte: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="basescore" type="number" value="100"/></td>
+              </tr>
+              <tr>
+                  <td>Beschreibung: </td><td><input onkeydown="InputBoxKeyPressed(event)" id="title" type="text" value="Test Title" /></td>
+              </tr>
+          </table>
+          <b>Ansichten verwalten:</b><br/>
+          <button id="addview" style="margin:1px; width:150px; height: 25px"  onclick="AddView()">Hinzuf&uuml;gen</button><button id="clearviews" style="margin:1px;width:150px; height: 25px" onclick="ClearViews()">Leeren</button>
+          <br/>Current:<span id="current"></span></div><hr/>
+       </div>
+       <div id="tab_2">
+          <textarea id="output" onkeydown="InputBoxKeyPressed(event)" style="height:300px; width: 325px;background-color: #ffffee;" onclick="SelectAllText('output')"></textarea><br/>
+          <button id="save" style="margin:1px;width:150px; height: 25px"  onclick="SaveToFile()">Speichern</button>
+          </div>
+       </div>
+   </div>
 </div>
 
 

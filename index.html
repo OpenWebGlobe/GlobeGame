@@ -30,13 +30,13 @@
     <script type="text/javascript" src="compiled/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="compiled/owg-optimized.js"></script>
     <script type="text/javascript" src="compiled/kineticjs.js"></script>
-    <script type="text/javascript" src="compiled/globegame-optimized.js"></script>
-    <!--<script type="text/javascript" src="external/closure-library/closure/goog/base.js"></script>
+    <!--<script type="text/javascript" src="compiled/globegame-optimized.js"></script>-->
+    <script type="text/javascript" src="external/closure-library/closure/goog/base.js"></script>
     <script type="text/javascript" src="compiled/deps.js"></script>
-    <script type="text/javascript">goog.require('owg.gg.GlobeGame');</script>-->
-    <link href="style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">goog.require('owg.gg.GlobeGame');</script>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
 </head>
-<body style="overflow:hidden;" onload="Init()">
+<body style="overflow:hidden;" onload="if(!loaded){loaded = true; Init();}">
 <div id="main_div" class="main_div">
 </div>
 <div id="owg_div" class="owg_div">
@@ -49,7 +49,8 @@
     document.oncontextmenu = function(e) { return false; }
     document.onrightmousedown = function(e) { return false; }
     ogSetArtworkDirectory("");
-    var globeGame = new GlobeGame("main_div", "http://localhost/data");
+    var globeGame = new GlobeGame("main_div", "http://10.42.2.37");
+    var loaded = false;
 
 
     function Init()
