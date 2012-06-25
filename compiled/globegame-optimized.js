@@ -1384,7 +1384,7 @@ TouchKeyboard.prototype.Destroy = function() {
 owg.gg.GlobeGame = {};
 GlobeGame.STATE = {IDLE:0, CHALLENGE:1, HIGHSCORE:2};
 GlobeGame.FLYSTATE = {IDLE:0, FLYAROUND:1};
-var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_sounds = {}, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_stage = null, m_ui = null, m_static = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "de", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 10, m_progress = null, m_state = GlobeGame.STATE.IDLE, m_flystate = GlobeGame.FLYSTATE.IDLE, m_score = null, m_gameData = null, m_globeGame = 
+var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_sounds = {}, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_stage = null, m_ui = null, m_static = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "none", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 10, m_progress = null, m_state = GlobeGame.STATE.IDLE, m_flystate = GlobeGame.FLYSTATE.IDLE, m_score = null, m_gameData = null, m_globeGame = 
 null, m_debug = !1, m_loaded = !1;
 function GlobeGame(a, b) {
   b && (m_datahost = b);
@@ -1397,18 +1397,18 @@ function GlobeGame(a, b) {
   m_static = new Kinetic.Layer
 }
 GlobeGame.prototype.Init = function(a, b) {
-  var c = this;
-  m_gameData = new GameData(function() {
-    var a = {btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", btn_02:"art/btn_02.png", btn_02_c:"art/btn_02_c.png", btn_02_h:"art/btn_02_h.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png", nw_logo:"art/nw_logo.png", logo:"art/logo.png", 
-    logo_sm:"art/logo_sm.png", coins:"art/coins.png"}, b = {pick:"sfx/pick.wav", correct:"sfx/correct.wav", wrong:"sfx/wrong.wav", coins:"sfx/coins.wav", highscores:"sfx/highscores.mp3", track01:"sfx/track01.mp3", track02:"sfx/track02.mp3", track03:"sfx/track03.mp3", track04:"sfx/track04.mp3", swoosh:"sfx/swoosh.wav", ping1:"sfx/ping1.wav", ping2:"sfx/ping2.wav"}, e = new ScreenText(m_ui, "Loading language...", m_centerX, m_centerY, 25, "center");
-    c.LoadLanguage(function() {
-      e.text = "Loading sounds...";
-      c.LoadSounds(b, function() {
-        e.text = "Loading images...";
-        c.LoadImages(a, function() {
+  var c = this, d = {btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", btn_02:"art/btn_02.png", btn_02_c:"art/btn_02_c.png", btn_02_h:"art/btn_02_h.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png", nw_logo:"art/nw_logo.png", logo:"art/logo.png", 
+  logo_sm:"art/logo_sm.png", coins:"art/coins.png"}, f = new ScreenText(m_ui, "Loading sounds...", m_centerX, m_centerY, 25, "center");
+  c.LoadSounds({pick:"sfx/pick.wav", correct:"sfx/correct.wav", wrong:"sfx/wrong.wav", coins:"sfx/coins.wav", highscores:"sfx/highscores.mp3", track01:"sfx/track01.mp3", track02:"sfx/track02.mp3", track03:"sfx/track03.mp3", track04:"sfx/track04.mp3", swoosh:"sfx/swoosh.wav", ping1:"sfx/ping1.wav", ping2:"sfx/ping2.wav"}, function() {
+    f.text = "Loading images...";
+    c.LoadImages(d, function() {
+      f.text = "Choose language";
+      var a = function() {
+        f.text = "Loading language...";
+        c.LoadLanguage(function() {
           if(!m_loaded) {
             m_loaded = !0;
-            e.Destroy();
+            f.Destroy();
             var a = new Kinetic.Shape({drawFunc:function() {
               var a = this.getContext();
               a.drawImage(m_images.nw_logo, 1, window.innerHeight - 58, 469, 57);
@@ -1448,9 +1448,29 @@ GlobeGame.prototype.Init = function(a, b) {
               m_sounds.track01.play()
             }, !0);
             m_sounds["track0" + Math.floor(Math.random() * 4 + 1)].play();
-            c.EnterIdle()
+            m_gameData = new GameData(function() {
+              c.EnterIdle()
+            })
           }
         })
+      }, b = new Button02(m_ui, "btn_de", window.innerWidth / 2 - 120, 300, 76, 69, "DEU", 15, function() {
+        m_lang = "de";
+        b.Destroy();
+        d.Destroy();
+        h.Destroy();
+        a()
+      }), d = new Button02(m_ui, "btn_fr", window.innerWidth / 2 - 40, 300, 76, 69, "FRA", 15, function() {
+        m_lang = "fr";
+        b.Destroy();
+        d.Destroy();
+        h.Destroy();
+        a()
+      }), h = new Button02(m_ui, "btn_en", window.innerWidth / 2 + 40, 300, 76, 69, "ENG", 15, function() {
+        m_lang = "en";
+        b.Destroy();
+        d.Destroy();
+        h.Destroy();
+        a()
       })
     })
   });

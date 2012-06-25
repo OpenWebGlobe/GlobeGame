@@ -68,7 +68,7 @@ var m_ui =     null;
 var m_static = null;
 var m_centerX = window.innerWidth/2;
 var m_centerY = window.innerHeight/2;
-var m_lang = "de";
+var m_lang = "none";
 var m_datahost = "http://localhost";
 var m_locale = [];
 var m_player = null;
@@ -123,59 +123,62 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
     var that = this;
 
     /* Preload */
-    // load gamedata
-    m_gameData = new GameData(function()
-    {
-        // Preload images
-        var sources = {
-            btn_01: "art/btn_01.png",
-            btn_01_c: "art/btn_01_c.png",
-            btn_01_h: "art/btn_01_h.png",
-            btn_01_d: "art/btn_01_d.png",
-            btn_01_f: "art/btn_01_f.png",
-            btn_01_t: "art/btn_01_t.png",
-            btn_01_o: "art/btn_01_o.png",
-            btn_02:   "art/btn_02.png",
-            btn_02_c: "art/btn_02_c.png",
-            btn_02_h: "art/btn_02_h.png",
-            clock: "art/clock.png",
-            dial: "art/dial.png",
-            pin_blue: "art/pin_blue.png",
-            pin_red: "art/pin_red.png",
-            pin_green: "art/pin_green.png",
-            pin_yellow: "art/pin_yellow.png",
-            nw_logo: "art/nw_logo.png",
-            logo: "art/logo.png",
-            logo_sm: "art/logo_sm.png",
-            coins: "art/coins.png"
-        };
-        // Preload sounds
-        var sounds = {
-            pick: "sfx/pick.wav",
-            correct: "sfx/correct.wav",
-            wrong: "sfx/wrong.wav",
-            coins: "sfx/coins.wav",
-            highscores: "sfx/highscores.mp3",
-            track01: "sfx/track01.mp3",
-            track02: "sfx/track02.mp3",
-            track03: "sfx/track03.mp3",
-            track04: "sfx/track04.mp3",
-            swoosh: "sfx/swoosh.wav",
-            ping1: "sfx/ping1.wav",
-            ping2: "sfx/ping2.wav"
-        };
 
-        var loadingText = new ScreenText(m_ui, "Loading language...",m_centerX, m_centerY, 25, "center");
-        that.LoadLanguage(function()
-        {
-            loadingText.text = "Loading sounds...";
-            that.LoadSounds(sounds, function(){
-                loadingText.text = "Loading images...";
-                that.LoadImages(sources, function(){
+    // Preload images
+    var sources = {
+        btn_01: "art/btn_01.png",
+        btn_01_c: "art/btn_01_c.png",
+        btn_01_h: "art/btn_01_h.png",
+        btn_01_d: "art/btn_01_d.png",
+        btn_01_f: "art/btn_01_f.png",
+        btn_01_t: "art/btn_01_t.png",
+        btn_01_o: "art/btn_01_o.png",
+        btn_02:   "art/btn_02.png",
+        btn_02_c: "art/btn_02_c.png",
+        btn_02_h: "art/btn_02_h.png",
+        clock: "art/clock.png",
+        dial: "art/dial.png",
+        pin_blue: "art/pin_blue.png",
+        pin_red: "art/pin_red.png",
+        pin_green: "art/pin_green.png",
+        pin_yellow: "art/pin_yellow.png",
+        nw_logo: "art/nw_logo.png",
+        logo: "art/logo.png",
+        logo_sm: "art/logo_sm.png",
+        coins: "art/coins.png"
+    };
+    // Preload sounds
+    var sounds = {
+        pick: "sfx/pick.wav",
+        correct: "sfx/correct.wav",
+        wrong: "sfx/wrong.wav",
+        coins: "sfx/coins.wav",
+        highscores: "sfx/highscores.mp3",
+        track01: "sfx/track01.mp3",
+        track02: "sfx/track02.mp3",
+        track03: "sfx/track03.mp3",
+        track04: "sfx/track04.mp3",
+        swoosh: "sfx/swoosh.wav",
+        ping1: "sfx/ping1.wav",
+        ping2: "sfx/ping2.wav"
+    };
+
+    var loadingText = new ScreenText(m_ui, "Loading sounds...",m_centerX, m_centerY, 25, "center");
+    that.LoadSounds(sounds, function(){
+        loadingText.text = "Loading images...";
+        that.LoadImages(sources, function(){
+            loadingText.text = "Choose language";
+
+            var doInit = function()
+            {
+                loadingText.text = "Loading language...";
+                that.LoadLanguage(function()
+                {
                     if(!m_loaded)
                     {
                         m_loaded = true;
                         loadingText.Destroy();
+
                         /* nw logo & swisstopo copyright */
                         var statics = new Kinetic.Shape({drawFunc:function(){
                             var ctx = this.getContext();
@@ -203,14 +206,14 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
                             ctx.strokeStyle = "#000"; // stroke color
                             ctx.strokeText("SWISSIMAGE, DHM25 © swisstopo JD100033", window.innerWidth-13, window.innerHeight-10);
 
-                           if(m_debug)
-                           {
-                              ctx.fillStyle = "#F00";
-                              ctx.font = "8pt TitanOne";
-                              ctx.textAlign = "left";
-                              ctx.fillText("State:" +m_state, 5, 80);
-                              ctx.fillText("Flystate:" +m_flystate, 5, 90);
-                           }
+                            if(m_debug)
+                            {
+                                ctx.fillStyle = "#F00";
+                                ctx.font = "8pt TitanOne";
+                                ctx.textAlign = "left";
+                                ctx.fillText("State:" +m_state, 5, 80);
+                                ctx.fillText("Flystate:" +m_flystate, 5, 90);
+                            }
 
                         }});
 
@@ -234,11 +237,28 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
                         },true);
                         var index = Math.floor(Math.random()*4+1);
                         m_sounds["track0"+index].play();
-
-
-                        that.EnterIdle();
+                        // load gamedata
+                        m_gameData = new GameData(function()
+                        {
+                            that.EnterIdle();
+                        });
                     }
                 });
+            }
+            var btn_de = new Button02(m_ui, "btn_de", (window.innerWidth/2)-120, 300, 76, 69,"DEU", 15, function(){
+                m_lang = "de";
+                btn_de.Destroy();btn_fr.Destroy();btn_en.Destroy();
+                doInit();
+            });
+            var btn_fr = new Button02(m_ui, "btn_fr", (window.innerWidth/2)-40, 300, 76, 69,"FRA", 15, function(){
+                m_lang = "fr";
+                btn_de.Destroy();btn_fr.Destroy();btn_en.Destroy();
+                doInit();
+            });
+            var btn_en = new Button02(m_ui, "btn_en", (window.innerWidth/2)+40, 300, 76, 69,"ENG", 15, function(){
+                m_lang = "en";
+                btn_de.Destroy();btn_fr.Destroy();btn_en.Destroy();
+                doInit();
             });
         });
     });
