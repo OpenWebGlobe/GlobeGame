@@ -33,3 +33,23 @@ var ogSetMouseDownFunction = function(a,b){};
 var ogSetCanvasSizeOffset = function(a,b,c){};
 var ogSetRenderQuality = function(a,b){};
 var ogSetArtworkDirectory = function(a){};
+var ogCreateContext = function(a){};
+var ogCreateScene = function(a,b,c){};
+var ogCreateWorld = function(a){};
+
+//------------------------------------------------------------------------------
+// SCENE TYPES
+//------------------------------------------------------------------------------
+
+//* @constant
+var OG_SCENE_3D_ELLIPSOID_WGS84     = 1;
+//* @constant
+var OG_SCENE_3D_FLAT_CARTESIAN      = 2;
+//* @constant
+var OG_SCENE_2D_SCREEN              = 3;
+//* @constant
+var OG_SCENE_CUSTOM                 = 4;
+//* @constant
+var OG_NAVIGATIONMODE_GLOBE                 = 0;
+//* @constant
+var OG_NAVIGATIONMODE_FLIGHT                = 1;

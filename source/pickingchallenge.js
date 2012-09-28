@@ -71,13 +71,12 @@ function PickingChallenge(baseScore, title, pos)
      */
     this.OnOkay = function()
     {
-        var scene = ogGetScene(m_context);
-        var cartesian = ogToCartesian(scene, that.solutionPos[0],that.solutionPos[1],that.solutionPos[2]);
-        var screenPos = ogWorldToWindow(scene,cartesian[0],cartesian[1],cartesian[2]);
+        var cartesian = ogToCartesian(m_scene, that.solutionPos[0],that.solutionPos[1],that.solutionPos[2]);
+        var screenPos = ogWorldToWindow(m_scene,cartesian[0],cartesian[1],cartesian[2]);
         var distance = ogCalcDistanceWGS84(that.solutionPos[0], that.solutionPos[1], that.pickPos[1], that.pickPos[2]);
         distance = Math.round((distance/1000)*Math.pow(10,1))/Math.pow(10,1);
         that.resultPin.SetPos(screenPos[0], screenPos[1]);
-        m_sounds["ping1"].play();
+        m_soundhandler.Play("ping1");
         if(that.posPin)
         {
             that.distanceLine = new Kinetic.Shape({drawFunc:function(){
@@ -149,17 +148,16 @@ function PickingChallenge(baseScore, title, pos)
         if(that.mouseLock == false)
         {
             var pos = m_stage.getMousePosition();
-            var scene = ogGetScene(m_context);
             if(that.posPin)
                 that.posPin.SetPos(pos.x, pos.y);
             if(that.flystate == true)
             {
-                ogStopFlyTo(scene);
+                ogStopFlyTo(m_scene);
             }
-            var ori = ogGetOrientation(scene);
-            var result = ogPickGlobe(scene, pos.x, pos.y);
+            var ori = ogGetOrientation(m_scene);
+            var result = ogPickGlobe(m_scene, pos.x, pos.y);
             that.ZoomIn(result, ori);
-            m_sounds["swoosh"].play();
+            m_soundhandler.Play("swoosh");
             if(that.posPin == null)
             {
                 that.posPin = new Pin(m_ui, m_images["pin_blue"], pos.x, pos.y);
@@ -175,18 +173,17 @@ function PickingChallenge(baseScore, title, pos)
     {
         if(that.mouseLock == false)
         {
-            var scene = ogGetScene(m_context);
             that.zoomState = false;
             var pos = m_stage.getMousePosition();
             var mx = pos.x-10;
             var my = pos.y-10;
-            that.pickPos = ogPickGlobe(scene, pos.x, pos.y);
-            m_sounds["pick"].play();
+            that.pickPos = ogPickGlobe(m_scene, pos.x, pos.y);
+           m_soundhandler.Play("pick");
             if(that.posPin != null)
                 that.posPin.SetVisible(false);
             if(that.flystate == true)
             {
-                ogStopFlyTo(scene);
+                ogStopFlyTo(m_scene);
             }
 
             that.ZoomOut();
@@ -212,8 +209,7 @@ function PickingChallenge(baseScore, title, pos)
     this.FlightCallback = function()
     {
         that.flystate = false;
-        var scene = ogGetScene(m_context);
-        var pos = ogWorldToWindow(scene,that.pickPos[4],that.pickPos[5],that.pickPos[6]);
+        var pos = ogWorldToWindow(m_scene,that.pickPos[4],that.pickPos[5],that.pickPos[6]);
         if(that.posPin != null)
         {
             that.posPin.SetVisible(true);
@@ -263,10 +259,8 @@ PickingChallenge.prototype.Prepare = function(delay)
 
         that.clock = new Clock(m_ui, 50, 75, 60);
 
-        var scene = ogGetScene(m_context);
-        var camId = ogGetActiveCamera(scene);
-        ogSetPosition(camId,8.225578,46.8248707, 280000.0);
-        ogSetOrientation(camId,0.0,-90.0, 0.0);
+        ogSetPosition(m_camera,8.225578,46.8248707, 280000.0);
+        ogSetOrientation(m_camera,0.0,-90.0, 0.0);
 
         ogSetInPositionFunction(m_context,that.FlightCallback);
         that.ogFrameLayer = ogAddImageLayer(m_globe, {
@@ -366,9 +360,8 @@ PickingChallenge.prototype.OnDestroy = function()
 PickingChallenge.prototype.ZoomIn = function(pos, ori)
 {
     this.flystate = true;
-    var scene = ogGetScene(m_context);
-    ogSetFlightDuration(scene,500);
-    ogFlyToLookAtPosition(scene,pos[1],pos[2], pos[3],26000,0.00,-90.0, 0.0);
+    ogSetFlightDuration(m_scene,500);
+    ogFlyToLookAtPosition(m_scene,pos[1],pos[2], pos[3],26000,0.00,-90.0, 0.0);
    m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
 };
 //-----------------------------------------------------------------------------
@@ -379,9 +372,8 @@ PickingChallenge.prototype.ZoomIn = function(pos, ori)
 PickingChallenge.prototype.ZoomOut = function(ori)
 {
     this.flystate = true;
-    var scene = ogGetScene(m_context);
-    ogSetFlightDuration(scene,350);
-    ogFlyTo(scene,8.225578,46.8248707, 280000.0,0.00,-90.0, 0.0);
+    ogSetFlightDuration(m_scene,350);
+    ogFlyTo(m_scene,8.225578,46.8248707, 280000.0,0.00,-90.0, 0.0);
    m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
 };
 

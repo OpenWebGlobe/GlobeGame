@@ -58,14 +58,15 @@ GlobeGame.FLYSTATE =
  var m_images = {};
 var m_loadedImages = 0;
 var m_numImages = 0;
-var m_sounds = {};
 var m_loadedSounds = 0;
 var m_numSounds = 0;
 var m_context = null;
 var m_globe = null;
+var m_scene = null;
 var m_stage = null;
 var m_ui =     null;
 var m_static = null;
+var m_camera = null;
 var m_centerX = window.innerWidth/2;
 var m_centerY = window.innerHeight/2;
 var m_lang = "none";
@@ -75,6 +76,8 @@ var m_player = null;
 var m_qCount = 0;
 var m_qMax = 10;
 var m_progress = null;
+var m_soundhandler = new SoundHandler();
+var m_soundenabled = true;
 /** @type {GlobeGame.STATE} */
 var m_state = GlobeGame.STATE.IDLE;
 var m_flystate = GlobeGame.FLYSTATE.IDLE;
@@ -162,7 +165,11 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
         ping1: "sfx/ping1.wav",
         ping2: "sfx/ping2.wav"
     };
-
+ /*  var c = document.getElementById('canvas');
+   c.addEventListener("touchstart", this.TouchHandler, true);
+   c.addEventListener("touchmove", this.TouchHandler, true);
+   c.addEventListener("touchend", this.TouchHandler, true);
+   c.addEventListener("touchcancel", this.TouchHandler, true);*/
     var loadingText = new ScreenText(m_ui, "Loading sounds...",m_centerX, m_centerY, 25, "center");
     that.LoadSounds(sounds, function(){
         loadingText.text = "Loading images...";
@@ -218,25 +225,27 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
                         }});
 
                         m_static.add(statics);
-
-                        m_sounds["track01"].volume = 0.25;
-                        m_sounds["track01"].addEventListener("ended", function() {
-                            m_sounds["track02"].play();
-                        },true);
-                        m_sounds["track02"].volume = 0.25;
-                        m_sounds["track02"].addEventListener("ended", function() {
-                            m_sounds["track03"].play();
-                        },true);
-                        m_sounds["track03"].volume = 0.25;
-                        m_sounds["track03"].addEventListener("ended", function() {
-                            m_sounds["track04"].play();
-                        },true);
-                        m_sounds["track04"].volume = 0.25;
-                        m_sounds["track04"].addEventListener("ended", function() {
-                            m_sounds["track01"].play();
-                        },true);
-                        var index = Math.floor(Math.random()*4+1);
-                        m_sounds["track0"+index].play();
+                       if(m_soundenabled)
+                       {
+                          m_soundhandler.sounds["track01"].volume = 0.25;
+                          m_soundhandler.sounds["track01"].addEventListener("ended", function() {
+                             m_soundhandler.sounds["track02"].play();
+                           },true);
+                          m_soundhandler.sounds["track02"].volume = 0.25;
+                          m_soundhandler.sounds["track02"].addEventListener("ended", function() {
+                             m_soundhandler.sounds["track03"].play();
+                           },true);
+                          m_soundhandler.sounds["track03"].volume = 0.25;
+                          m_soundhandler.sounds["track03"].addEventListener("ended", function() {
+                             m_soundhandler.sounds["track04"].play();
+                           },true);
+                          m_soundhandler.sounds["track04"].volume = 0.25;
+                          m_soundhandler.sounds["track04"].addEventListener("ended", function() {
+                             m_soundhandler.sounds["track01"].play();
+                           },true);
+                           var index = Math.floor(Math.random()*4+1);
+                          m_soundhandler.sounds["track0"+index].play();
+                       }
                         // load gamedata
                         m_gameData = new GameData(function()
                         {
@@ -262,8 +271,16 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
             });
         });
     });
-    m_context = ogCreateContextFromCanvas("canvas", true);
-    m_globe = ogCreateGlobe(m_context);
+   m_context = ogCreateContext( {canvas: "canvas",
+         fullscreen: true
+      }
+   );
+   m_scene = ogCreateScene(m_context, OG_SCENE_3D_ELLIPSOID_WGS84, {
+         rendertotexture: false
+      }
+   );
+   m_globe = ogCreateWorld(m_scene);
+   m_camera = ogGetActiveCamera(m_scene);
     // Add OWG Data
     ogAddImageLayer(m_globe, {
         url: [m_datahost],
@@ -343,7 +360,7 @@ GlobeGame.prototype.EnterHighscore = function()
         function(name){
             m_player.playerName = name;
             keyboard.Destroy();
-            m_sounds["highscores"].play();
+           m_soundhandler.Play("highscores");
 
             jQuery.get('db.php?action=append&name='+m_player.playerName+'&score='+m_player.playerScore, function(data) {
 
@@ -372,10 +389,8 @@ GlobeGame.prototype.EnterHighscore = function()
 GlobeGame.prototype.FlyAround = function()
 {
    m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
-    var scene = ogGetScene(m_context);
-    var cam = ogGetActiveCamera(scene);
-    ogSetPosition(cam,8.006896018981934,46.27399444580078,10000000);
-    ogSetOrientation(cam,0,-90,0);
+    ogSetPosition(m_camera,8.006896018981934,46.27399444580078,10000000);
+    ogSetOrientation(m_camera,0,-90,0);
     var views = [
 
         { "longitude": 8.006896018981934,
@@ -415,11 +430,11 @@ GlobeGame.prototype.FlyAround = function()
         }
     ];
     var pos = 0;
-    ogSetFlightDuration(scene,20000);
+    ogSetFlightDuration(m_scene,20000);
     var introFlyTo = function()
     {
         var oView = views[pos];
-        ogFlyTo(scene,oView["longitude"],oView["latitude"], oView["elevation"],oView["yaw"],oView["pitch"],oView["roll"]);
+        ogFlyTo(m_scene,oView["longitude"],oView["latitude"], oView["elevation"],oView["yaw"],oView["pitch"],oView["roll"]);
         if(pos >= 4) {pos = 0;} else{ pos += 1; }
     };
     ogSetInPositionFunction(m_context,introFlyTo);
@@ -501,21 +516,27 @@ GlobeGame.prototype.LoadImages = function(sources, callback){
  */
 GlobeGame.prototype.LoadSounds = function(sounds, callback){
     // get num of sources
+   if(m_soundenabled)
+   {
     var that = this;
     for (var src in sounds) {
         m_numSounds++;
     }
     for (var src in sounds) {
-        m_sounds[src] = document.createElement('audio');
-        m_sounds[src].setAttribute('src', sounds[src]);
-        m_sounds[src].load();
-        m_sounds[src].addEventListener("canplay", function() {
+        m_soundhandler.sounds[src] = document.createElement('audio');
+        m_soundhandler.sounds[src].setAttribute('src', sounds[src]);
+        m_soundhandler.sounds[src].load();
+        m_soundhandler.sounds[src].addEventListener("canplay", function() {
             if (++m_loadedSounds >= m_numSounds) {
                 if(callback != null)
                     callback();
             }
         },true);
     }
+   } else
+   {
+      callback();
+   }
 };
 
 //-----------------------------------------------------------------------------
@@ -579,9 +600,8 @@ GlobeGame.prototype.NextChallenge = function()
  */
 GlobeGame.prototype.StopFlyTo = function()
 {
-    var scene = ogGetScene(m_context);
     ogSetInPositionFunction(m_context,function(){});
-    ogStopFlyTo(scene);
+    ogStopFlyTo(m_scene);
    m_flystate = GlobeGame.FLYSTATE.IDLE;
 };
 //-----------------------------------------------------------------------------

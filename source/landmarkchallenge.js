@@ -77,9 +77,8 @@ function LandmarkChallenge(baseScore, options, correctOption, views, title)
         if(that.stop != true && that.flystate < that.views.length)
         {
             var oView = that.views[that.flystate];
-            var scene = ogGetScene(m_context);
             that.flystate +=1;
-            ogFlyTo(scene,oView["longitude"],oView["latitude"], oView["elevation"],oView["yaw"],oView["pitch"],oView["roll"]);
+            ogFlyTo(m_scene,oView["longitude"],oView["latitude"], oView["elevation"],oView["yaw"],oView["pitch"],oView["roll"]);
            m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
         }
     };
@@ -115,11 +114,9 @@ LandmarkChallenge.prototype.Prepare = function(delay)
         that.screenText = new ScreenText(m_ui, that.text,m_centerX, window.innerHeight-255, 26, "center");
         that.clock = new Clock(m_ui, 50, 75, 60);
         var flightduration = Math.floor(40/(that.views.length-1))*1000;
-        var scene = ogGetScene(m_context);
-        ogSetFlightDuration(scene,flightduration);
-        var camId = ogGetActiveCamera(scene);
-        ogSetPosition(camId,that.views[0].longitude,that.views[0].latitude, that.views[0].elevation);
-        ogSetOrientation(camId,that.views[0]["yaw"],that.views[0]["pitch"], that.views[0]["roll"]);
+        ogSetFlightDuration(m_scene,flightduration);
+        ogSetPosition(m_camera,that.views[0].longitude,that.views[0].latitude, that.views[0].elevation);
+        ogSetOrientation(m_camera,that.views[0]["yaw"],that.views[0]["pitch"], that.views[0]["roll"]);
         ogSetInPositionFunction(m_context,that.FlightCallback);
     };
     if(delay > 0)
@@ -156,8 +153,7 @@ LandmarkChallenge.prototype.Destroy = function(event)
         this.clock.Pause();
         ogSetInPositionFunction(m_context,function() {});
         this.stop = true;
-        var scene = ogGetScene(m_context);
-        ogStopFlyTo(scene);
+        ogStopFlyTo(m_scene);
         this.OnDestroy();
         this.destroyed = true;
     }
@@ -204,7 +200,7 @@ LandmarkChallenge.prototype.PickOption = function(option, timeleft) {
     this.buttonArray[3].SetEnabled(false);
     var that = this;
     if (this.correctOption == option) {
-        m_sounds["correct"].play();
+       m_soundhandler.Play("correct");
         if(m_player)
         {
             var score = 0;
@@ -224,7 +220,7 @@ LandmarkChallenge.prototype.PickOption = function(option, timeleft) {
             that.callback();
         }, 2000);
     } else {
-        m_sounds["wrong"].play();
+        m_soundhandler.Play("wrong");
         this.buttonArray[option - 1].SetEnabled(true);
         this.buttonArray[this.correctOption - 1].SetEnabled(true);
         this.buttonArray[option - 1].SetState(4);

@@ -149,6 +149,24 @@ function Button01(layer, name, x, y, width, height, caption, fontsize)
             }
         }
     });
+   this.shape.on("touchstart", function(){
+      if(that.enabled){
+         that.onMouseDownEvent();
+         if(that.state < 3)
+         {that.state = 2;}
+      }
+
+   });
+   this.shape.on("touchend", function(){
+      if(that.enabled){
+
+         that.onMouseUpEvent();
+         if(that.state < 3)
+         {that.state = 1;
+            that.onClickEvent();
+         }
+      }
+   });
     this.shape.name = name;
     layer.add(this.shape);
 }
@@ -291,6 +309,23 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
             }
         }
     });
+   this.shape.on("touchstart", function(){
+      if(that.enabled){
+         that.onMouseDownEvent();
+         if(that.state < 3)
+         {that.state = 2;}
+      }
+
+   });
+   this.shape.on("touchend", function(){
+      if(that.enabled){
+         that.onMouseUpEvent();
+         if(that.state < 3)
+         {that.state = 1;
+            that.onClickEvent(that);
+         }
+      }
+   });
     this.shape.name = name;
     layer.add(this.shape);
 }
@@ -402,7 +437,7 @@ Clock.prototype.Countdown = function()
         else
         {
             that.running = false;
-            m_sounds["wrong"].play();
+            m_soundhandler.Play("wrong");
             that.onTimeoutEvent(); }
     }, 1000);
     if(this.running)
@@ -410,7 +445,7 @@ Clock.prototype.Countdown = function()
         this.seconds = this.seconds -1;
         if(this.seconds <= 10)
         {
-            m_sounds["ping2"].play();
+           m_soundhandler.Play("ping2");
         }
     }
 };
@@ -532,7 +567,7 @@ function MessageDialog(layer, message, x, y,width, height)
     this.Callback = function(){};
     this.OnOkay = function()
     {
-        m_sounds["ping1"].play();
+        m_soundhandler.Play("ping1");
         that.Destroy();
         that.Callback();
     };

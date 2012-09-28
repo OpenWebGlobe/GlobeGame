@@ -101,7 +101,7 @@ function Coins(layer, score)
     this.layer = layer;
     var that = this;
     var inc = 0;
-    m_sounds["coins"].play();
+   m_soundhandler.Play("coins");
     var t0 = new Date();
     var t1;
     this.shape = new Kinetic.Shape({drawFunc:function(){
@@ -251,3 +251,36 @@ function Timeout(callback,timeout)
     setTimeout(function(){timeoutFunction(tt0,new Date(), callback)},0);
 }
 goog.exportSymbol('Timeout', Timeout);
+
+
+goog.provide('owg.gg.SoundHandler');
+//-----------------------------------------------------------------------------
+/**
+ * @class SoundHandler
+ * @constructor
+ *
+ * @description sound data I/O handler
+ *
+ * @author Robert Wüest robert.wst@gmail.ch
+ */
+function SoundHandler()
+{
+   this.sounds = {};
+}
+//-----------------------------------------------------------------------------
+/**
+ * @description play soundfile
+ * @param {string} id sound id
+ */
+SoundHandler.prototype.Play = function(id)
+{
+   if(m_soundenabled)
+   {
+      this.sounds[id].play();
+   }
+};
+
+
+
+goog.exportSymbol('SoundHandler', SoundHandler);
+goog.exportProperty(SoundHandler.prototype, 'Play', SoundHandler.prototype.Play);
