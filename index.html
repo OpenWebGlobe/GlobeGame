@@ -26,6 +26,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="cache-control" content="no-cache">
+<meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+<meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1">
 <head>
     <script type="text/javascript" src="compiled/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="compiled/owg-optimized.js"></script>
@@ -49,7 +52,7 @@
     document.oncontextmenu = function(e) { return false; }
     document.onrightmousedown = function(e) { return false; }
     ogSetArtworkDirectory("");
-    var globeGame = new GlobeGame("main_div", "http://10.42.2.37");
+    var globeGame = new GlobeGame("main_div", "http://10.42.2.37", true);
     var loaded = false;
 
 

@@ -1409,7 +1409,7 @@ GlobeGame.STATE = {IDLE:0, CHALLENGE:1, HIGHSCORE:2};
 GlobeGame.FLYSTATE = {IDLE:0, FLYAROUND:1};
 var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_scene = null, m_stage = null, m_ui = null, m_static = null, m_camera = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "none", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 10, m_progress = null, m_soundhandler = new SoundHandler, m_soundenabled = !0, m_state = GlobeGame.STATE.IDLE, m_flystate = 
 GlobeGame.FLYSTATE.IDLE, m_score = null, m_gameData = null, m_globeGame = null, m_debug = !1, m_loaded = !1;
-function GlobeGame(a, b) {
+function GlobeGame(a, b, c) {
   b && (m_datahost = b);
   m_qCount = 0;
   this.currentChallenge = null;
@@ -1417,7 +1417,8 @@ function GlobeGame(a, b) {
   m_globeGame = this;
   m_stage = new Kinetic.Stage(a, window.innerWidth, window.innerHeight);
   m_ui = new Kinetic.Layer;
-  m_static = new Kinetic.Layer
+  m_static = new Kinetic.Layer;
+  m_soundenabled = c
 }
 GlobeGame.prototype.Init = function(a, b) {
   var c = this, d = {btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", btn_02:"art/btn_02.png", btn_02_c:"art/btn_02_c.png", btn_02_h:"art/btn_02_h.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png", nw_logo:"art/nw_logo.png", logo:"art/logo.png", 

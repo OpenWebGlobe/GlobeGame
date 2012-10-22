@@ -98,8 +98,9 @@ var m_loaded = false;
  * @author Robert Wüest robert.wst@gmail.ch
  * @param {string} canvasDiv
  * @param {(string|null)} datapath
+ * @param {boolean} soundenabled
  */
-function GlobeGame(canvasDiv, datapath)
+function GlobeGame(canvasDiv, datapath, soundenabled)
 {
     if(datapath)
     {
@@ -113,6 +114,7 @@ function GlobeGame(canvasDiv, datapath)
     m_stage = new Kinetic.Stage(canvasDiv, window.innerWidth, window.innerHeight);
     m_ui = new Kinetic.Layer();
     m_static = new Kinetic.Layer();
+   m_soundenabled = soundenabled;
 }
 
 //-----------------------------------------------------------------------------
