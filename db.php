@@ -21,7 +21,7 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE);
     function Append($name,$score)
     {
         $praefix = "gg_";
-        $statement = "INSERT INTO `".$praefix."highscore`(`name`,`date`,`score`) VALUES('".$name."', '".date("Y-m-d H:m:s")."', ".$score.")";
+        $statement = "INSERT INTO `".$praefix."highscore`(`name`,`date`,`score`) VALUES('".$name."', '".date("Y-m-d H:i:s")."', ".$score.")";
         MysqlExec($statement);
     }
 
