@@ -28,6 +28,8 @@ var m_numImages = 0;
 var m_context;
 var m_globe;
 var m_stage;
+var m_scene;
+var m_camera;
 var m_ui = new Kinetic.Layer();
 var m_static = new Kinetic.Layer();
 var m_centerX = (window.innerWidth-350)/2;
@@ -41,6 +43,7 @@ var m_pickOverlay;
 var trLayer = null;
 var m_elev;
 var m_views = [];
+var m_soundenabled = false;
 var m_datahost = "http://localhost";
 
 //-----------------------------------------------------------------------------
@@ -79,8 +82,16 @@ function Init(datapath) {
         m_datahost = datapath;
     }
     ogSetArtworkDirectory("../WebViewer/art/");
-    m_context = ogCreateContextFromCanvas("canvas", true);
-    m_globe = ogCreateGlobe(m_context);
+   m_context = ogCreateContext( {canvas: "canvas",
+         fullscreen: true
+      }
+   );
+   m_scene = ogCreateScene(m_context, OG_SCENE_3D_ELLIPSOID_WGS84, {
+         rendertotexture: false
+      }
+   );
+   m_globe = ogCreateWorld(m_scene);
+   m_camera = ogGetActiveCamera(m_scene);
     m_stage = new Kinetic.Stage("main_ui", window.innerWidth, window.innerHeight);
     // Preload images
     var sources = {
@@ -119,11 +130,11 @@ function Init(datapath) {
     //ogSetRenderQuality(m_globe, 2);
     ogSetRenderFunction(m_context, OnRender);
     ogSetResizeFunction(m_context, OnResize);
-    var scene = ogGetScene(m_context);
-    var camId = ogGetActiveCamera(scene);
+
+    var camId = ogGetActiveCamera(m_scene);
     ogSetPosition(camId,8.225578,46.8248707, 280000.0);
     ogSetOrientation(camId,0.0,-90.0, 0.0);
-    ogSetCanvasSizeOffset(scene, 360, 1);
+    ogSetCanvasSizeOffset(m_scene, 360, 1);
     m_pin = new Pin(m_static, m_images["pin_red"], 0,0);
     m_pickOverlay = new Kinetic.Rect({
         x: 0,
