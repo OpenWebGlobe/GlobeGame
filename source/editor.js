@@ -92,7 +92,13 @@ function Init(datapath) {
    );
    m_globe = ogCreateWorld(m_scene);
    m_camera = ogGetActiveCamera(m_scene);
-    m_stage = new Kinetic.Stage("main_ui", window.innerWidth, window.innerHeight);
+   m_stage = new Kinetic.Stage({
+      container: "main_ui",
+      width: window.innerWidth,
+      height: window.innerHeight,
+      x: 0,
+      y: 0
+   });
     // Preload images
     var sources = {
         btn_01: "art/btn_01.png",
@@ -127,7 +133,7 @@ function Init(datapath) {
         layer: "DHM25",
         service: "owg"
     });
-    //ogSetRenderQuality(m_globe, 2);
+    ogSetRenderQuality(m_globe, 3);
     ogSetRenderFunction(m_context, OnRender);
     ogSetResizeFunction(m_context, OnResize);
 
@@ -211,7 +217,7 @@ function TypeChanged(type)
         jQuery('#landmark_div').css("visibility", "visible");
         jQuery('#main_ui').css("visibility", "hidden");
         m_cType = 0;
-        m_stage.remove(m_static);
+        m_static.remove();
         m_elev = ogAddElevationLayer(m_globe, {
             url: [m_datahost],
             layer: "DHM25",
@@ -301,7 +307,7 @@ function Update()
         m_challenge.Activate();
     }else
     {
-        m_stage.remove(m_static);
+        m_static.remove();
         var pos = [ val["Longitude"], val["Latitude"], val["Elevation"] ];
         m_challenge = new PickingChallenge(val["BaseScore"], val["Title"], pos);
         m_challenge.draftmode = true;

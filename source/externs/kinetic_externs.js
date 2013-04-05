@@ -37,17 +37,18 @@ var Kinetic = {
         "getMousePosition":function() {}
     },
     "Layer":{
-        "setAlpha": function() {},
-        "getAlpha": function() {},
+        "setOpacity": function() {},
+        "getOpacity": function() {},
         "setScale": function() {}
     },
     "Group": function () {},
     "Shape":
     {
-       "setAlpha": function() {},
+       "setOpacity": function() {},
        "getScale": function() {},
        "setScale": function() {},
-       "setZIndex": function() {}
+       "setZIndex": function() {},
+       "setPosition": function() {}
     },
     "Rect": function () {},
     "Circle": function () {},
@@ -55,5 +56,6 @@ var Kinetic = {
     "Polygon": function () {},
     "RegularPolygon": function () {},
     "Star": function () {},
-    "Text": function () {}
+    "Text": function () {},
+    "Path": function () {}
 };

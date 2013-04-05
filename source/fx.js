@@ -43,6 +43,7 @@ function FlyingText(layer, text, fontcolor)
     this.scalefactor = 1.0;
     this.alpha = 1.0;
     this.layer = layer;
+    this.destroyed = false;
     var x0 = (window.innerWidth/2);
     var y0 = window.innerHeight/2-50;
     var that = this;
@@ -53,18 +54,22 @@ function FlyingText(layer, text, fontcolor)
 
     var t0= new Date();
     var t1;
-    this.shape = new Kinetic.Shape({drawFunc:function(){
+    var redraw;
+    var uniqueId = m_globeGame.GenerateUniqueId();
+    this.shape = new Kinetic.Shape({drawFunc:function(canvas){
         t1 = new Date();
         var delta = t1.valueOf() - t0.valueOf();
         that.alpha = 1.0 - (delta/3500);
         that.scalefactor = 1.0 +(delta/3500);
         if(that.alpha <= 0.0)
         {
-            that.layer.remove(that.shape);
+           this.destroyed = true;
+           m_globeGame.UnregisterCycleCallback(uniqueId);
+            setTimeout(function(){that.shape.remove();},500);
         }
         else
         {
-            var ctx = this.getContext();
+            var ctx = canvas.getContext();
             ctx.beginPath(); // !!!
             ctx.font = "32pt LuckiestGuy";
             ctx.fillStyle = that.fontcolor;
@@ -76,9 +81,18 @@ function FlyingText(layer, text, fontcolor)
             ctx.strokeStyle = "#000"; // stroke color
             ctx.strokeText(that.text, tX, tY);
             this.setScale(that.scalefactor,that.scalefactor);
-            this.setAlpha(that.alpha);
+            this.setOpacity(that.alpha);
+           canvas.fillStroke(this);
         }
+
     }});
+      redraw = function() {
+         if(that.destroyed == false)
+         {
+            that.layer.draw();
+         }
+      };
+    m_globeGame.RegisterCycleCallback(uniqueId,redraw);
     layer.add(this.shape);
 }
 goog.exportSymbol('FlyingText', FlyingText);
@@ -104,18 +118,18 @@ function Coins(layer, score)
    m_soundhandler.Play("coins");
     var t0 = new Date();
     var t1;
-    this.shape = new Kinetic.Shape({drawFunc:function(){
+    this.shape = new Kinetic.Shape({drawFunc:function(canvas){
         t1 = new Date();
         var delta = t1.valueOf() - t0.valueOf();
         that.alpha = 1 -(delta/3500);
         inc += (delta / 300);
         if(that.alpha <= 0.0)
         {
-            that.layer.remove(that.shape);
+            that.shape.remove();
         }
         else
         {
-            var ctx = this.getContext();
+            var ctx = canvas.getContext();
             ctx.beginPath(); // !!!
             ctx.font = "40pt LuckiestGuy";
             ctx.fillStyle = "#FE3";
@@ -127,7 +141,8 @@ function Coins(layer, score)
             ctx.strokeStyle = "#000"; // stroke color
             ctx.strokeText("+"+that.score, tX, tY);
             ctx.drawImage(m_images["coins"], 248-inc, 20, 80, 100);
-            this.setAlpha(that.alpha);
+            this.setOpacity(that.alpha);
+           canvas.fillStroke(this);
         }
     }});
     layer.add(this.shape);
@@ -147,9 +162,9 @@ function FadeOut(callback)
         t1 = new Date();
         var delta = t1.valueOf() - t0.valueOf();
         var alpha = 1.0 - (delta/1000);
-        m_ui.setAlpha(alpha);
-        if(m_ui.getAlpha() > 0.0)
-        { setTimeout(function(){_fadeOut();}, 0);} else { m_ui.setAlpha(0.0); callback();}
+        m_ui.setOpacity(alpha);
+        if(m_ui.getOpacity() > 0.0)
+        { setTimeout(function(){_fadeOut();}, 0);} else { m_ui.setOpacity(0.0); callback();}
     };
     _fadeOut();
 }
@@ -168,9 +183,9 @@ function FadeIn(callback)
         t1 = new Date();
         var delta = t1.valueOf() - t0.valueOf();
         var alpha = 1.0 - (delta/2000);
-        m_ui.setAlpha(alpha);
-        if(m_ui.getAlpha() < 1.0)
-        { setTimeout(function(){_fadeIn(); }, 0);} else { m_ui.setAlpha(1.0); callback();}
+        m_ui.setOpacity(alpha);
+        if(m_ui.getOpacity() < 1.0)
+        { setTimeout(function(){_fadeIn(); }, 0);} else { m_ui.setOpacity(1.0); callback();}
     };
     _fadeIn();
 }
@@ -198,33 +213,38 @@ function BlackScreen(duration, callback)
         t1 = new Date();
         var delta = t1.valueOf() - t0.valueOf();
         var alpha = 0.0 + (delta/800);
-        blackScreen.setAlpha(alpha);
+        blackScreen.setOpacity(alpha);
+       m_stage.draw();
         if(alpha < 1.0)
         {
             setTimeout(function(){recurIn();},0);
         } else
         {
-            blackScreen.setAlpha(1.0);
+            blackScreen.setOpacity(1.0);
+           m_stage.draw();
         }
     };
     var recurOut = function(cback){
         t1 = new Date();
         var delta = t1.valueOf() - t0.valueOf();
         var alpha = 1.0 - (delta/1000);
-        blackScreen.setAlpha(alpha);
+        blackScreen.setOpacity(alpha);
+        m_stage.draw();
         if(alpha > 0.0)
         {
             setTimeout(function(){recurOut(cback);},0);
         } else
         {
-            blackScreen.setAlpha(1.0); cback();
+            blackScreen.setOpacity(1.0);
+           cback();
         }
     };
     recurIn();
     setTimeout(function(){
         t0 = new Date();
         recurOut(function(){
-            m_static.remove(blackScreen);
+            blackScreen.remove();
+            m_stage.draw();
             callback();
         });
     }, duration);

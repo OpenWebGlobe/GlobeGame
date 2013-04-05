@@ -142,7 +142,7 @@ function PickingChallenge(baseScore, title, pos)
     {
         if(that.hint)
         {
-            m_ui.remove(that.hint);
+            that.hint.remove();
             that.hint = null;
         }
         if(that.mouseLock == false)
@@ -313,7 +313,7 @@ PickingChallenge.prototype.OnDestroy = function()
     var that = this;
     if(this.hint)
     {
-        m_ui.remove(that.hint);
+       this.hint.remove();
     }
     if(!this.draftmode)
     {
@@ -324,11 +324,11 @@ PickingChallenge.prototype.OnDestroy = function()
             {
                 that.posPin.Destroy();
                 if(that.distanceLine)
-                    m_ui.remove(that.distanceLine);
+                    that.distanceLine.remove();
             }
             that.okayBtn.Destroy();
 
-            m_ui.remove(that.pickOverlay);
+            that.pickOverlay.remove();
             setTimeout(function(){
             ogRemoveImageLayer(that.ogFrameLayer);
             },700);
@@ -342,11 +342,11 @@ PickingChallenge.prototype.OnDestroy = function()
         {
             that.posPin.Destroy();
             if(that.distanceLine)
-                m_ui.remove(that.distanceLine);
+                that.distanceLine.remove();
         }
         that.okayBtn.Destroy();
 
-        m_ui.remove(that.pickOverlay);
+        that.pickOverlay.remove();
         ogRemoveImageLayer(that.ogFrameLayer);
         that.eventDestroyed();
     }
