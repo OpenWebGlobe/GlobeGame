@@ -53,35 +53,11 @@ function DistrictChallenge(baseScore, correctPick, baseData, view, title, extent
    this.text = title;
    this.stop = false;
    this.clock = null;
-   this.pathArray = [];
+   this.shapes = [];
    this.screenText = null;
    this.clickState = 0;
    this.extent = extent;
-
-
-   /* Inline functions*/
-   /* this.onOption1 = function(){
-    that.PickOption(1, that.clock.GetSeconds());
-    };
-    this.onOption2 = function(){
-    that.PickOption(2, that.clock.GetSeconds());
-    };
-    this.onOption3 = function(){
-    that.PickOption(3, that.clock.GetSeconds());
-    };
-    this.onOption4 = function(){
-    that.PickOption(4, that.clock.GetSeconds());
-    };
-    this.FlightCallback = function()
-    {
-    if(that.stop != true && that.flystate < that.views.length)
-    {
-    var oView = that.views[that.flystate];
-    that.flystate +=1;
-    ogFlyTo(m_scene,oView["longitude"],oView["latitude"], oView["elevation"],oView["yaw"],oView["pitch"],oView["roll"]);
-    m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
-    }
-    };*/
+   this.trials = 0;
 }
 DistrictChallenge.prototype = new Challenge(0);
 DistrictChallenge.prototype.constructor = DistrictChallenge;
@@ -95,33 +71,11 @@ DistrictChallenge.prototype.Prepare = function (delay) {
    var prepFunc = function () {
       for (var i = 0; i < that.data.length; i++) {
          that.CreateInteractiveSurface(that.data[i]);
-         var clickOption = function(){
-
-         };
       }
-      that.screenText = new ScreenText(m_ui, that.text,m_centerX, window.innerHeight-255, 26, "center");
-      that.clock = new Clock(m_ui, 50, 75, 60);
+      that.screenText = new ScreenText(m_ui, that.text,m_centerX, window.innerHeight-180, 26, "center");
+      that.clock = new Clock(m_ui, 50, 82, 60);
       ogSetPosition(m_camera,that.view.longitude,that.view.latitude, that.view.elevation);
       ogSetOrientation(m_camera,that.view["yaw"],that.view["pitch"], that.view["roll"]);
-      /* btn1 = new Button01(m_ui, "btn1", m_centerX-310, window.innerHeight-239, 300, 69, that.options[0], 15);
-       btn1.onClickEvent = that.onOption1;
-       btn2 = new Button01(m_ui, "btn2", m_centerX+10, window.innerHeight-239, 300, 69, that.options[1], 15);
-       btn2.onClickEvent = that.onOption2;
-       btn3 = new Button01(m_ui, "btn3", m_centerX-310, window.innerHeight-150, 300, 69, that.options[2], 15);
-       btn3.onClickEvent = that.onOption3;
-       btn4 = new Button01(m_ui, "btn4", m_centerX+10, window.innerHeight-150, 300, 69, that.options[3], 15);
-       btn4.onClickEvent = that.onOption4;
-       that.buttonArray.push(btn1);
-       that.buttonArray.push(btn2);
-       that.buttonArray.push(btn3);
-       that.buttonArray.push(btn4);
-       that.screenText = new ScreenText(m_ui, that.text,m_centerX, window.innerHeight-255, 26, "center");
-       that.clock = new Clock(m_ui, 50, 75, 60);
-       var flightduration = Math.floor(40/(that.views.length-1))*1000;
-       ogSetFlightDuration(m_scene,flightduration);
-       ogSetPosition(m_camera,that.views[0].longitude,that.views[0].latitude, that.views[0].elevation);
-       ogSetOrientation(m_camera,that.views[0]["yaw"],that.views[0]["pitch"], that.views[0]["roll"]);
-       ogSetInPositionFunction(m_context,that.FlightCallback);*/
    };
    if (delay > 0) {
       setTimeout(prepFunc, delay);
@@ -140,8 +94,6 @@ DistrictChallenge.prototype.Activate = function () {
          that.callback()
       };
       that.clock.Start();
-
-      //that.FlightCallback();
    });
 };
 //-----------------------------------------------------------------------------
@@ -149,13 +101,11 @@ DistrictChallenge.prototype.Activate = function () {
  * @description destroy challenge
  */
 DistrictChallenge.prototype.Destroy = function (event) {
-   if (!this.destroyed) {
+   if(!this.destroyed)
+   {
       this.eventDestroyed = event;
+      ogSetInPositionFunction(m_context,function() {});
       this.clock.Pause();
-      ogSetInPositionFunction(m_context, function () {
-      });
-      this.stop = true;
-      ogStopFlyTo(m_scene);
       this.OnDestroy();
       this.destroyed = true;
    }
@@ -166,76 +116,57 @@ DistrictChallenge.prototype.Destroy = function (event) {
  */
 DistrictChallenge.prototype.OnDestroy = function () {
    this.clock.Destroy();
+
    var that = this;
-   if (!this.draftmode) {
-      FadeOut(function () {
-         /*that.buttonArray[0].Destroy();
-         that.buttonArray[1].Destroy();
-         that.buttonArray[2].Destroy();
-         that.buttonArray[3].Destroy();
-         that.screenText.Destroy();*/
+   if(this.hint)
+   {
+      this.hint.remove();
+   }
+   if(!this.draftmode)
+   {
+      FadeOut(function(){
+         that.RemoveAllSurfaces();
+         that.screenText.Destroy();
          that.eventDestroyed();
       });
-   }
-   else
+   } else
    {
-      /*that.buttonArray[0].Destroy();
-      that.buttonArray[1].Destroy();
-      that.buttonArray[2].Destroy();
-      that.buttonArray[3].Destroy();
-      that.screenText.Destroy();*/
+      that.RemoveAllSurfaces();
+      that.screenText.Destroy();
       that.eventDestroyed();
    }
 };
 //-----------------------------------------------------------------------------
 /**
- * @description pick solution
- * @param {number} id
+ * @description Score
  * @param {number} timeleft
  */
-DistrictChallenge.prototype.Pick = function (id, timeleft) {
-   /*this.buttonArray[0].SetEnabled(false);
-    this.buttonArray[1].SetEnabled(false);
-    this.buttonArray[2].SetEnabled(false);
-    this.buttonArray[3].SetEnabled(false);
-    var that = this;
-    if (this.correctOption == id) {
-    m_soundhandler.Play("correct");
-    if(m_player)
-    {
-    var score = 0;
-    m_player.ScorePoints(this.baseScore, ""); score += this.baseScore;
-    m_player.ScorePoints(Math.floor(timeleft / 5), m_locale["timebonus"]);score +=Math.floor(timeleft / 5);
-    if (timeleft > 50) {
-    m_player.ScorePoints(20, m_locale["speedbonus"]);
-    score += 20;
-    }
-    Timeout(function(){
-    var coins = new Coins(m_ui, score);
-    }, 1000);
-    }
-    this.buttonArray[option - 1].SetEnabled(true);
-    this.buttonArray[option - 1].SetState(3);
-    setTimeout(function () {
-    that.callback();
-    }, 2000);
-    } else {
-    m_soundhandler.Play("wrong");
-    this.buttonArray[option - 1].SetEnabled(true);
-    this.buttonArray[this.correctOption - 1].SetEnabled(true);
-    this.buttonArray[option - 1].SetState(4);
-    this.buttonArray[this.correctOption - 1].SetState(5);
-    setTimeout(function () {
-    that.callback();
-    }, 2000);
-    }*/
+DistrictChallenge.prototype.Score = function (timeleft) {
+   var that = this;
+      m_soundhandler.Play("correct");
+      if (m_player) {
+         var score = 0;
+
+         score += Math.floor(this.baseScore/this.trials);
+         m_player.ScorePoints(score, "");
+         m_player.ScorePoints(Math.floor(timeleft / 5), m_locale["timebonus"]);
+         score += Math.floor(timeleft / 5);
+         if (timeleft > 50) {
+            m_player.ScorePoints(20, m_locale["speedbonus"]);
+            score += 20;
+         }
+         Timeout(function () {
+            var coins = new Coins(m_ui, score);
+         }, 800);
+      }
+      setTimeout(function () {
+         that.callback();
+      }, 2000);
 };
 
 DistrictChallenge.prototype.CreateInteractiveSurface = function(fieldData)
 {
    var that = this;
-
-
 
    var shape = new Kinetic.Path({
       x: ((window.innerWidth-(that.extent[0]*(window.innerHeight/that.extent[1])))/2),
@@ -251,20 +182,35 @@ DistrictChallenge.prototype.CreateInteractiveSurface = function(fieldData)
    {
       shape.setPosition(((window.innerWidth-(that.extent[0]*(window.innerHeight/that.extent[1])))/2), 0);
       shape.setScale((window.innerHeight/that.extent[1]));
-      shape.draw();
    };
 
    var onClickEvent = function() {
+      that.trials += 1;
       if (that.correctPick == shape.name)
       {
          shape.setFill("#00FF00");
+         that.Score(that.clock.GetSeconds());
+      }
+      else if(that.trials >= 8)
+      {
+         m_soundhandler.Play("wrong");
+         for(var i = 0; i < that.shapes.length; i++)
+         {
+            if(that.shapes[i]["name"] == that.correctPick)
+            {
+               that.shapes[i].setFill("#FFFF00");
+               break;
+            }
+         }
+         setTimeout(function () {
+            that.callback();
+         }, 2500);
       }
       else
       {
          shape.setFill("#FF0000");
-         var text = new FlyingText(m_static, "Nochmal versuchen!", "#FF6600");
+         //var text = new FlyingText(m_static, "Nochmal versuchen!", "#FF6600");
       }
-      m_ui.draw();
    };
    var onMouseOverEvent = function() {};
    var onMouseOutEvent = function() {};
@@ -309,8 +255,17 @@ DistrictChallenge.prototype.CreateInteractiveSurface = function(fieldData)
          }
    });
    shape.name = fieldData["label"]["text"];
+   this.shapes.push(shape);
    m_ui.add(shape);
-   m_ui.draw();
+};
+
+DistrictChallenge.prototype.RemoveAllSurfaces = function()
+{
+   for(var i = 0; i < this.shapes.length; i++)
+   {
+      m_globeGame.UnregisterResizeCallback(this.shapes[i].name);
+      this.shapes[i].remove();
+   }
 };
 
 goog.exportSymbol('DistrictChallenge', DistrictChallenge);
@@ -318,5 +273,5 @@ goog.exportProperty(DistrictChallenge.prototype, 'Prepare', DistrictChallenge.pr
 goog.exportProperty(DistrictChallenge.prototype, 'Activate', DistrictChallenge.prototype.Activate);
 goog.exportProperty(DistrictChallenge.prototype, 'Destroy', DistrictChallenge.prototype.Destroy);
 goog.exportProperty(DistrictChallenge.prototype, 'OnDestroy', DistrictChallenge.prototype.OnDestroy);
-goog.exportProperty(DistrictChallenge.prototype, 'Pick', DistrictChallenge.prototype.Pick);
+goog.exportProperty(DistrictChallenge.prototype, 'Score', DistrictChallenge.prototype.Score);
 goog.exportProperty(DistrictChallenge.prototype, 'RegisterCallback', DistrictChallenge.prototype.RegisterCallback);

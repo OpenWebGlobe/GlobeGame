@@ -64,117 +64,112 @@ function Button01(layer, name, x, y, width, height, caption, fontsize)
     this.onMouseOutEvent = function() {};
     this.onMouseDownEvent = function() {};
     this.onMouseUpEvent = function() {};
-    var that = this;
+    var thaat = this;
 
     this.shape = new Kinetic.Shape({drawFunc:function(canvas){
-        var ctx = this.getContext();
+        var ctx = canvas.getContext();
         var clickOffset = 0;
-        if(that.enabled == false)
+        if(thaat.enabled == false)
         {
             ctx.drawImage(m_images["btn_01_d"], x, y, width, height);
         }
-        else if(that.state == 0)
+        else if(thaat.state == 0)
         {
             ctx.drawImage(m_images["btn_01"], x, y, width, height);
         }
-        else if(that.state == 1)
+        else if(thaat.state == 1)
         {
             ctx.drawImage(m_images["btn_01_h"], x, y, width, height);
         }
-        else if(that.state == 2)
+        else if(thaat.state == 2)
         {
             ctx.drawImage(m_images["btn_01_c"], x, y, width, height);
             clickOffset = 2;
         }
-        else if(that.state == 3)
+        else if(thaat.state == 3)
         {
             ctx.drawImage(m_images["btn_01_t"], x, y, width, height);
         }
-        else if(that.state == 4)
+        else if(thaat.state == 4)
         {
             ctx.drawImage(m_images["btn_01_f"], x, y, width, height);
         }
-        else if(that.state == 5)
+        else if(thaat.state == 5)
         {
             ctx.drawImage(m_images["btn_01_o"], x, y, width, height);
         }
         ctx.beginPath();
         ctx.rect(x, y, width, height);
         ctx.closePath();
+       canvas.fillStroke(this);
         ctx.font = fontsize+"pt TitanOne";
         ctx.fillStyle = "#FFF";
-        var textWidth = ctx.measureText(that.caption).width;
-        var textHeight = ctx.measureText(that.caption).height;
-        var tX = x+(width/2)+clickOffset;
-        var tY = y+ 3*(height/5)+clickOffset;
-        /*if(textWidth <= width)
-        {
-            tX = x + ((width-textWidth)/2);
-        }*/
-        ctx.fillText(that.caption, tX, tY);
+       var textWidth = ctx.measureText(thaat.caption).width;
+       var tX = x + ((width-textWidth)/2);
+       var tY = y+ 3*(height/5)+clickOffset;
+        ctx.fillText(thaat.caption, tX, tY);
         ctx.lineWidth = 1;
         ctx.strokeStyle = "#000"; // stroke color
-        ctx.strokeText(that.caption, tX, tY);
-       canvas.fillStroke(this);
+        ctx.strokeText(thaat.caption, tX, tY);
+
     }});
 
     this.shape.on("mouseout", function(){
-        if(that.enabled){
-            that.onMouseOutEvent();
-            if(that.state < 3)
-            {that.state = 0;}
+        if(thaat.enabled){
+           thaat.onMouseOutEvent();
+            if(thaat.state < 3)
+            {thaat.state = 0;}
         }
-       m_stage.draw();
+
     });
     this.shape.on("mouseover", function(){
-        if(that.enabled){
-            that.onMouseOverEvent();
-            if(that.state < 3)
-            {that.state = 1;}
+        if(thaat.enabled){
+           thaat.onMouseOverEvent();
+            if(thaat.state < 3)
+            {thaat.state = 1;}
         }
-       m_stage.draw();
+
     });
     this.shape.on("mousedown", function(){
-        if(that.enabled){
-            that.onMouseDownEvent();
-            if(that.state < 3)
-            {that.state = 2;}
+        if(thaat.enabled){
+           thaat.onMouseDownEvent();
+            if(thaat.state < 3)
+            {thaat.state = 2;}
         }
-       m_stage.draw();
+
     });
     this.shape.on("mouseup", function(){
-        if(that.enabled){
+        if(thaat.enabled){
 
-            that.onMouseUpEvent();
-            if(that.state < 3)
-            {that.state = 1;
-            that.onClickEvent();
+           thaat.onMouseUpEvent();
+            if(thaat.state < 3)
+            {thaat.state = 1;
+               thaat.onClickEvent();
             }
         }
-       m_stage.draw();
+
     });
    this.shape.on("touchstart", function(){
-      if(that.enabled){
-         that.onMouseDownEvent();
-         if(that.state < 3)
-         {that.state = 2;}
+      if(thaat.enabled){
+         thaat.onMouseDownEvent();
+         if(thaat.state < 3)
+         {thaat.state = 2;}
       }
-      m_stage.draw();
+
    });
    this.shape.on("touchend", function(){
-      if(that.enabled){
+      if(thaat.enabled){
 
-         that.onMouseUpEvent();
-         if(that.state < 3)
-         {that.state = 1;
-            that.onClickEvent();
+         thaat.onMouseUpEvent();
+         if(thaat.state < 3)
+         {thaat.state = 1;
+            thaat.onClickEvent();
          }
       }
-      m_stage.draw();
+
    });
     this.shape.name = name;
     layer.add(this.shape);
-    layer.draw();
 }
 //-----------------------------------------------------------------------------
 /**
@@ -272,13 +267,8 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
         ctx.font = fontsize+"pt TitanOne";
         ctx.fillStyle = "#FFF";
         var textWidth = ctx.measureText(that.caption).width;
-        var textHeight = ctx.measureText(that.caption).height;
-        var tX = x+(width/2)+clickOffset;
+        var tX = x + ((width-textWidth)/2);
         var tY = y+ 3*(height/5)+clickOffset;
-        /*if(textWidth <= width)
-        {
-            tX = x + ((width-textWidth)/2);
-        }*/
         ctx.fillText(that.caption, tX, tY);
         ctx.lineWidth = 1;
         ctx.strokeStyle = "#000"; // stroke color
@@ -293,7 +283,7 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
             if(that.state < 3)
             {that.state = 0;}
         }
-       m_stage.draw();
+
     });
     this.shape.on("mouseover", function(){
         if(that.enabled){
@@ -301,7 +291,7 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
             if(that.state < 3)
             {that.state = 1;}
         }
-       m_stage.draw();
+
     });
     this.shape.on("mousedown", function(){
         if(that.enabled){
@@ -309,7 +299,7 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
             if(that.state < 3)
             {that.state = 2;}
         }
-       m_stage.draw();
+
     });
     this.shape.on("mouseup", function(){
         if(that.enabled){
@@ -319,7 +309,7 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
                 that.onClickEvent(that);
             }
         }
-       m_stage.draw();
+
     });
    this.shape.on("touchstart", function(){
       if(that.enabled){
@@ -327,7 +317,7 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
          if(that.state < 3)
          {that.state = 2;}
       }
-      m_stage.draw();
+
    });
    this.shape.on("touchend", function(){
       if(that.enabled){
@@ -337,11 +327,10 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
             that.onClickEvent(that);
          }
       }
-      m_stage.draw();
+
    });
     this.shape.name = name;
     layer.add(this.shape);
-    m_stage.draw();
 }
 
 //-----------------------------------------------------------------------------
@@ -399,17 +388,17 @@ function Clock(layer, x, y, seconds)
             ctx.fill();
             if(that.seconds > 10) {ctx.fillStyle = "#FFF";} else {ctx.fillStyle = "#F00";}
             ctx.font = "40pt TitanOne";
-            ctx.textAlign = "center";
+           ctx.textAlign = "center";
             var secs = "" +that.seconds;
             ctx.fillText(secs, 85, 110);
             ctx.lineWidth = 3;
+
             ctx.strokeStyle = "#000"; // stroke color
             ctx.strokeText(secs, 85, 110);
            canvas.fillStroke(this);
         }
     }});
     layer.add(this.shape);
-    this.shape.draw();
 };
 //-----------------------------------------------------------------------------
 /**
@@ -444,7 +433,6 @@ Clock.prototype.Countdown = function()
 {
     var that = this;
     setTimeout(function(){
-       that.layer.draw();
         if(that.obsolete == true)
         {
 
@@ -455,7 +443,6 @@ Clock.prototype.Countdown = function()
         {
             that.running = false;
             m_soundhandler.Play("wrong");
-           that.layer.draw();
             that.onTimeoutEvent(); }
     }, 1000);
     if(this.running)
@@ -464,7 +451,6 @@ Clock.prototype.Countdown = function()
         if(this.seconds <= 10)
         {
            m_soundhandler.Play("ping2");
-           that.layer.draw();
         }
     }
 };
@@ -537,8 +523,8 @@ function ScreenText(layer, text, x, y, fontsize, align)
     this.layer = layer;
     var that = this;
 
-    this.shape = new Kinetic.Shape({drawFunc:function(){
-        var ctx = this.getContext();
+    this.shape = new Kinetic.Shape({drawFunc:function(canvas){
+        var ctx = canvas.getContext();
         ctx.textAlign = that.align;
         ctx.fillStyle = "#FFF";
         ctx.font = that.fontsize+"pt TitanOne";
@@ -547,9 +533,9 @@ function ScreenText(layer, text, x, y, fontsize, align)
         ctx.lineWidth = 3;
         ctx.strokeStyle = "#000"; // stroke color
         ctx.strokeText(that.text,  that.x, that.y);
+       canvas.fillStroke(this);
     }});
     layer.add(this.shape);
-    this.shape.draw();
 }
 
 //-----------------------------------------------------------------------------
@@ -619,7 +605,6 @@ function MessageDialog(layer, message, x, y,width, height)
 
     this.okayButton = new Button01(m_ui, "dialog", x-150, y+(height/2)-100, 300, 69, "OK", 15);
     this.okayButton.onClickEvent = that.OnOkay;
-    m_stage.draw();
 }
 //-----------------------------------------------------------------------------
 /**
@@ -661,7 +646,7 @@ function ScoreCount(layer)
     this.shape = new Kinetic.Shape({drawFunc:function(canvas){
         var ctx = canvas.getContext();
         ctx.beginPath();
-        ctx.rect(10, 10, 225, 50);
+        ctx.rect(2, 2, 273, 73);
         var grad = ctx.createLinearGradient(10, 10, 10, 50);
         grad.addColorStop(0, "#555");
         grad.addColorStop(1, "#CCC");
@@ -716,10 +701,10 @@ function ProgressCount(layer, qMax)
         ctx.fillStyle = "#FFF";
         ctx.font = "26pt TitanOne";
         ctx.textAlign = "left";
-        ctx.fillText(that.qCount + "/" + that.qMax, 245, 47);
+        ctx.fillText(that.qCount + "/" + that.qMax, 185, 50);
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#000"; // stroke color
-        ctx.strokeText(that.qCount + "/" + that.qMax, 245, 47);
+        ctx.strokeText(that.qCount + "/" + that.qMax, 185, 50);
        canvas.fillStroke(this);
 
     }});
@@ -775,8 +760,14 @@ function Pin(layer, image, x, y)
             ctx.drawImage(image, that.x-74, that.y-132, 86, 144);
            canvas.fillStroke(this);
         }
-
-    }});
+       },
+          drawHitFunc: function(canvas) {
+             var context = canvas.getContext();
+             context.beginPath();
+             context.closePath();
+             canvas.fillStroke(this);
+          }
+    });
     layer.add(this.shape);
 }
 

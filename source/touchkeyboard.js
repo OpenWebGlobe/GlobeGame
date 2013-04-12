@@ -54,8 +54,8 @@ function TouchKeyboard(layer, name, x, y, caption, callback)
     var height = 390;
     var width = 853;
 
-    this.shape = new Kinetic.Shape({drawFunc:function(){
-        var ctx = this.getContext();
+    this.shape = new Kinetic.Shape({drawFunc:function(canvas){
+        var ctx = canvas.getContext();
         ctx.beginPath();
         ctx.rect(that.x, that.y, width, height);
         var grad = ctx.createLinearGradient(x, y, x, y+height);
@@ -73,6 +73,7 @@ function TouchKeyboard(layer, name, x, y, caption, callback)
         ctx.lineWidth = 1;
         ctx.strokeStyle = "#000"; // stroke color
         ctx.strokeText(caption+that.input+"_", x+20,y+30);
+       canvas.fillStroke(this);
     }});
     layer.add(this.shape);
     this.Append = function(sender)

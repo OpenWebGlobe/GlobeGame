@@ -57,6 +57,7 @@ function LandmarkChallenge(baseScore, options, correctOption, views, title)
     this.buttonArray = [];
     this.screenText = null;
 
+
     var that = this;
 
     /* Inline functions*/
@@ -91,33 +92,30 @@ LandmarkChallenge.prototype.constructor=LandmarkChallenge;
  */
 LandmarkChallenge.prototype.Prepare = function(delay)
 {
-    var btn1 = null;
-    var btn2 = null;
-    var btn3 = null;
-    var btn4 = null;
-
     var that = this;
     var prepFunc = function()
     {
-        btn1 = new Button01(m_ui, "btn1", m_centerX-310, window.innerHeight-239, 300, 69, that.options[0], 15);
-        btn1.onClickEvent = that.onOption1;
-        btn2 = new Button01(m_ui, "btn2", m_centerX+10, window.innerHeight-239, 300, 69, that.options[1], 15);
-        btn2.onClickEvent = that.onOption2;
-        btn3 = new Button01(m_ui, "btn3", m_centerX-310, window.innerHeight-150, 300, 69, that.options[2], 15);
-        btn3.onClickEvent = that.onOption3;
-        btn4 = new Button01(m_ui, "btn4", m_centerX+10, window.innerHeight-150, 300, 69, that.options[3], 15);
-        btn4.onClickEvent = that.onOption4;
-        that.buttonArray.push(btn1);
-        that.buttonArray.push(btn2);
-        that.buttonArray.push(btn3);
-        that.buttonArray.push(btn4);
         that.screenText = new ScreenText(m_ui, that.text,m_centerX, window.innerHeight-255, 26, "center");
-        that.clock = new Clock(m_ui, 50, 75, 60);
+        that.clock = new Clock(m_ui, 50, 82, 60);
+
         var flightduration = Math.floor(40/(that.views.length-1))*1000;
         ogSetFlightDuration(m_scene,flightduration);
         ogSetPosition(m_camera,that.views[0].longitude,that.views[0].latitude, that.views[0].elevation);
         ogSetOrientation(m_camera,that.views[0]["yaw"],that.views[0]["pitch"], that.views[0]["roll"]);
         ogSetInPositionFunction(m_context,that.FlightCallback);
+
+       var b1 = new Button01(m_ui, "btn1", m_centerX-310, window.innerHeight-239, 300, 69, that.options[0], 15);
+       b1.onClickEvent = that.onOption1;
+       that.buttonArray.push(b1);
+       var b2 = new Button01(m_ui, "btn2", m_centerX+10, window.innerHeight-239, 300, 69, that.options[1], 15);
+       b2.onClickEvent = that.onOption2;
+       that.buttonArray.push(b2);
+       var b3 = new Button01(m_ui, "btn3", m_centerX-310, window.innerHeight-150, 300, 69, that.options[2], 15);
+       b3.onClickEvent = that.onOption3;
+       that.buttonArray.push(b3);
+       var b4 = new Button01(m_ui, "btn4", m_centerX+10, window.innerHeight-150, 300, 69, that.options[3], 15);
+       b4.onClickEvent = that.onOption4;
+       that.buttonArray.push(b4);
     };
     if(delay > 0)
     {
@@ -137,7 +135,6 @@ LandmarkChallenge.prototype.Activate = function()
     FadeIn(function() {
         that.clock.onTimeoutEvent = function(){that.callback()};
         that.clock.Start();
-
         that.FlightCallback();
     });
 };
@@ -212,7 +209,7 @@ LandmarkChallenge.prototype.PickOption = function(option, timeleft) {
             }
             Timeout(function(){
                 var coins = new Coins(m_ui, score);
-            }, 1000);
+            }, 800);
         }
         this.buttonArray[option - 1].SetEnabled(true);
         this.buttonArray[option - 1].SetState(3);

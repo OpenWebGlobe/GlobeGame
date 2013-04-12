@@ -68,7 +68,6 @@ var m_stage = null;
 var m_ui =     null;
 var m_static = null;
 var m_camera = null;
-var m_basedata =  {};
 var m_centerX = window.innerWidth/2;
 var m_centerY = window.innerHeight/2;
 var m_lang = "none";
@@ -90,6 +89,7 @@ var m_gameData = null;
 var m_globeGame = null;
 var m_debug = false;
 var m_loaded = false;
+var m_drawLock = false;
 
 /**
  * @class GlobeGame
@@ -323,19 +323,6 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
 
     m_stage.add(m_static);
     m_stage.add(m_ui);
-
-    /*var redraw = function(){
-        m_static.draw();
-       setTimeout(redraw,10);
-    };
-   redraw();*/
-
-
-   /* m_stage.onFrame(function(frame){
-        that.OnCanvasRender(frame);
-        renderCallback(frame);
-    });
-    m_stage.start();*/
 };
 //-----------------------------------------------------------------------------
 /**
@@ -411,7 +398,7 @@ GlobeGame.prototype.EnterHighscore = function()
  */
 GlobeGame.prototype.FlyAround = function()
 {
-   m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
+    m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
     ogSetPosition(m_camera,8.006896018981934,46.27399444580078,10000000);
     ogSetOrientation(m_camera,0,-90,0);
     var views = [
@@ -577,6 +564,7 @@ GlobeGame.prototype.LoadSounds = function(sounds, callback){
     // get num of sources
    if(m_soundenabled)
    {
+      alert("bla");
     var that = this;
     for (var src in sounds) {
         m_numSounds++;
@@ -642,15 +630,15 @@ GlobeGame.prototype.NextChallenge = function()
     if(m_qCount <= m_qMax){
         m_globeGame.currentChallenge = m_gameData.PickChallenge();
         m_globeGame.currentChallenge.RegisterCallback(m_globeGame.ProcessChallenge);
-        m_globeGame.currentChallenge.Prepare(1000);
-        BlackScreen(3500, function(){
+        m_globeGame.currentChallenge.Prepare(1200);
+        BlackScreen(2500, function(){
             m_globeGame.InitQuiz();
         });
     }
     else
     {
-        setTimeout(function(){m_globeGame.EnterHighscore()}, 1500);
-        BlackScreen(3500, function(){
+        setTimeout(function(){m_globeGame.EnterHighscore()}, 1200);
+        BlackScreen(2500, function(){
         });
     }
 };
@@ -680,10 +668,10 @@ GlobeGame.prototype.OnCanvasRender = function(frame)
  */
 GlobeGame.prototype.OnOGRender = function(context)
 {
-   //m_stage.draw();
    m_globeGame.CycleCallback();
+   m_stage.draw();
 };
-//-----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 /**
  * @description resize context event
  * @param {number} context
@@ -694,7 +682,6 @@ GlobeGame.prototype.OnOGResize = function(context)
     m_centerX = window.innerWidth/2;
     m_centerY = window.innerHeight/2;
     m_globeGame.ResizeCallback();
-    m_stage.draw();
 };
 
 GlobeGame.prototype.GenerateUniqueId = function()

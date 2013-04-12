@@ -79,8 +79,8 @@ function PickingChallenge(baseScore, title, pos)
         m_soundhandler.Play("ping1");
         if(that.posPin)
         {
-            that.distanceLine = new Kinetic.Shape({drawFunc:function(){
-                var ctx = this.getContext();
+            that.distanceLine = new Kinetic.Shape({drawFunc:function(canvas){
+                var ctx = canvas.getContext();
                 ctx.moveTo(screenPos[0], screenPos[1]);
                 ctx.lineTo(that.posPin.x, that.posPin.y);
                 ctx.lineWidth = 3;
@@ -94,7 +94,7 @@ function PickingChallenge(baseScore, title, pos)
                 ctx.lineWidth = 2;
                 ctx.strokeStyle = "#000"; // stroke color
                 ctx.strokeText(distance+"km", screenPos[0], screenPos[1]);
-
+               canvas.fillStroke(this);
             }});
             m_ui.add(that.distanceLine);
         }
@@ -111,7 +111,7 @@ function PickingChallenge(baseScore, title, pos)
                 }
                 Timeout(function(){
                     var coins = new Coins(m_ui, score);
-                }, 1000);
+                }, 800);
             }
         }
         setTimeout(function(){
@@ -163,6 +163,7 @@ function PickingChallenge(baseScore, title, pos)
                 that.posPin = new Pin(m_ui, m_images["pin_blue"], pos.x, pos.y);
             }
             that.zoomState = true;
+
         }
     };
     //-----------------------------------------------------------------------------
@@ -200,7 +201,8 @@ function PickingChallenge(baseScore, title, pos)
             var pos = m_stage.getMousePosition();
             if(that.posPin != null)
                 that.posPin.SetPos(pos.x, pos.y);
-        }
+
+      }
     };
     //-----------------------------------------------------------------------------
     /**
@@ -210,7 +212,7 @@ function PickingChallenge(baseScore, title, pos)
     {
         that.flystate = false;
         var pos = ogWorldToWindow(m_scene,that.pickPos[4],that.pickPos[5],that.pickPos[6]);
-        if(that.posPin != null)
+        if(that.posPin != null && that.zoomState == false)
         {
             that.posPin.SetVisible(true);
             that.posPin.SetPos(pos[0], pos[1]);
@@ -244,8 +246,8 @@ PickingChallenge.prototype.Prepare = function(delay)
         that.okayBtn.onClickEvent = that.OnOkay;
         that.okayBtn.onMouseOverEvent = that.MouseOverOkBtn;
         that.okayBtn.onMouseOutEvent = that.MouseOutOkBtn;
-        that.hint = new Kinetic.Shape({drawFunc: function(){
-            var ctx = this.getContext();
+        that.hint = new Kinetic.Shape({drawFunc: function(canvas){
+            var ctx = canvas.getContext();
             ctx.beginPath(); // !!!
             ctx.font = "22pt TitanOne";
             ctx.fillStyle = "#0FF";
@@ -257,7 +259,7 @@ PickingChallenge.prototype.Prepare = function(delay)
         }});
         m_ui.add(that.hint);
 
-        that.clock = new Clock(m_ui, 50, 75, 60);
+        that.clock = new Clock(m_ui, 50, 82, 60);
 
         ogSetPosition(m_camera,8.225578,46.8248707, 280000.0);
         ogSetOrientation(m_camera,0.0,-90.0, 0.0);
@@ -331,7 +333,7 @@ PickingChallenge.prototype.OnDestroy = function()
             that.pickOverlay.remove();
             setTimeout(function(){
             ogRemoveImageLayer(that.ogFrameLayer);
-            },700);
+            },1200);
             that.eventDestroyed();
         });
     } else
@@ -372,6 +374,7 @@ PickingChallenge.prototype.ZoomIn = function(pos, ori)
 PickingChallenge.prototype.ZoomOut = function(ori)
 {
     this.flystate = true;
+    //this.posPin.SetVisible(false);
     ogSetFlightDuration(m_scene,350);
     ogFlyTo(m_scene,8.225578,46.8248707, 280000.0,0.00,-90.0, 0.0);
    m_flystate = GlobeGame.FLYSTATE.FLYAROUND;

@@ -1,0 +1,14 @@
+{
+    "Type": 2,
+    "BaseScore": 100,
+    "Title": "Gemeinderaten: Wo ist Therwil?",
+    "CorrectPick": "Therwil",
+    "DataFile": "bl_gemeinden_high",
+    "Longitude": 7.6170971603393555,
+    "Latitude": 47.4260847473144,
+    "Elevation": 42688.31,
+    "Yaw": 0.0,
+    "Pitch": -90.0,
+    "Roll": 0.0,
+    "SceneExtent": [1651,1050]
+}
