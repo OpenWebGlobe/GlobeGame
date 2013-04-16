@@ -367,7 +367,7 @@ goog.scope = function(a) {
 };
 var owg = {gg:{}};
 owg.gg.Editor = {};
-var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_context, m_globe, m_stage, m_scene, m_camera, m_ui = new Kinetic.Layer, m_static = new Kinetic.Layer, m_centerX = (window.innerWidth - 350) / 2, m_centerY = window.innerHeight / 2, m_challenge = null, m_cType = 0, m_pin, m_pick = [!1, 0, 0, 0], m_zoom = !1, m_pickOverlay, trLayer = null, m_elev, m_views = [], m_soundenabled = !1, m_datahost = "http://localhost";
+var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_context, m_globe, m_stage, m_scene, m_camera, m_ui = new Kinetic.Layer, m_static = new Kinetic.Layer, m_centerX = (window.innerWidth - 350) / 2, m_centerY = window.innerHeight / 2, m_challenge = null, m_cType = 0, m_pin, m_pick = [!1, 0, 0, 0], m_zoom = !1, m_pickOverlay, trLayer = null, m_elev, m_views = [], m_soundenabled = !1, m_datahost = "http://localhost", m_callbacks = [], m_resizeCallbacks = [];
 function SelectAllText(a) {
   document.getElementById(a).focus();
   document.getElementById(a).select()
@@ -387,11 +387,12 @@ function Init(a) {
   m_scene = ogCreateScene(m_context, OG_SCENE_3D_ELLIPSOID_WGS84, {rendertotexture:!1});
   m_globe = ogCreateWorld(m_scene);
   m_camera = ogGetActiveCamera(m_scene);
-  m_stage = new Kinetic.Stage("main_ui", window.innerWidth, window.innerHeight);
+  m_stage = new Kinetic.Stage({container:"main_ui", width:window.innerWidth, height:window.innerHeight, x:0, y:0});
   LoadImages({btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png"});
   ogAddImageLayer(m_globe, {url:[m_datahost], layer:"bluemarble", service:"owg"});
   ogAddImageLayer(m_globe, {url:[m_datahost], layer:"swissimage", service:"owg"});
   m_elev = ogAddElevationLayer(m_globe, {url:[m_datahost], layer:"DHM25", service:"owg"});
+  ogSetRenderQuality(m_globe, 3);
   ogSetRenderFunction(m_context, OnRender);
   ogSetResizeFunction(m_context, OnResize);
   a = ogGetActiveCamera(m_scene);
@@ -404,11 +405,7 @@ function Init(a) {
   m_pickOverlay.on("mousedown", PickMouseDown);
   m_pickOverlay.on("mouseup", PickMouseUp);
   m_pickOverlay.on("mousemove", PickMouseMove);
-  m_stage.add(m_ui);
-  m_stage.onFrame(function(a) {
-    OnCanvasRender(a)
-  });
-  m_stage.start()
+  m_stage.add(m_ui)
 }
 function PickMouseMove() {
   if(m_zoom) {
@@ -434,8 +431,8 @@ function PickMouseUp() {
   }, 100)
 }
 function TypeChanged(a) {
-  a == "landmark" ? (ClearViews(), jQuery("#picking_div").css("visibility", "hidden"), jQuery("#landmark_div").css("visibility", "visible"), jQuery("#main_ui").css("visibility", "hidden"), m_cType = 0, m_stage.remove(m_static), m_elev = ogAddElevationLayer(m_globe, {url:[m_datahost], layer:"DHM25", service:"owg"})) : a == "picking" && (jQuery("#picking_div").css("visibility", "visible"), jQuery("#landmark_div").css("visibility", "hidden"), jQuery("#main_ui").css("visibility", "visible"), m_cType = 
-  1, a = ogGetScene(m_context), a = ogGetActiveCamera(a), ogSetPosition(a, 8.225578, 46.8248707, 28E4), ogSetOrientation(a, 0, -90, 0), m_stage.add(m_static), ogRemoveImageLayer(m_elev))
+  a == "landmark" ? (ClearViews(), jQuery("#picking_div").css("visibility", "hidden"), jQuery("#landmark_div").css("visibility", "visible"), jQuery("#main_ui").css("visibility", "hidden"), m_cType = 0, m_static.remove(), m_elev = ogAddElevationLayer(m_globe, {url:[m_datahost], layer:"DHM25", service:"owg"})) : a == "picking" && (jQuery("#picking_div").css("visibility", "visible"), jQuery("#landmark_div").css("visibility", "hidden"), jQuery("#main_ui").css("visibility", "visible"), m_cType = 1, a = 
+  ogGetScene(m_context), a = ogGetActiveCamera(a), ogSetPosition(a, 8.225578, 46.8248707, 28E4), ogSetOrientation(a, 0, -90, 0), m_stage.add(m_static), ogRemoveImageLayer(m_elev))
 }
 function TrafficLayer(a) {
   a ? trLayer = ogAddImageLayer(m_globe, {url:[m_datahost], layer:"osm_transparent", service:"owg"}) : ogRemoveImageLayer(trLayer)
@@ -454,7 +451,7 @@ function AddView() {
 }
 function Update() {
   var a = jQuery.parseJSON(document.getElementById("output").innerHTML);
-  m_cType == 0 ? m_challenge = new LandmarkChallenge(a.BaseScore, a.Options, a.CorrectOption, a.Views, a.Title) : (m_stage.remove(m_static), m_challenge = new PickingChallenge(a.BaseScore, a.Title, [a.Longitude, a.Latitude, a.Elevation]));
+  m_cType == 0 ? m_challenge = new LandmarkChallenge(a.BaseScore, a.Options, a.CorrectOption, a.Views, a.Title) : (m_static.remove(), m_challenge = new PickingChallenge(a.BaseScore, a.Title, [a.Longitude, a.Latitude, a.Elevation]));
   m_challenge.draftmode = !0;
   m_challenge.Prepare(0);
   m_challenge.Activate()
@@ -482,8 +479,21 @@ function OnChallengeReset() {
   var a = ogGetScene(m_context), a = ogGetActiveCamera(a);
   m_cType == 0 ? jQuery("#main_ui").css("visibility", "hidden") : m_cType == 1 && (ogSetPosition(a, 8.225578, 46.8248707, 28E4), ogSetOrientation(a, 0, -90, 0), m_stage.add(m_static))
 }
-function OnCanvasRender() {
-  m_stage.draw()
+function RegisterCycleCallback(a, b) {
+  m_callbacks.push([a, b])
+}
+function UnregisterCycleCallback(a) {
+  for(var b = 0;b < m_callbacks.length;b++) {
+    m_callbacks[b][0] == a && m_callbacks.splice(b, 1)
+  }
+}
+function RegisterResizeCallback(a, b) {
+  m_resizeCallbacks.push([a, b])
+}
+function UnregisterResizeCallback(a) {
+  for(var b = 0;b < m_resizeCallbacks.length;b++) {
+    m_resizeCallbacks[b][0] == a && m_resizeCallbacks.splice(b, 1)
+  }
 }
 function OnRender() {
   var a = ogGetScene(m_context), b = ogGetOrientation(a), a = ogGetPosition(a);
@@ -496,12 +506,19 @@ function OnRender() {
   }else {
     m_cType == 1 && (c = '{\n   "Type": 1,\n   "BaseScore": ' + document.getElementById("qscore").value + ',\n   "Title": "' + document.getElementById("location").value + '",\n   "Longitude": ' + m_pick[1] + ',\n   "Latitude": ' + m_pick[2] + ',\n   "Elevation": ' + m_pick[3] + "\n\n}")
   }
-  document.getElementById("output").innerHTML = c
+  document.getElementById("output").innerHTML = c;
+  m_stage.draw();
+  for(b = 0;b < m_callbacks.length;b++) {
+    m_callbacks[b][1]()
+  }
 }
 function OnResize() {
   m_centerX = (window.innerWidth - 350) / 2;
   m_centerY = window.innerHeight / 2;
-  m_stage.setSize(window.innerWidth - 350, window.innerHeight)
+  m_stage.setSize(window.innerWidth - 350, window.innerHeight);
+  for(var a = 0;a < m_resizeCallbacks.length;a++) {
+    m_resizeCallbacks[a][1]()
+  }
 }
 goog.exportSymbol("SelectAllText", SelectAllText);
 goog.exportSymbol("LoadImages", LoadImages);
@@ -518,7 +535,6 @@ goog.exportSymbol("ClearViews", ClearViews);
 goog.exportSymbol("ShowChallenge", ShowChallenge);
 goog.exportSymbol("HideChallenge", HideChallenge);
 goog.exportSymbol("OnChallengeReset", OnChallengeReset);
-goog.exportSymbol("OnCanvasRender", OnCanvasRender);
 goog.exportSymbol("OnRender", OnRender);
 goog.exportSymbol("OnResize", OnResize);
 

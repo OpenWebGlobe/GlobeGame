@@ -43,9 +43,9 @@ goog.require('owg.gg.GameData');
  * @enum {number}
  */
 GlobeGame.STATE = {
-    IDLE: 0,
-    CHALLENGE: 1,
-    HIGHSCORE: 2
+   IDLE: 0,
+   CHALLENGE: 1,
+   HIGHSCORE: 2
 };
 
 GlobeGame.FLYSTATE =
@@ -65,20 +65,21 @@ var m_context = null;
 var m_globe = null;
 var m_scene = null;
 var m_stage = null;
-var m_ui =     null;
+var m_ui = null;
 var m_static = null;
 var m_camera = null;
-var m_centerX = window.innerWidth/2;
-var m_centerY = window.innerHeight/2;
+var m_centerX = window.innerWidth / 2;
+var m_centerY = window.innerHeight / 2;
 var m_lang = "none";
 var m_datahost = "http://localhost";
 var m_locale = [];
 var m_player = null;
 var m_qCount = 0;
-var m_qMax = 10;
+var m_qMax = 1;
 var m_progress = null;
 var m_soundhandler = new SoundHandler();
 var m_soundenabled = true;
+var m_showhash = false;
 /** @type {GlobeGame.STATE} */
 var m_state = GlobeGame.STATE.IDLE;
 var m_flystate = GlobeGame.FLYSTATE.IDLE;
@@ -89,7 +90,6 @@ var m_gameData = null;
 var m_globeGame = null;
 var m_debug = false;
 var m_loaded = false;
-var m_drawLock = false;
 
 /**
  * @class GlobeGame
@@ -101,29 +101,29 @@ var m_drawLock = false;
  * @param {string} canvasDiv
  * @param {(string|null)} datapath
  * @param {boolean} soundenabled
+ * @param {boolean} showhash
  */
-function GlobeGame(canvasDiv, datapath, soundenabled)
-{
-    if(datapath)
-    {
-        m_datahost = datapath;
-    }
-    m_qCount = 0;
-    this.currentChallenge = null;
-    this.callbacks = [];
-    this.resizeCallbacks = [];
-    var that = this;
-    m_globeGame = this;
-    m_stage = new Kinetic.Stage({
-       container: canvasDiv,
-       width: window.innerWidth,
-       height: window.innerHeight,
-       x: 0,
-       y: 0
-    });
-    m_ui = new Kinetic.Layer();
-    m_static = new Kinetic.Layer();
-    m_soundenabled = soundenabled;
+function GlobeGame(canvasDiv, datapath, soundenabled, showhash) {
+   if (datapath) {
+      m_datahost = datapath;
+   }
+   m_qCount = 0;
+   this.currentChallenge = null;
+   this.callbacks = [];
+   this.resizeCallbacks = [];
+   var that = this;
+   m_globeGame = this;
+   m_stage = new Kinetic.Stage({
+      container: canvasDiv,
+      width: window.innerWidth,
+      height: window.innerHeight,
+      x: 0,
+      y: 0
+   });
+   m_ui = new Kinetic.Layer();
+   m_static = new Kinetic.Layer();
+   m_soundenabled = soundenabled;
+   m_showhash = showhash;
 }
 
 //-----------------------------------------------------------------------------
@@ -132,161 +132,161 @@ function GlobeGame(canvasDiv, datapath, soundenabled)
  * @param {function({number})} renderCallback
  * @param {({number}|null)} renderQuality
  */
-GlobeGame.prototype.Init = function(renderCallback, renderQuality)
-{
-    var that = this;
+GlobeGame.prototype.Init = function (renderCallback, renderQuality) {
+   var that = this;
 
-    /* Preload */
+   /* Preload */
 
-    // Preload images
-    var sources = {
-        btn_01: "art/btn_01.png",
-        btn_01_c: "art/btn_01_c.png",
-        btn_01_h: "art/btn_01_h.png",
-        btn_01_d: "art/btn_01_d.png",
-        btn_01_f: "art/btn_01_f.png",
-        btn_01_t: "art/btn_01_t.png",
-        btn_01_o: "art/btn_01_o.png",
-        btn_02:   "art/btn_02.png",
-        btn_02_c: "art/btn_02_c.png",
-        btn_02_h: "art/btn_02_h.png",
-        clock: "art/clock.png",
-        dial: "art/dial.png",
-        pin_blue: "art/pin_blue.png",
-        pin_red: "art/pin_red.png",
-        pin_green: "art/pin_green.png",
-        pin_yellow: "art/pin_yellow.png",
-        nw_logo: "art/nw_logo.png",
-        logo: "art/logo.png",
-        logo_sm: "art/logo_sm.png",
-        coins: "art/coins.png"
-    };
-    // Preload sounds
-    var sounds = {
-        pick: "sfx/pick.wav",
-        correct: "sfx/correct.wav",
-        wrong: "sfx/wrong.wav",
-        coins: "sfx/coins.wav",
-        highscores: "sfx/highscores.mp3",
-        track01: "sfx/track01.mp3",
-        track02: "sfx/track02.mp3",
-        track03: "sfx/track03.mp3",
-        track04: "sfx/track04.mp3",
-        swoosh: "sfx/swoosh.wav",
-        ping1: "sfx/ping1.wav",
-        ping2: "sfx/ping2.wav"
-    };
+   // Preload images
+   var sources = {
+      btn_01: "art/btn_01.png",
+      btn_01_c: "art/btn_01_c.png",
+      btn_01_h: "art/btn_01_h.png",
+      btn_01_d: "art/btn_01_d.png",
+      btn_01_f: "art/btn_01_f.png",
+      btn_01_t: "art/btn_01_t.png",
+      btn_01_o: "art/btn_01_o.png",
+      btn_02: "art/btn_02.png",
+      btn_02_c: "art/btn_02_c.png",
+      btn_02_h: "art/btn_02_h.png",
+      clock: "art/clock.png",
+      dial: "art/dial.png",
+      pin_blue: "art/pin_blue.png",
+      pin_red: "art/pin_red.png",
+      pin_green: "art/pin_green.png",
+      pin_yellow: "art/pin_yellow.png",
+      nw_logo: "art/nw_logo.png",
+      logo: "art/logo.png",
+      logo_sm: "art/logo_sm.png",
+      coins: "art/coins.png",
+      logo_owg: "art/logo_owg.png"
+   };
+   // Preload sounds
+   var sounds = {
+      pick: "sfx/pick.wav",
+      correct: "sfx/correct.wav",
+      wrong: "sfx/wrong.wav",
+      coins: "sfx/coins.wav",
+      highscores: "sfx/highscores.mp3",
+      track01: "sfx/track01.mp3",
+      track02: "sfx/track02.mp3",
+      track03: "sfx/track03.mp3",
+      track04: "sfx/track04.mp3",
+      swoosh: "sfx/swoosh.wav",
+      ping1: "sfx/ping1.wav",
+      ping2: "sfx/ping2.wav"
+   };
 
- /*  var c = document.getElementById('canvas');
-   c.addEventListener("touchstart", this.TouchHandler, true);
-   c.addEventListener("touchmove", this.TouchHandler, true);
-   c.addEventListener("touchend", this.TouchHandler, true);
-   c.addEventListener("touchcancel", this.TouchHandler, true);*/
-    var loadingText = new ScreenText(m_ui, "Loading sounds...",m_centerX, m_centerY, 25, "center");
-    that.LoadSounds(sounds, function(){
-        loadingText.text = "Loading images...";
-        that.LoadImages(sources, function(){
-            loadingText.text = "Choose language";
+   /*  var c = document.getElementById('canvas');
+    c.addEventListener("touchstart", this.TouchHandler, true);
+    c.addEventListener("touchmove", this.TouchHandler, true);
+    c.addEventListener("touchend", this.TouchHandler, true);
+    c.addEventListener("touchcancel", this.TouchHandler, true);*/
+   var loadingText = new ScreenText(m_ui, "Loading sounds...", m_centerX, m_centerY, 25, "center");
+   that.LoadSounds(sounds, function () {
+      loadingText.text = "Loading images...";
+      that.LoadImages(sources, function () {
+         loadingText.text = "Choose language";
 
-            var doInit = function()
-            {
-                loadingText.text = "Loading language...";
+         var doInit = function () {
+            loadingText.text = "Loading language...";
 
-                that.LoadLanguage(function()
-                {
-                    if(!m_loaded)
-                    {
-                        m_loaded = true;
-                        loadingText.Destroy();
+            that.LoadLanguage(function () {
+               if (!m_loaded) {
+                  m_loaded = true;
+                  loadingText.Destroy();
 
-                        /* nw logo & swisstopo copyright */
-                        var statics = new Kinetic.Shape({drawFunc:function(canvas){
-                            var ctx = canvas.getContext();
-                            ctx.drawImage(m_images["nw_logo"], 1, window.innerHeight-58, 469, 57);
-                            if(m_state != GlobeGame.STATE.CHALLENGE)
-                            {
-                                ctx.drawImage(m_images["logo"], window.innerWidth/2-352, 30, 705, 206);
-                            }
-                            else
-                            {
-                                ctx.drawImage(m_images["logo_sm"], window.innerWidth-260, 4, 254, 50);
-                            }
-                            ctx.textAlign = "right";
-                            ctx.fillStyle = "#FFF";
-                            ctx.font = "18pt TitanOne";
-                            ctx.fillText("www.openwebglobe.org", window.innerWidth-13, window.innerHeight-30);
-                            ctx.lineWidth = 1;
-                            ctx.strokeStyle = "#000"; // stroke color
-                            ctx.strokeText("www.openwebglobe.org", window.innerWidth-13, window.innerHeight-30);
+                  /* nw logo & swisstopo copyright */
+                  var statics = new Kinetic.Shape({drawFunc: function (canvas) {
+                     var ctx = canvas.getContext();
+                     ctx.drawImage(m_images["nw_logo"], window.innerWidth - 365, window.innerHeight - 40, 360, 44);
+                     if (m_state != GlobeGame.STATE.CHALLENGE) {
+                        ctx.drawImage(m_images["logo"], window.innerWidth / 2 - 352, 30, 705, 206);
+                     }
+                     else {
+                        ctx.drawImage(m_images["logo_sm"], window.innerWidth - 260, 4, 254, 50);
+                     }
+                     ctx.textAlign = "left";
+                     ctx.fillStyle = "#FFF";
+                     ctx.font = "14pt TitanOne";
+                     ctx.fillText("www.openwebglobe.org", 5, window.innerHeight - 22);
+                     ctx.lineWidth = 1;
+                     ctx.strokeStyle = "#000"; // stroke color
+                     ctx.strokeText("www.openwebglobe.org", 5, window.innerHeight - 22);
 
-                            ctx.fillStyle = "#FFF";
-                            ctx.font = "13pt TitanOne";
-                            ctx.fillText("SWISSIMAGE, DHM25 © swisstopo JD100033", window.innerWidth-13, window.innerHeight-10);
-                            ctx.lineWidth = 1;
-                            ctx.strokeStyle = "#000"; // stroke color
-                            ctx.strokeText("SWISSIMAGE, DHM25 © swisstopo JD100033", window.innerWidth-13, window.innerHeight-10);
+                     ctx.fillStyle = "#FFF";
+                     ctx.font = "10pt TitanOne";
+                     ctx.fillText("SWISSIMAGE, DHM25 © swisstopo JD100033", 5, window.innerHeight - 5);
+                     ctx.lineWidth = 1;
+                     ctx.strokeStyle = "#000"; // stroke color
+                     ctx.strokeText("SWISSIMAGE, DHM25 © swisstopo JD100033", 5, window.innerHeight - 5);
 
-                            if(m_debug)
-                            {
-                                ctx.fillStyle = "#F00";
-                                ctx.font = "8pt TitanOne";
-                                ctx.textAlign = "left";
-                                ctx.fillText("State:" +m_state, 5, 80);
-                                ctx.fillText("Flystate:" +m_flystate, 5, 90);
-                            }
-                           canvas.fillStroke(this);
+                     ctx.drawImage(m_images["logo_owg"], 0, window.innerHeight - 120, 240, 86);
 
-                        }});
+                     if (m_debug) {
+                        ctx.fillStyle = "#F00";
+                        ctx.font = "8pt TitanOne";
+                        ctx.textAlign = "left";
+                        ctx.fillText("State:" + m_state, 5, 80);
+                        ctx.fillText("Flystate:" + m_flystate, 5, 90);
+                     }
+                     canvas.fillStroke(this);
 
-                        m_static.add(statics);
-                       if(m_soundenabled)
-                       {
-                          m_soundhandler.sounds["track01"].volume = 0.25;
-                          m_soundhandler.sounds["track01"].addEventListener("ended", function() {
-                             m_soundhandler.sounds["track02"].play();
-                           },true);
-                          m_soundhandler.sounds["track02"].volume = 0.25;
-                          m_soundhandler.sounds["track02"].addEventListener("ended", function() {
-                             m_soundhandler.sounds["track03"].play();
-                           },true);
-                          m_soundhandler.sounds["track03"].volume = 0.25;
-                          m_soundhandler.sounds["track03"].addEventListener("ended", function() {
-                             m_soundhandler.sounds["track04"].play();
-                           },true);
-                          m_soundhandler.sounds["track04"].volume = 0.25;
-                          m_soundhandler.sounds["track04"].addEventListener("ended", function() {
-                             m_soundhandler.sounds["track01"].play();
-                           },true);
-                           var index = Math.floor(Math.random()*4+1);
-                          m_soundhandler.sounds["track0"+index].play();
-                       }
-                        // load gamedata
-                        m_gameData = new GameData(function()
-                        {
-                            that.EnterIdle();
-                        });
-                    }
-                });
-            }
+                  }});
 
-            var btn_de = new Button02(m_ui, "btn_de", (window.innerWidth/2)-120, 300, 76, 69,"DEU", 15, function(){
-                m_lang = "de";
-                btn_de.Destroy();btn_fr.Destroy();btn_en.Destroy();
-                doInit();
+                  m_static.add(statics);
+                  if (m_soundenabled) {
+                     m_soundhandler.sounds["track01"].volume = 0.25;
+                     m_soundhandler.sounds["track01"].addEventListener("ended", function () {
+                        m_soundhandler.sounds["track02"].play();
+                     }, true);
+                     m_soundhandler.sounds["track02"].volume = 0.25;
+                     m_soundhandler.sounds["track02"].addEventListener("ended", function () {
+                        m_soundhandler.sounds["track03"].play();
+                     }, true);
+                     m_soundhandler.sounds["track03"].volume = 0.25;
+                     m_soundhandler.sounds["track03"].addEventListener("ended", function () {
+                        m_soundhandler.sounds["track04"].play();
+                     }, true);
+                     m_soundhandler.sounds["track04"].volume = 0.25;
+                     m_soundhandler.sounds["track04"].addEventListener("ended", function () {
+                        m_soundhandler.sounds["track01"].play();
+                     }, true);
+                     var index = Math.floor(Math.random() * 4 + 1);
+                     m_soundhandler.sounds["track0" + index].play();
+                  }
+                  // load gamedata
+                  m_gameData = new GameData(function () {
+                     that.EnterIdle();
+                  });
+               }
             });
-            var btn_fr = new Button02(m_ui, "btn_fr", (window.innerWidth/2)-40, 300, 76, 69,"FRA", 15, function(){
-                m_lang = "fr";
-                btn_de.Destroy();btn_fr.Destroy();btn_en.Destroy();
-                doInit();
-            });
-            var btn_en = new Button02(m_ui, "btn_en", (window.innerWidth/2)+40, 300, 76, 69,"ENG", 15, function(){
-                m_lang = "en";
-                btn_de.Destroy();btn_fr.Destroy();btn_en.Destroy();
-                doInit();
-            });
-        });
-    });
-   m_context = ogCreateContext( {canvas: "canvas",
+         }
+
+         var btn_de = new Button02(m_ui, "btn_de", (window.innerWidth / 2) - 120, 300, 76, 69, "DEU", 15, function () {
+            m_lang = "de";
+            btn_de.Destroy();
+            btn_fr.Destroy();
+            btn_en.Destroy();
+            doInit();
+         });
+         var btn_fr = new Button02(m_ui, "btn_fr", (window.innerWidth / 2) - 40, 300, 76, 69, "FRA", 15, function () {
+            m_lang = "fr";
+            btn_de.Destroy();
+            btn_fr.Destroy();
+            btn_en.Destroy();
+            doInit();
+         });
+         var btn_en = new Button02(m_ui, "btn_en", (window.innerWidth / 2) + 40, 300, 76, 69, "ENG", 15, function () {
+            m_lang = "en";
+            btn_de.Destroy();
+            btn_fr.Destroy();
+            btn_en.Destroy();
+            doInit();
+         });
+      });
+   });
+   m_context = ogCreateContext({canvas: "canvas",
          fullscreen: true
       }
    );
@@ -296,179 +296,189 @@ GlobeGame.prototype.Init = function(renderCallback, renderQuality)
    );
    m_globe = ogCreateWorld(m_scene);
    m_camera = ogGetActiveCamera(m_scene);
-    // Add OWG Data
-    ogAddImageLayer(m_globe, {
-        url: [m_datahost],
-        layer: "bluemarble",
-        service: "owg"
-    });
-    ogAddImageLayer(m_globe, {
-        url: [m_datahost],
-        layer: "swissimage",
-        service: "owg"
-    });
+   // Add OWG Data
+   ogAddImageLayer(m_globe, {
+      url: [m_datahost],
+      layer: "bluemarble",
+      service: "owg"
+   });
+   ogAddImageLayer(m_globe, {
+      url: [m_datahost],
+      layer: "swissimage",
+      service: "owg"
+   });
 
-    ogAddElevationLayer(m_globe, {
-        url: [m_datahost],
-        layer: "DHM25",
-        service: "owg"
-    });
-    if(renderQuality != null)
-    {
-        ogSetRenderQuality(m_globe,renderQuality);
-    }
-    ogSetRenderFunction(m_context, this.OnOGRender);
-    ogSetResizeFunction(m_context, this.OnOGResize);
+   ogAddElevationLayer(m_globe, {
+      url: [m_datahost],
+      layer: "DHM25",
+      service: "owg"
+   });
+   if (renderQuality != null) {
+      ogSetRenderQuality(m_globe, renderQuality);
+   }
+   ogSetRenderFunction(m_context, this.OnOGRender);
+   ogSetResizeFunction(m_context, this.OnOGResize);
 
 
-    m_stage.add(m_static);
-    m_stage.add(m_ui);
+   m_stage.add(m_static);
+   m_stage.add(m_ui);
 };
 //-----------------------------------------------------------------------------
 /**
  * @description STATE function enter idle mode
  */
-GlobeGame.prototype.EnterIdle = function()
-{
-    var that = this;
-    m_state = GlobeGame.STATE.IDLE;
+GlobeGame.prototype.EnterIdle = function () {
+   var that = this;
+   m_state = GlobeGame.STATE.IDLE;
 
-    var startMessage = new MessageDialog(m_ui, m_locale.start, window.innerWidth/2, window.innerHeight-200, 500, 220);
-    startMessage.RegisterCallback(function(){
-        that.StopFlyTo();
-        m_ui.setOpacity(0.0);
-        that.EnterChallenge();
-    });
-    this.FlyAround();
+   var startMessage = new MessageDialog(m_ui, m_locale.start, window.innerWidth / 2, window.innerHeight - 200, 500, 220);
+   startMessage.RegisterCallback(function () {
+      that.StopFlyTo();
+      m_ui.setOpacity(0.0);
+      that.EnterChallenge();
+   });
+   if(m_flystate != GlobeGame.FLYSTATE.FLYAROUND)
+   {
+      this.FlyAround();
+   }
 };
 //-----------------------------------------------------------------------------
 /**
  * @description STATE function enter challenge mode
  */
-GlobeGame.prototype.EnterChallenge = function()
-{
-    m_state = GlobeGame.STATE.CHALLENGE;
-    m_player = new Player("");
-    m_score = new ScoreCount(m_ui);
-    m_progress = new ProgressCount(m_ui, m_qMax);
-    this.ProcessChallenge();
+GlobeGame.prototype.EnterChallenge = function () {
+   m_state = GlobeGame.STATE.CHALLENGE;
+   m_player = new Player("");
+   m_score = new ScoreCount(m_ui);
+   m_progress = new ProgressCount(m_ui, m_qMax);
+   this.ProcessChallenge();
 
 };
 //-----------------------------------------------------------------------------
 /**
  * @description STATE function enter highscore
  */
-GlobeGame.prototype.EnterHighscore = function()
-{
-    var that = this;
-    if(m_progress)
-        m_progress.Destroy();
-    m_ui.setOpacity(1.0);
-    m_state = GlobeGame.STATE.HIGHSCORE;
-    this.FlyAround();
-    var keyboard = new TouchKeyboard(m_ui,"keys",(window.innerWidth/2)-426,(window.innerHeight/2)-195, m_locale["entername"],
-        function(name){
-            m_player.playerName = name;
-            keyboard.Destroy();
-           m_soundhandler.Play("highscores");
+GlobeGame.prototype.EnterHighscore = function () {
+   var that = this;
+   if (m_progress)
+      m_progress.Destroy();
+   m_ui.setOpacity(1.0);
+   m_state = GlobeGame.STATE.HIGHSCORE;
+   this.FlyAround();
+   var keyboard = new TouchKeyboard(m_ui, "keys", (window.innerWidth / 2) - 426, (window.innerHeight / 2) - 195, m_locale["entername"],
+      function (name) {
+         m_player.playerName = name;
+         keyboard.Destroy();
+         m_soundhandler.Play("highscores");
+         jQuery.get('hash.php', function (data1) {
+            jQuery.get('db.php?action=append&name=' + m_player.playerName + '&score=' + m_player.playerScore + "&hash=" + data1, function (data2) {
 
-            jQuery.get('db.php?action=append&name='+m_player.playerName+'&score='+m_player.playerScore, function(data) {
-
-                var list = /** @type {Array} */eval(data);
-
-                var highscore = new HighScoreDialog(m_ui, list, 500, 650, m_player);
-
-                highscore.RegisterCallback(function(){
-                    if(m_score)
+               var hash = data1;
+               var list = /** @type {Array} */eval(data2);
+               var highscore = new HighScoreDialog(m_ui, list, hash, 500, 650, m_player);
+               setTimeout(function(){
+                  if(m_state == GlobeGame.STATE.HIGHSCORE)
+                  {
+                     if (m_score)
                         m_score.Destroy();
-                    m_qCount = 0;
-                    m_gameData = new GameData(function()
-                    {
-                        that.StopFlyTo();
-                        m_ui.setOpacity(0.0);
-                        that.EnterChallenge();
-                    });
-                });
+                     m_qCount = 0;
+                     highscore.Destroy();
+                     m_gameData = new GameData(function () {
+                        that.EnterIdle();
+                     });
+                  }
+               },20000);
+
+               highscore.RegisterCallback(function () {
+                  if (m_score)
+                     m_score.Destroy();
+                  m_qCount = 0;
+                  m_gameData = new GameData(function () {
+                     that.StopFlyTo();
+                     m_ui.setOpacity(0.0);
+                     that.EnterChallenge();
+                  });
+
+               });
             });
-        });
+         });
+      });
 };
 //-----------------------------------------------------------------------------
 /**
  * @description flying around the terrain
  */
-GlobeGame.prototype.FlyAround = function()
-{
-    m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
-    ogSetPosition(m_camera,8.006896018981934,46.27399444580078,10000000);
-    ogSetOrientation(m_camera,0,-90,0);
-    var views = [
+GlobeGame.prototype.FlyAround = function () {
+   m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
+   ogSetPosition(m_camera, 8.006896018981934, 46.27399444580078, 10000000);
+   ogSetOrientation(m_camera, 0, -90, 0);
+   var views = [
 
-        { "longitude": 8.006896018981934,
-            "latitude": 46.27399444580078,
-            "elevation": 6440.3505859375,
-            "yaw": 0.6147540983606554,
-            "pitch": -17.74590163934426,
-            "roll": 0
-        },
-        { "longitude": 8.078167915344238,
-            "latitude": 46.43217849731445,
-            "elevation": 3730.73583984375,
-            "yaw": -12.663934426229508,
-            "pitch": -5.737704918032784,
-            "roll": 0
-        },
-        { "longitude": 8.09277629852295,
-            "latitude": 46.60940170288086,
-            "elevation": 7909.09912109375,
-            "yaw": -50.9016393442623,
-            "pitch": -28.442622950819672,
-            "roll": 0
-        },
-        { "longitude": 7.97355318069458,
-            "latitude": 46.78914260864258,
-            "elevation": 1968.3804931640625,
-            "yaw": -108.60655737704916,
-            "pitch": -18.360655737704917,
-            "roll": 0
-        },
-        { "longitude": 8.006896018981934,
-            "latitude": 46.27399444580078,
-            "elevation":10000000,
-            "yaw": 0.0,
-            "pitch": -90.0,
-            "roll": 0.0
-        }
-    ];
-    var pos = 0;
-    ogSetFlightDuration(m_scene,20000);
-    var introFlyTo = function()
-    {
-        var oView = views[pos];
-        ogFlyTo(m_scene,oView["longitude"],oView["latitude"], oView["elevation"],oView["yaw"],oView["pitch"],oView["roll"]);
-        if(pos >= 4) {pos = 0;} else{ pos += 1; }
-    };
-    ogSetInPositionFunction(m_context,introFlyTo);
-    introFlyTo();
+      { "longitude": 8.006896018981934,
+         "latitude": 46.27399444580078,
+         "elevation": 6440.3505859375,
+         "yaw": 0.6147540983606554,
+         "pitch": -17.74590163934426,
+         "roll": 0
+      },
+      { "longitude": 8.078167915344238,
+         "latitude": 46.43217849731445,
+         "elevation": 3730.73583984375,
+         "yaw": -12.663934426229508,
+         "pitch": -5.737704918032784,
+         "roll": 0
+      },
+      { "longitude": 8.09277629852295,
+         "latitude": 46.60940170288086,
+         "elevation": 7909.09912109375,
+         "yaw": -50.9016393442623,
+         "pitch": -28.442622950819672,
+         "roll": 0
+      },
+      { "longitude": 7.97355318069458,
+         "latitude": 46.78914260864258,
+         "elevation": 1968.3804931640625,
+         "yaw": -108.60655737704916,
+         "pitch": -18.360655737704917,
+         "roll": 0
+      },
+      { "longitude": 8.006896018981934,
+         "latitude": 46.27399444580078,
+         "elevation": 10000000,
+         "yaw": 0.0,
+         "pitch": -90.0,
+         "roll": 0.0
+      }
+   ];
+   var pos = 0;
+   ogSetFlightDuration(m_scene, 20000);
+   var introFlyTo = function () {
+      var oView = views[pos];
+      ogFlyTo(m_scene, oView["longitude"], oView["latitude"], oView["elevation"], oView["yaw"], oView["pitch"], oView["roll"]);
+      if (pos >= 4) {
+         pos = 0;
+      } else {
+         pos += 1;
+      }
+   };
+   ogSetInPositionFunction(m_context, introFlyTo);
+   introFlyTo();
 };
 //-----------------------------------------------------------------------------
 /**
  * @description process registered callbacks
  */
-GlobeGame.prototype.CycleCallback = function()
-{
-    for(var i = 0; i < this.callbacks.length; i++)
-    {
-        this.callbacks[i][1]();
-    }
+GlobeGame.prototype.CycleCallback = function () {
+   for (var i = 0; i < this.callbacks.length; i++) {
+      this.callbacks[i][1]();
+   }
 };
 //-----------------------------------------------------------------------------
 /**
  * @description process registered resize callbacks
  */
-GlobeGame.prototype.ResizeCallback = function()
-{
-   for(var i = 0; i < this.resizeCallbacks.length; i++)
-   {
+GlobeGame.prototype.ResizeCallback = function () {
+   for (var i = 0; i < this.resizeCallbacks.length; i++) {
       this.resizeCallbacks[i][1]();
    }
 };
@@ -476,9 +486,8 @@ GlobeGame.prototype.ResizeCallback = function()
 /**
  * @description start challenge
  */
-GlobeGame.prototype.InitQuiz = function()
-{
-    this.currentChallenge.Activate();
+GlobeGame.prototype.InitQuiz = function () {
+   this.currentChallenge.Activate();
 };
 //-----------------------------------------------------------------------------
 /**
@@ -486,24 +495,20 @@ GlobeGame.prototype.InitQuiz = function()
  * @param {string} id
  * @param {function()} callback
  */
-GlobeGame.prototype.RegisterCycleCallback = function(id, callback)
-{
-    this.callbacks.push([id,callback]);
+GlobeGame.prototype.RegisterCycleCallback = function (id, callback) {
+   this.callbacks.push([id, callback]);
 };
 //-----------------------------------------------------------------------------
 /**
  * @description remove callback functions from game cycle
  * @param {string} id
  */
-GlobeGame.prototype.UnregisterCycleCallback = function(id)
-{
-    for(var i = 0; i < this.callbacks.length; i++)
-    {
-        if(this.callbacks[i][0] == id)
-        {
-            this.callbacks.splice(i,1);
-        }
-    }
+GlobeGame.prototype.UnregisterCycleCallback = function (id) {
+   for (var i = 0; i < this.callbacks.length; i++) {
+      if (this.callbacks[i][0] == id) {
+         this.callbacks.splice(i, 1);
+      }
+   }
 };
 //-----------------------------------------------------------------------------
 /**
@@ -511,22 +516,18 @@ GlobeGame.prototype.UnregisterCycleCallback = function(id)
  * @param {string} id
  * @param {function()} callback
  */
-GlobeGame.prototype.RegisterResizeCallback = function(id, callback)
-{
-   this.resizeCallbacks.push([id,callback]);
+GlobeGame.prototype.RegisterResizeCallback = function (id, callback) {
+   this.resizeCallbacks.push([id, callback]);
 };
 //-----------------------------------------------------------------------------
 /**
  * @description remove callback functions from window resize
  * @param {string} id
  */
-GlobeGame.prototype.UnregisterResizeCallback = function(id)
-{
-   for(var i = 0; i < this.resizeCallbacks.length; i++)
-   {
-      if(this.resizeCallbacks[i][0] == id)
-      {
-         this.resizeCallbacks.splice(i,1);
+GlobeGame.prototype.UnregisterResizeCallback = function (id) {
+   for (var i = 0; i < this.resizeCallbacks.length; i++) {
+      if (this.resizeCallbacks[i][0] == id) {
+         this.resizeCallbacks.splice(i, 1);
       }
    }
 };
@@ -536,22 +537,22 @@ GlobeGame.prototype.UnregisterResizeCallback = function(id)
  * @param {Object.<string>} sources
  * @param {(function()|null)} callback
  */
-GlobeGame.prototype.LoadImages = function(sources, callback){
-    // get num of sources
-    var that = this;
-    for (var src in sources) {
-        m_numImages++;
-    }
-    for (var src in sources) {
-        m_images[src] = new Image();
-        m_images[src].onload = function(){
+GlobeGame.prototype.LoadImages = function (sources, callback) {
+   // get num of sources
+   var that = this;
+   for (var src in sources) {
+      m_numImages++;
+   }
+   for (var src in sources) {
+      m_images[src] = new Image();
+      m_images[src].onload = function () {
          if (++m_loadedImages >= m_numImages) {
-             if(callback != null)
-                callback();
-            }
-         };
-        m_images[src].src = sources[src];
-    }
+            if (callback != null)
+               callback();
+         }
+      };
+      m_images[src].src = sources[src];
+   }
 };
 
 //-----------------------------------------------------------------------------
@@ -560,28 +561,25 @@ GlobeGame.prototype.LoadImages = function(sources, callback){
  * @param {Object.<string>} sounds
  * @param {(function()|null)} callback
  */
-GlobeGame.prototype.LoadSounds = function(sounds, callback){
-    // get num of sources
-   if(m_soundenabled)
-   {
-      alert("bla");
-    var that = this;
-    for (var src in sounds) {
-        m_numSounds++;
-    }
-    for (var src in sounds) {
-        m_soundhandler.sounds[src] = document.createElement('audio');
-        m_soundhandler.sounds[src].setAttribute('src', sounds[src]);
-        m_soundhandler.sounds[src].load();
-        m_soundhandler.sounds[src].addEventListener("canplay", function() {
+GlobeGame.prototype.LoadSounds = function (sounds, callback) {
+   // get num of sources
+   if (m_soundenabled) {
+      var that = this;
+      for (var src in sounds) {
+         m_numSounds++;
+      }
+      for (var src in sounds) {
+         m_soundhandler.sounds[src] = document.createElement('audio');
+         m_soundhandler.sounds[src].setAttribute('src', sounds[src]);
+         m_soundhandler.sounds[src].load();
+         m_soundhandler.sounds[src].addEventListener("canplay", function () {
             if (++m_loadedSounds >= m_numSounds) {
-                if(callback != null)
-                    callback();
+               if (callback != null)
+                  callback();
             }
-        },true);
-    }
-   } else
-   {
+         }, true);
+      }
+   } else {
       callback();
    }
 };
@@ -592,64 +590,59 @@ GlobeGame.prototype.LoadSounds = function(sounds, callback){
  * @description load languages
  * @param {function()} callback
  */
-GlobeGame.prototype.LoadLanguage = function(callback)
-{
-    jQuery.getJSON('data/lang_'+m_lang+'.json', function(data) {
-        m_locale = data;
-        if(callback != null)
-        callback();
-    });
+GlobeGame.prototype.LoadLanguage = function (callback) {
+   jQuery.getJSON('data/lang_' + m_lang + '.json', function (data) {
+      m_locale = data;
+      if (callback != null)
+         callback();
+   });
 };
 //-----------------------------------------------------------------------------
 /**
  * @description ProcessChallenge
  */
-GlobeGame.prototype.ProcessChallenge = function()
-{
-    if(m_globeGame)
-    {
-        // evaluate past challenge
-        if(m_globeGame.currentChallenge && !m_globeGame.currentChallenge.destroyed)
-        {
-            m_globeGame.currentChallenge.Destroy(m_globeGame.NextChallenge);
-        }
-        else
-        {
-            m_globeGame.NextChallenge();
-        }
-    }
+GlobeGame.prototype.ProcessChallenge = function () {
+   if (m_globeGame) {
+      // evaluate past challenge
+      if (m_globeGame.currentChallenge && !m_globeGame.currentChallenge.destroyed) {
+         m_globeGame.currentChallenge.Destroy(m_globeGame.NextChallenge);
+      }
+      else {
+         m_globeGame.NextChallenge();
+      }
+   }
 };
 //-----------------------------------------------------------------------------
 /**
  * @description NextChallenge
  */
-GlobeGame.prototype.NextChallenge = function()
-{
-    m_qCount += 1;
-    m_progress.Inc();
-    if(m_qCount <= m_qMax){
-        m_globeGame.currentChallenge = m_gameData.PickChallenge();
-        m_globeGame.currentChallenge.RegisterCallback(m_globeGame.ProcessChallenge);
-        m_globeGame.currentChallenge.Prepare(1200);
-        BlackScreen(2500, function(){
-            m_globeGame.InitQuiz();
-        });
-    }
-    else
-    {
-        setTimeout(function(){m_globeGame.EnterHighscore()}, 1200);
-        BlackScreen(2500, function(){
-        });
-    }
+GlobeGame.prototype.NextChallenge = function () {
+   m_qCount += 1;
+   m_progress.Inc();
+   if (m_qCount <= m_qMax) {
+      m_globeGame.currentChallenge = m_gameData.PickChallenge();
+      m_globeGame.currentChallenge.RegisterCallback(m_globeGame.ProcessChallenge);
+      m_globeGame.currentChallenge.Prepare(1200);
+      BlackScreen(2500, function () {
+         m_globeGame.InitQuiz();
+      });
+   }
+   else {
+      setTimeout(function () {
+         m_globeGame.EnterHighscore()
+      }, 1200);
+      BlackScreen(2500, function () {
+      });
+   }
 };
 //-----------------------------------------------------------------------------
 /**
  * @description NextChallenge
  */
-GlobeGame.prototype.StopFlyTo = function()
-{
-    ogSetInPositionFunction(m_context,function(){});
-    ogStopFlyTo(m_scene);
+GlobeGame.prototype.StopFlyTo = function () {
+   ogSetInPositionFunction(m_context, function () {
+   });
+   ogStopFlyTo(m_scene);
    m_flystate = GlobeGame.FLYSTATE.IDLE;
 };
 //-----------------------------------------------------------------------------
@@ -657,8 +650,7 @@ GlobeGame.prototype.StopFlyTo = function()
  * @description resize context event
  * @param {number} frame
  */
-GlobeGame.prototype.OnCanvasRender = function(frame)
-{
+GlobeGame.prototype.OnCanvasRender = function (frame) {
 
 };
 //-----------------------------------------------------------------------------
@@ -666,8 +658,7 @@ GlobeGame.prototype.OnCanvasRender = function(frame)
  * @description resize context event
  * @param {number} context
  */
-GlobeGame.prototype.OnOGRender = function(context)
-{
+GlobeGame.prototype.OnOGRender = function (context) {
    m_globeGame.CycleCallback();
    m_stage.draw();
 };
@@ -676,17 +667,15 @@ GlobeGame.prototype.OnOGRender = function(context)
  * @description resize context event
  * @param {number} context
  */
-GlobeGame.prototype.OnOGResize = function(context)
-{
-    m_stage.setSize(window.innerWidth, window.innerHeight);
-    m_centerX = window.innerWidth/2;
-    m_centerY = window.innerHeight/2;
-    m_globeGame.ResizeCallback();
+GlobeGame.prototype.OnOGResize = function (context) {
+   m_stage.setSize(window.innerWidth, window.innerHeight);
+   m_centerX = window.innerWidth / 2;
+   m_centerY = window.innerHeight / 2;
+   m_globeGame.ResizeCallback();
 };
 
-GlobeGame.prototype.GenerateUniqueId = function()
-{
-   var s4 = function() {
+GlobeGame.prototype.GenerateUniqueId = function () {
+   var s4 = function () {
       return Math.floor((1 + Math.random()) * 0x10000)
          .toString(16)
          .substring(1);

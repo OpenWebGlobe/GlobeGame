@@ -72,10 +72,10 @@ DistrictChallenge.prototype.Prepare = function (delay) {
       for (var i = 0; i < that.data.length; i++) {
          that.CreateInteractiveSurface(that.data[i]);
       }
-      that.screenText = new ScreenText(m_ui, that.text,m_centerX, window.innerHeight-180, 26, "center");
+      that.screenText = new ScreenText(m_ui, that.text, m_centerX, window.innerHeight - 180, 26, "center");
       that.clock = new Clock(m_ui, 50, 82, 60);
-      ogSetPosition(m_camera,that.view.longitude,that.view.latitude, that.view.elevation);
-      ogSetOrientation(m_camera,that.view["yaw"],that.view["pitch"], that.view["roll"]);
+      ogSetPosition(m_camera, that.view.longitude, that.view.latitude, that.view.elevation);
+      ogSetOrientation(m_camera, that.view["yaw"], that.view["pitch"], that.view["roll"]);
    };
    if (delay > 0) {
       setTimeout(prepFunc, delay);
@@ -101,10 +101,10 @@ DistrictChallenge.prototype.Activate = function () {
  * @description destroy challenge
  */
 DistrictChallenge.prototype.Destroy = function (event) {
-   if(!this.destroyed)
-   {
+   if (!this.destroyed) {
       this.eventDestroyed = event;
-      ogSetInPositionFunction(m_context,function() {});
+      ogSetInPositionFunction(m_context, function () {
+      });
       this.clock.Pause();
       this.OnDestroy();
       this.destroyed = true;
@@ -118,19 +118,16 @@ DistrictChallenge.prototype.OnDestroy = function () {
    this.clock.Destroy();
 
    var that = this;
-   if(this.hint)
-   {
+   if (this.hint) {
       this.hint.remove();
    }
-   if(!this.draftmode)
-   {
-      FadeOut(function(){
+   if (!this.draftmode) {
+      FadeOut(function () {
          that.RemoveAllSurfaces();
          that.screenText.Destroy();
          that.eventDestroyed();
       });
-   } else
-   {
+   } else {
       that.RemoveAllSurfaces();
       that.screenText.Destroy();
       that.eventDestroyed();
@@ -143,61 +140,55 @@ DistrictChallenge.prototype.OnDestroy = function () {
  */
 DistrictChallenge.prototype.Score = function (timeleft) {
    var that = this;
-      m_soundhandler.Play("correct");
-      if (m_player) {
-         var score = 0;
+   m_soundhandler.Play("correct");
+   if (m_player) {
+      var score = 0;
 
-         score += Math.floor(this.baseScore/this.trials);
-         m_player.ScorePoints(score, "");
-         m_player.ScorePoints(Math.floor(timeleft / 5), m_locale["timebonus"]);
-         score += Math.floor(timeleft / 5);
-         if (timeleft > 50) {
-            m_player.ScorePoints(20, m_locale["speedbonus"]);
-            score += 20;
-         }
-         Timeout(function () {
-            var coins = new Coins(m_ui, score);
-         }, 800);
+      score += Math.floor(this.baseScore / this.trials);
+      m_player.ScorePoints(score, "");
+      m_player.ScorePoints(Math.floor(timeleft / 5), m_locale["timebonus"]);
+      score += Math.floor(timeleft / 5);
+      if (timeleft > 50) {
+         m_player.ScorePoints(20, m_locale["speedbonus"]);
+         score += 20;
       }
-      setTimeout(function () {
-         that.callback();
-      }, 2000);
+      Timeout(function () {
+         var coins = new Coins(m_ui, score);
+      }, 800);
+   }
+   setTimeout(function () {
+      that.callback();
+   }, 2000);
 };
 
-DistrictChallenge.prototype.CreateInteractiveSurface = function(fieldData)
-{
+DistrictChallenge.prototype.CreateInteractiveSurface = function (fieldData) {
    var that = this;
 
    var shape = new Kinetic.Path({
-      x: ((window.innerWidth-(that.extent[0]*(window.innerHeight/that.extent[1])))/2),
+      x: ((window.innerWidth - (that.extent[0] * (window.innerHeight / that.extent[1]))) / 2),
       y: 0,
       data: fieldData["path"],
       fill: '#FFFFFF',
       stroke: '#FFFFFF',
       opacity: 0.5,
-      scale: (window.innerHeight/that.extent[1])
+      scale: (window.innerHeight / that.extent[1])
    });
 
-   var updateShape = function()
-   {
-      shape.setPosition(((window.innerWidth-(that.extent[0]*(window.innerHeight/that.extent[1])))/2), 0);
-      shape.setScale((window.innerHeight/that.extent[1]));
+   var updateShape = function () {
+      shape.setPosition(((window.innerWidth - (that.extent[0] * (window.innerHeight / that.extent[1]))) / 2), 0);
+      shape.setScale((window.innerHeight / that.extent[1]));
    };
 
-   var onClickEvent = function() {
+   var onClickEvent = function () {
       that.trials += 1;
-      if (that.correctPick == shape.name)
-      {
+      if (that.correctPick == shape.name) {
          shape.setFill("#00FF00");
          that.Score(that.clock.GetSeconds());
       }
-      else if(that.trials >= 8)
-      {
+      else if (that.trials >= 8) {
          m_soundhandler.Play("wrong");
-         for(var i = 0; i < that.shapes.length; i++)
-         {
-            if(that.shapes[i]["name"] == that.correctPick)
-            {
+         for (var i = 0; i < that.shapes.length; i++) {
+            if (that.shapes[i]["name"] == that.correctPick) {
                that.shapes[i].setFill("#FFFF00");
                break;
             }
@@ -206,63 +197,68 @@ DistrictChallenge.prototype.CreateInteractiveSurface = function(fieldData)
             that.callback();
          }, 2500);
       }
-      else
-      {
+      else {
          shape.setFill("#FF0000");
          //var text = new FlyingText(m_static, "Nochmal versuchen!", "#FF6600");
       }
    };
-   var onMouseOverEvent = function() {};
-   var onMouseOutEvent = function() {};
-   var onMouseDownEvent = function() {};
-   var onMouseUpEvent = function() {};
+   var onMouseOverEvent = function () {
+   };
+   var onMouseOutEvent = function () {
+   };
+   var onMouseDownEvent = function () {
+   };
+   var onMouseUpEvent = function () {
+   };
 
    m_globeGame.RegisterResizeCallback(fieldData["label"]["text"], updateShape);
 
-   shape.on("mouseout", function(){
-         onMouseOutEvent();
-         if(that.clickState < 3)
-         {that.clickState = 0;}
+   shape.on("mouseout", function () {
+      onMouseOutEvent();
+      if (that.clickState < 3) {
+         that.clickState = 0;
+      }
    });
-   shape.on("mouseover", function(){
-         onMouseOverEvent();
-         if(that.clickState < 3)
-         {that.clickState = 1;}
+   shape.on("mouseover", function () {
+      onMouseOverEvent();
+      if (that.clickState < 3) {
+         that.clickState = 1;
+      }
    });
-   shape.on("mousedown", function(){
-         onMouseDownEvent();
-         if(that.clickState < 3)
-         {that.clickState = 2;}
+   shape.on("mousedown", function () {
+      onMouseDownEvent();
+      if (that.clickState < 3) {
+         that.clickState = 2;
+      }
 
    });
-   shape.on("mouseup", function(){
-         onMouseUpEvent();
-         if(that.clickState < 3)
-         {that.clickState = 1;
-            onClickEvent();
-         }
+   shape.on("mouseup", function () {
+      onMouseUpEvent();
+      if (that.clickState < 3) {
+         that.clickState = 1;
+         onClickEvent();
+      }
    });
-   shape.on("touchstart", function(){
-         onMouseDownEvent();
-         if(that.clickState < 3)
-         {that.clickState = 2;}
+   shape.on("touchstart", function () {
+      onMouseDownEvent();
+      if (that.clickState < 3) {
+         that.clickState = 2;
+      }
    });
-   shape.on("touchend", function(){
-         onMouseUpEvent();
-         if(that.clickState < 3)
-         {that.clickState = 1;
-            onClickEvent();
-         }
+   shape.on("touchend", function () {
+      onMouseUpEvent();
+      if (that.clickState < 3) {
+         that.clickState = 1;
+         onClickEvent();
+      }
    });
    shape.name = fieldData["label"]["text"];
    this.shapes.push(shape);
    m_ui.add(shape);
 };
 
-DistrictChallenge.prototype.RemoveAllSurfaces = function()
-{
-   for(var i = 0; i < this.shapes.length; i++)
-   {
+DistrictChallenge.prototype.RemoveAllSurfaces = function () {
+   for (var i = 0; i < this.shapes.length; i++) {
       m_globeGame.UnregisterResizeCallback(this.shapes[i].name);
       this.shapes[i].remove();
    }

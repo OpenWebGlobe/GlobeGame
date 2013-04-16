@@ -34,10 +34,9 @@ goog.require('owg.gg.FlyingText');
  *
  * @param {(string|null)} name
  */
-function Player(name)
-{
-    this.playerName = name;
-    this.playerScore = 0;
+function Player(name) {
+   this.playerName = name;
+   this.playerScore = 0;
 };
 //-----------------------------------------------------------------------------
 /**
@@ -45,10 +44,9 @@ function Player(name)
  * @param {number} amount
  * @param {string} description
  */
-Player.prototype.ScorePoints = function(amount, description)
-{
-    var text = new FlyingText(m_static, "+"+amount+" "+m_locale["points"]+" "+ description, "#FFEE11");
-    this.playerScore += amount;
+Player.prototype.ScorePoints = function (amount, description) {
+   var text = new FlyingText(m_static, "+" + amount + " " + m_locale["points"] + " " + description, "#FFEE11");
+   this.playerScore += amount;
 };
 
 goog.exportSymbol('Player', Player);

@@ -36,66 +36,59 @@ goog.require('owg.gg.DistrictChallenge');
  * @author Robert Wüest robert.wst@gmail.ch
  * @param {(function()|null)} callback
  */
-function GameData(callback)
-{
-    // load question array
-    this.questions = [];
+function GameData(callback) {
+   // load question array
+   this.questions = [];
    this.baseData = {};
-    var that = this
-   jQuery.get('getData.php', function(data) {
+   var that = this
+   jQuery.get('getData.php', function (data) {
       that.baseData = jQuery.parseJSON(data);
 
-       jQuery.get('getChallenges.php?lang='+m_lang, function(data) {
-           var jsonData = jQuery.parseJSON(data);
-           var items = [];
-           /** @type {{Type:number}} */
-           jQuery.each(jsonData, function(key, val) {
-               if(val.Type == 0)
-               {
-                   var baseScore = /** @type {number} */val.BaseScore;
-                   var options = /** @type {Array} */val.Options;
-                   var correctOption = /** @type {number} */val.CorrectOption;
-                   var views = /** @type {Array} */val.Views;
-                   var title = /** @type {string} */val.Title;
-                   var landmarkchallenge = new LandmarkChallenge(baseScore, options, correctOption, views, title);
-                   items.push(landmarkchallenge);
-               }else
-               if(val.Type == 1)
-               {
-                   var lng = /** @type {number} */val.Longitude;
-                   var lat = /** @type {number} */val.Latitude;
-                   var elv = /** @type {number} */val.Elevation;
-                   var baseScore = /** @type {number} */val.BaseScore;
-                   var title = /** @type {string} */val.Title;
-                   var pos = [ lng, lat, elv];
-                   var pickingchallenge = new PickingChallenge(baseScore, title, pos);
-                   items.push(pickingchallenge);
-               }
-               else
-               if(val.Type == 2)
-               {
-                  var lng = /** @type {number} */val.Longitude;
-                  var lat = /** @type {number} */val.Latitude;
-                  var elv = /** @type {number} */val.Elevation;
-                  var yaw = /** @type {number} */val.Yaw;
-                  var pitch = /** @type {number} */val.Pitch;
-                  var roll = /** @type {number} */val.Roll;
-                  var baseScore = /** @type {number} */val.BaseScore;
-                  var correctPick = /** @type {string} */val.CorrectPick;
-                  var title = /** @type {string} */val.Title;
-                  var dataFile = /** @type {string} */val.DataFile;
-                  var extent = /** @type {Array.<number>} */val.SceneExtent;
-                  var view = { "longitude": lng, "latitude":lat, "elevation":elv,"yaw":yaw,"pitch":pitch,"roll":roll};
-                  var districtchallenge = new DistrictChallenge(baseScore,correctPick,that.baseData[dataFile], view, title, extent);
-                  items.push(districtchallenge);
-               }
-           });
-           that.questions = items;
-           if(callback)
-           {
-               callback();
-           }
-       });
+      jQuery.get('getChallenges.php?lang=' + m_lang, function (data) {
+         var jsonData = jQuery.parseJSON(data);
+         var items = [];
+         /** @type {{Type:number}} */
+         jQuery.each(jsonData, function (key, val) {
+            if (val.Type == 0) {
+               var baseScore = /** @type {number} */val.BaseScore;
+               var options = /** @type {Array} */val.Options;
+               var correctOption = /** @type {number} */val.CorrectOption;
+               var views = /** @type {Array} */val.Views;
+               var title = /** @type {string} */val.Title;
+               var landmarkchallenge = new LandmarkChallenge(baseScore, options, correctOption, views, title);
+               items.push(landmarkchallenge);
+            } else if (val.Type == 1) {
+               var lng = /** @type {number} */val.Longitude;
+               var lat = /** @type {number} */val.Latitude;
+               var elv = /** @type {number} */val.Elevation;
+               var baseScore = /** @type {number} */val.BaseScore;
+               var title = /** @type {string} */val.Title;
+               var pos = [ lng, lat, elv];
+               var pickingchallenge = new PickingChallenge(baseScore, title, pos);
+               items.push(pickingchallenge);
+            }
+            else if (val.Type == 2) {
+               var lng = /** @type {number} */val.Longitude;
+               var lat = /** @type {number} */val.Latitude;
+               var elv = /** @type {number} */val.Elevation;
+               var yaw = /** @type {number} */val.Yaw;
+               var pitch = /** @type {number} */val.Pitch;
+               var roll = /** @type {number} */val.Roll;
+               var baseScore = /** @type {number} */val.BaseScore;
+               var correctPick = /** @type {string} */val.CorrectPick;
+               var title = /** @type {string} */val.Title;
+               var dataFile = /** @type {string} */val.DataFile;
+               var extent = /** @type {Array.<number>} */val.SceneExtent;
+               var view = { "longitude": lng, "latitude": lat, "elevation": elv, "yaw": yaw, "pitch": pitch, "roll": roll};
+               var districtchallenge = new DistrictChallenge(baseScore, correctPick, that.baseData[dataFile], view, title, extent);
+               items.push(districtchallenge);
+            }
+         });
+         that.questions = items;
+         if (callback) {
+            callback();
+         }
+      });
 
    });
 }
@@ -103,13 +96,12 @@ function GameData(callback)
 /**
  * @description pop random challenge from available game data
  */
-GameData.prototype.PickChallenge = function()
-{
-    // Random pick a challenge
-    var index = Math.floor(Math.random()*this.questions.length);
-    var challenge = this.questions[index];
-    this.questions.splice(index,1);
-    return challenge;
+GameData.prototype.PickChallenge = function () {
+   // Random pick a challenge
+   var index = Math.floor(Math.random() * this.questions.length);
+   var challenge = this.questions[index];
+   this.questions.splice(index, 1);
+   return challenge;
 };
 goog.exportSymbol('GameData', GameData);
 goog.exportProperty(GameData.prototype, 'PickChallenge', GameData.prototype.PickChallenge);

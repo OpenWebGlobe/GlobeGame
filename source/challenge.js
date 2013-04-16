@@ -32,26 +32,30 @@ goog.provide('owg.gg.Challenge');
  * @author Robert Wüest robert.wst@gmail.ch
  * @param {number} type
  */
-function Challenge(type)
-{
-    /*
-     0: Landmark question
-     1: Picking question
-     */
-    this.type = type;
-    this.baseScore = 0;
-    this.destroyed = false;
-    this.draftmode = false;
-    var that = this;
-    this.eventDestroyed = function() {};
-    this.callback = function() {};
-    this.Prepare = function() {};
-    this.Activate = function() {};
-    this.Destroy = function(event) {};
-    this.OnDestroy = function() {};
-    this.RegisterCallback = function(func)
-    {
-        that.callback = func;
-    };
+function Challenge(type) {
+   /*
+    0: Landmark question
+    1: Picking question
+    */
+   this.type = type;
+   this.baseScore = 0;
+   this.destroyed = false;
+   this.draftmode = false;
+   var that = this;
+   this.eventDestroyed = function () {
+   };
+   this.callback = function () {
+   };
+   this.Prepare = function () {
+   };
+   this.Activate = function () {
+   };
+   this.Destroy = function (event) {
+   };
+   this.OnDestroy = function () {
+   };
+   this.RegisterCallback = function (func) {
+      that.callback = func;
+   };
 }
 goog.exportSymbol('Challenge', Challenge);

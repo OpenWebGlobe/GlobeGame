@@ -374,14 +374,14 @@ function FlyingText(a, b, c) {
   this.alpha = this.scalefactor = 1;
   this.layer = a;
   this.destroyed = !1;
-  var d = window.innerWidth / 2, e = window.innerHeight / 2 - 50, f = this, h = m_hInc * 60;
+  var d = window.innerWidth / 2, e = window.innerHeight / 2 - 75, f = this, h = m_hInc * 60;
   m_hInc += 1;
   m_hInc >= 3 && (m_hInc = 0);
-  var j = new Date, g;
+  var k = new Date, g;
   m_globeGame.GenerateUniqueId();
   this.shape = new Kinetic.Shape({drawFunc:function(a) {
     g = new Date;
-    var b = g.valueOf() - j.valueOf();
+    var b = g.valueOf() - k.valueOf();
     f.alpha = 1 - b / 1800;
     f.scalefactor = 1 + b / 1800;
     if(f.alpha <= 0) {
@@ -393,13 +393,12 @@ function FlyingText(a, b, c) {
       b.beginPath();
       b.font = "32pt LuckiestGuy";
       b.fillStyle = f.fontcolor;
-      var c = d / f.scalefactor, k = (e - 200 + h) / f.scalefactor;
+      var c = (e - 200 + h) * (f.scalefactor / 2);
       b.textAlign = "center";
-      b.fillText(f.text, c, k);
+      b.fillText(f.text, d, c);
       b.lineWidth = 3;
       b.strokeStyle = "#000";
-      b.strokeText(f.text, c, k);
-      this.setScale(f.scalefactor, f.scalefactor);
+      b.strokeText(f.text, d, c);
       this.setOpacity(f.alpha);
       a.fillStroke(this)
     }
@@ -464,8 +463,8 @@ function BlackScreen(a, b) {
   c.setZIndex(-100);
   var d = new Date, e, f = function() {
     e = new Date;
-    var f = 2 - (e.valueOf() - d.valueOf()) / (a / 2);
-    f > 0 ? f <= 1 ? c.setOpacity(f) : c.setOpacity(1) : (c.setOpacity(0), m_globeGame.UnregisterCycleCallback("blackFadeOut"), c.remove(), b())
+    var h = 2 - (e.valueOf() - d.valueOf()) / (a / 2);
+    h > 0 ? h <= 1 ? c.setOpacity(h) : c.setOpacity(1) : (c.setOpacity(0), m_globeGame.UnregisterCycleCallback("blackFadeOut"), c.remove(), b())
   };
   m_globeGame.RegisterCycleCallback("blackFadeIn", function() {
     e = new Date;
@@ -512,14 +511,14 @@ owg.gg.ScreenText = {};
 owg.gg.Pin = {};
 owg.gg.Clock = {};
 owg.gg.ScoreCount = {};
-function Button01(a, b, c, d, e, f, h, j) {
+function Button01(a, b, c, d, e, f, h, k) {
   this.x = c;
   this.y = d;
   this.width = e;
   this.height = f;
   this.state = 0;
   this.caption = h;
-  this.fontsize = j;
+  this.fontsize = k;
   this.name = b;
   this.enabled = !0;
   this.layer = a;
@@ -540,14 +539,16 @@ function Button01(a, b, c, d, e, f, h, j) {
     b.beginPath();
     b.rect(c, d, e, f);
     b.closePath();
-    b.font = j + "pt TitanOne";
+    a.fillStroke(this);
+    b.font = k + "pt TitanOne";
     b.fillStyle = "#FFF";
-    var k = b.measureText(g.caption).width, k = c + (e - k) / 2, h = d + 3 * (f / 5) + h;
-    b.fillText(g.caption, k, h);
+    a = b.measureText(g.caption).width;
+    a = c + (e - a) / 2;
+    h = d + 3 * (f / 5) + h;
+    b.fillText(g.caption, a, h);
     b.lineWidth = 1;
     b.strokeStyle = "#000";
-    b.strokeText(g.caption, k, h);
-    a.fillStroke(this)
+    b.strokeText(g.caption, a, h)
   }});
   this.shape.on("mouseout", function() {
     if(g.enabled && (g.onMouseOutEvent(), g.state < 3)) {
@@ -595,14 +596,14 @@ goog.exportSymbol("Button01", Button01);
 goog.exportProperty(Button01.prototype, "SetEnabled", Button01.prototype.SetEnabled);
 goog.exportProperty(Button01.prototype, "SetState", Button01.prototype.SetState);
 goog.exportProperty(Button01.prototype, "Destroy", Button01.prototype.Destroy);
-function Button02(a, b, c, d, e, f, h, j, g) {
+function Button02(a, b, c, d, e, f, h, k, g) {
   this.x = c;
   this.y = d;
   this.width = e;
   this.height = f;
   this.state = 0;
   this.caption = h;
-  this.fontsize = j;
+  this.fontsize = k;
   this.name = b;
   this.enabled = !0;
   this.layer = a;
@@ -624,7 +625,7 @@ function Button02(a, b, c, d, e, f, h, j, g) {
     b.rect(c, d, e, f);
     b.closePath();
     a.fillStroke(this);
-    b.font = j + "pt TitanOne";
+    b.font = k + "pt TitanOne";
     b.fillStyle = "#FFF";
     a = b.measureText(i.caption).width;
     a = c + (e - a) / 2;
@@ -918,25 +919,26 @@ goog.exportSymbol("Pin", Pin);
 goog.exportProperty(Pin.prototype, "SetPos", Pin.prototype.SetPos);
 goog.exportProperty(Pin.prototype, "SetVisible", Pin.prototype.SetVisible);
 goog.exportProperty(Pin.prototype, "Destroy", Pin.prototype.Destroy);
-function HighScoreDialog(a, b, c, d, e) {
+function HighScoreDialog(a, b, c, d, e, f) {
   this.list = b;
+  this.hash = c;
   this.layer = a;
   this.okayButton = null;
-  var f = this;
+  var h = this;
   this.Callback = function() {
   };
   this.OnOkay = function() {
-    f.Destroy();
-    f.Callback()
+    h.Destroy();
+    h.Callback()
   };
   this.shape = new Kinetic.Shape({drawFunc:function(a) {
     var b = a.getContext();
     b.beginPath();
-    b.rect(window.innerWidth / 2 - c / 2, window.innerHeight / 2 - d / 2, c, d);
-    var g = b.createLinearGradient(window.innerWidth / 2, window.innerHeight / 2 - d / 2, window.innerWidth / 2, window.innerHeight / 2 + d / 2);
-    g.addColorStop(0, "#555");
-    g.addColorStop(1, "#CCC");
-    b.fillStyle = g;
+    b.rect(window.innerWidth / 2 - d / 2, window.innerHeight / 2 - e / 2, d, e);
+    var c = b.createLinearGradient(window.innerWidth / 2, window.innerHeight / 2 - e / 2, window.innerWidth / 2, window.innerHeight / 2 + e / 2);
+    c.addColorStop(0, "#555");
+    c.addColorStop(1, "#CCC");
+    b.fillStyle = c;
     b.fill();
     b.lineWidth = 3;
     b.strokeStyle = "#FFF";
@@ -946,34 +948,36 @@ function HighScoreDialog(a, b, c, d, e) {
     b.strokeStyle = "#000";
     b.fillStyle = "#FF0";
     b.font = "25pt TitanOne";
-    b.fillText(m_locale.highscores, window.innerWidth / 2, window.innerHeight / 2 - d / 2 + 45);
-    b.strokeText(m_locale.highscores, window.innerWidth / 2, window.innerHeight / 2 - d / 2 + 45);
+    b.fillText(m_locale.highscores, window.innerWidth / 2, window.innerHeight / 2 - e / 2 + 45);
+    b.strokeText(m_locale.highscores, window.innerWidth / 2, window.innerHeight / 2 - e / 2 + 45);
     b.font = "12pt TitanOne";
     b.lineWidth = 1;
     b.fillStyle = "#FFF";
     b.textAlign = "left";
-    b.fillText("Swizz-Quiz Entwicklung:", 20, window.innerHeight - 110);
-    b.strokeText("Swizz-Quiz Entwicklung:", 20, window.innerHeight - 110);
-    b.fillText("Institut Vermessung und Geoinformation", 20, window.innerHeight - 95);
-    b.strokeText("Institut Vermessung und Geoinformation", 20, window.innerHeight - 95);
-    b.fillText("Robert W\u00fcest (robert.wueest@fhnw.ch)", 26, window.innerHeight - 78);
-    b.strokeText("Robert W\u00fcest (robert.wueest@fhnw.ch)", 26, window.innerHeight - 78);
-    b.fillText("Martin Christen (martin.christen@fhnw.ch)", 26, window.innerHeight - 65);
-    b.strokeText("Martin Christen (martin.christen@fhnw.ch)", 26, window.innerHeight - 65);
+    b.fillText("Swizz-Quiz Entwicklung:", 20, window.innerHeight - 160);
+    b.strokeText("Swizz-Quiz Entwicklung:", 20, window.innerHeight - 160);
+    b.fillText("Institut Vermessung und Geoinformation", 20, window.innerHeight - 145);
+    b.strokeText("Institut Vermessung und Geoinformation", 20, window.innerHeight - 145);
+    b.fillText("Robert W\u00fcest (robert.wueest@fhnw.ch)", 26, window.innerHeight - 128);
+    b.strokeText("Robert W\u00fcest (robert.wueest@fhnw.ch)", 26, window.innerHeight - 128);
     b.font = "15pt TitanOne";
     b.textAlign = "center";
     b.lineWidth = 2;
-    for(g = 1;g <= f.list.length;g++) {
-      b.fillStyle = g == 1 ? "#FFAA33" : e.playerName == f.list[g - 1][0] && e.playerScore == f.list[g - 1][2] ? "#0FF" : "#FFF";
-      var i = g + ". " + f.list[g - 1][0] + "  " + f.list[g - 1][2];
-      b.fillText(i, window.innerWidth / 2, window.innerHeight / 2 - d / 2 + 75 + g * 22);
+    for(var j = 1;j <= h.list.length;j++) {
+      b.fillStyle = j == 1 ? "#FFAA33" : f.playerName == h.list[j - 1][0] && f.playerScore == h.list[j - 1][2] ? "#0FF" : "#FFF";
+      var l = j + ". " + h.list[j - 1][0] + "  " + h.list[j - 1][2];
+      b.fillText(l, window.innerWidth / 2, window.innerHeight / 2 - e / 2 + 75 + j * 22);
       b.lineWidth = 1;
-      b.strokeText(i, window.innerWidth / 2, window.innerHeight / 2 - d / 2 + 75 + g * 22)
+      b.strokeText(l, window.innerWidth / 2, window.innerHeight / 2 - e / 2 + 75 + j * 22)
+    }
+    if(m_showhash) {
+      b.beginPath(), j = window.innerWidth / 2 + d / 2 + 25, l = window.innerHeight / 2 - 75, b.rect(j, l, 320, 150), b.fillStyle = c, b.fill(), b.lineWidth = 3, b.strokeStyle = "#FFF", b.stroke(), b.closePath(), b.beginPath(), b.rect(j + 40, l + 60, 240, 70), b.fillStyle = "#FFC", b.fill(), b.closePath(), b.font = "14pt TitanOne", b.lineWidth = 1, b.fillStyle = "#FFF", b.textAlign = "center", b.strokeStyle = "#000", b.fillText(m_locale.hash, j + 160, l + 30), b.strokeText(m_locale.hash, j + 160, 
+      l + 30), b.fillStyle = "#000", b.textAlign = "center", b.font = "24pt Verdana", b.fillText(h.hash, j + 160, l + 105)
     }
     a.fillStroke(this)
   }});
   a.add(this.shape);
-  this.okayButton = new Button01(m_ui, "dialog", window.innerWidth / 2 - 150, window.innerHeight / 2 + d / 2 - 100, 300, 69, m_locale.playagain, 15);
+  this.okayButton = new Button01(m_ui, "dialog", window.innerWidth / 2 - 150, window.innerHeight / 2 + e / 2 - 100, 300, 69, m_locale.playagain, 15);
   this.okayButton.onClickEvent = this.OnOkay
 }
 HighScoreDialog.prototype.RegisterCallback = function(a) {
@@ -1047,6 +1051,12 @@ LandmarkChallenge.prototype = new Challenge(0);
 LandmarkChallenge.prototype.constructor = LandmarkChallenge;
 LandmarkChallenge.prototype.Prepare = function(a) {
   var b = this, c = function() {
+    b.screenText = new ScreenText(m_ui, b.text, m_centerX, window.innerHeight - 255, 26, "center");
+    b.clock = new Clock(m_ui, 50, 82, 60);
+    ogSetFlightDuration(m_scene, Math.floor(40 / (b.views.length - 1)) * 1E3);
+    ogSetPosition(m_camera, b.views[0].longitude, b.views[0].latitude, b.views[0].elevation);
+    ogSetOrientation(m_camera, b.views[0].yaw, b.views[0].pitch, b.views[0].roll);
+    ogSetInPositionFunction(m_context, b.FlightCallback);
     var a = new Button01(m_ui, "btn1", m_centerX - 310, window.innerHeight - 239, 300, 69, b.options[0], 15);
     a.onClickEvent = b.onOption1;
     b.buttonArray.push(a);
@@ -1058,19 +1068,15 @@ LandmarkChallenge.prototype.Prepare = function(a) {
     b.buttonArray.push(a);
     a = new Button01(m_ui, "btn4", m_centerX + 10, window.innerHeight - 150, 300, 69, b.options[3], 15);
     a.onClickEvent = b.onOption4;
-    b.buttonArray.push(a);
-    b.screenText = new ScreenText(m_ui, b.text, m_centerX, window.innerHeight - 255, 26, "center");
-    b.clock = new Clock(m_ui, 50, 82, 60);
-    ogSetFlightDuration(m_scene, Math.floor(40 / (b.views.length - 1)) * 1E3);
-    ogSetPosition(m_camera, b.views[0].longitude, b.views[0].latitude, b.views[0].elevation);
-    ogSetOrientation(m_camera, b.views[0].yaw, b.views[0].pitch, b.views[0].roll);
-    ogSetInPositionFunction(m_context, b.FlightCallback)
+    b.buttonArray.push(a)
   };
   a > 0 ? setTimeout(c, a) : c()
 };
 LandmarkChallenge.prototype.Activate = function() {
   var a = this;
-  FadeIn(function() {
+  this.draftmode ? (a.clock.onTimeoutEvent = function() {
+    a.callback()
+  }, a.clock.Start(), a.FlightCallback()) : FadeIn(function() {
     a.clock.onTimeoutEvent = function() {
       a.callback()
     };
@@ -1167,14 +1173,14 @@ function PickingChallenge(a, b, c) {
       }}), m_ui.add(d.distanceLine)
     }
     if(m_player && c < 50) {
-      var j = 0;
+      var k = 0;
       m_player.ScorePoints(Math.floor(d.baseScore / 50 * (50 - c)), m_locale.estimation);
-      j += Math.floor(d.baseScore / 50 * (50 - c));
+      k += Math.floor(d.baseScore / 50 * (50 - c));
       m_player.ScorePoints(Math.floor(d.clock.seconds / 5), m_locale.timebonus);
-      j += Math.floor(d.clock.seconds / 5);
-      d.clock.seconds > 50 && (m_player.ScorePoints(20, m_locale.speedbonus), j += 20);
+      k += Math.floor(d.clock.seconds / 5);
+      d.clock.seconds > 50 && (m_player.ScorePoints(20, m_locale.speedbonus), k += 20);
       Timeout(function() {
-        new Coins(m_ui, j)
+        new Coins(m_ui, k)
       }, 800)
     }
     setTimeout(function() {
@@ -1475,11 +1481,11 @@ function GameData(a) {
           e.push(d)
         }else {
           if(c.Type == 1) {
-            var i = c.Longitude, l = c.Latitude, m = c.Elevation, d = c.BaseScore, g = c.Title, d = new PickingChallenge(d, g, [i, l, m]);
+            var i = c.Longitude, j = c.Latitude, l = c.Elevation, d = c.BaseScore, g = c.Title, d = new PickingChallenge(d, g, [i, j, l]);
             e.push(d)
           }else {
             if(c.Type == 2) {
-              var i = c.Longitude, l = c.Latitude, m = c.Elevation, k = c.Yaw, n = c.Pitch, o = c.Roll, d = c.BaseScore, p = c.CorrectPick, g = c.Title, d = new DistrictChallenge(d, p, b.baseData[c.DataFile], {longitude:i, latitude:l, elevation:m, yaw:k, pitch:n, roll:o}, g, c.SceneExtent);
+              var i = c.Longitude, j = c.Latitude, l = c.Elevation, m = c.Yaw, n = c.Pitch, o = c.Roll, d = c.BaseScore, p = c.CorrectPick, g = c.Title, d = new DistrictChallenge(d, p, b.baseData[c.DataFile], {longitude:i, latitude:j, elevation:l, yaw:m, pitch:n, roll:o}, g, c.SceneExtent);
               e.push(d)
             }
           }
@@ -1554,7 +1560,7 @@ function TouchKeyboard(a, b, c, d, e, f) {
   new Button02(a, "btn_ue", this.oX + 760, this.oY + 276, 76, 69, "OK", 15, this.OnOkay)]
 }
 TouchKeyboard.prototype.Destroy = function() {
-  this.layer.remove(this.shape);
+  this.shape.remove();
   for(var a = 0;a < this.buttonArray.length;a++) {
     this.buttonArray[a].Destroy()
   }
@@ -1563,9 +1569,9 @@ TouchKeyboard.prototype.Destroy = function() {
 owg.gg.GlobeGame = {};
 GlobeGame.STATE = {IDLE:0, CHALLENGE:1, HIGHSCORE:2};
 GlobeGame.FLYSTATE = {IDLE:0, FLYAROUND:1};
-var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_scene = null, m_stage = null, m_ui = null, m_static = null, m_camera = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "none", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 10, m_progress = null, m_soundhandler = new SoundHandler, m_soundenabled = !0, m_state = GlobeGame.STATE.IDLE, m_flystate = 
-GlobeGame.FLYSTATE.IDLE, m_score = null, m_gameData = null, m_globeGame = null, m_debug = !1, m_loaded = !1, m_drawLock = !1;
-function GlobeGame(a, b, c) {
+var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_scene = null, m_stage = null, m_ui = null, m_static = null, m_camera = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "none", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 1, m_progress = null, m_soundhandler = new SoundHandler, m_soundenabled = !0, m_showhash = !1, m_state = GlobeGame.STATE.IDLE, 
+m_flystate = GlobeGame.FLYSTATE.IDLE, m_score = null, m_gameData = null, m_globeGame = null, m_debug = !1, m_loaded = !1;
+function GlobeGame(a, b, c, d) {
   b && (m_datahost = b);
   m_qCount = 0;
   this.currentChallenge = null;
@@ -1575,11 +1581,12 @@ function GlobeGame(a, b, c) {
   m_stage = new Kinetic.Stage({container:a, width:window.innerWidth, height:window.innerHeight, x:0, y:0});
   m_ui = new Kinetic.Layer;
   m_static = new Kinetic.Layer;
-  m_soundenabled = c
+  m_soundenabled = c;
+  m_showhash = d
 }
 GlobeGame.prototype.Init = function(a, b) {
   var c = this, d = {btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", btn_02:"art/btn_02.png", btn_02_c:"art/btn_02_c.png", btn_02_h:"art/btn_02_h.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png", nw_logo:"art/nw_logo.png", logo:"art/logo.png", 
-  logo_sm:"art/logo_sm.png", coins:"art/coins.png"}, e = new ScreenText(m_ui, "Loading sounds...", m_centerX, m_centerY, 25, "center");
+  logo_sm:"art/logo_sm.png", coins:"art/coins.png", logo_owg:"art/logo_owg.png"}, e = new ScreenText(m_ui, "Loading sounds...", m_centerX, m_centerY, 25, "center");
   c.LoadSounds({pick:"sfx/pick.wav", correct:"sfx/correct.wav", wrong:"sfx/wrong.wav", coins:"sfx/coins.wav", highscores:"sfx/highscores.mp3", track01:"sfx/track01.mp3", track02:"sfx/track02.mp3", track03:"sfx/track03.mp3", track04:"sfx/track04.mp3", swoosh:"sfx/swoosh.wav", ping1:"sfx/ping1.wav", ping2:"sfx/ping2.wav"}, function() {
     e.text = "Loading images...";
     c.LoadImages(d, function() {
@@ -1592,21 +1599,22 @@ GlobeGame.prototype.Init = function(a, b) {
             e.Destroy();
             var a = new Kinetic.Shape({drawFunc:function(a) {
               var b = a.getContext();
-              b.drawImage(m_images.nw_logo, 1, window.innerHeight - 58, 469, 57);
+              b.drawImage(m_images.nw_logo, window.innerWidth - 365, window.innerHeight - 40, 360, 44);
               m_state != GlobeGame.STATE.CHALLENGE ? b.drawImage(m_images.logo, window.innerWidth / 2 - 352, 30, 705, 206) : b.drawImage(m_images.logo_sm, window.innerWidth - 260, 4, 254, 50);
-              b.textAlign = "right";
+              b.textAlign = "left";
               b.fillStyle = "#FFF";
-              b.font = "18pt TitanOne";
-              b.fillText("www.openwebglobe.org", window.innerWidth - 13, window.innerHeight - 30);
+              b.font = "14pt TitanOne";
+              b.fillText("www.openwebglobe.org", 5, window.innerHeight - 22);
               b.lineWidth = 1;
               b.strokeStyle = "#000";
-              b.strokeText("www.openwebglobe.org", window.innerWidth - 13, window.innerHeight - 30);
+              b.strokeText("www.openwebglobe.org", 5, window.innerHeight - 22);
               b.fillStyle = "#FFF";
-              b.font = "13pt TitanOne";
-              b.fillText("SWISSIMAGE, DHM25 \u00a9 swisstopo JD100033", window.innerWidth - 13, window.innerHeight - 10);
+              b.font = "10pt TitanOne";
+              b.fillText("SWISSIMAGE, DHM25 \u00a9 swisstopo JD100033", 5, window.innerHeight - 5);
               b.lineWidth = 1;
               b.strokeStyle = "#000";
-              b.strokeText("SWISSIMAGE, DHM25 \u00a9 swisstopo JD100033", window.innerWidth - 13, window.innerHeight - 10);
+              b.strokeText("SWISSIMAGE, DHM25 \u00a9 swisstopo JD100033", 5, window.innerHeight - 5);
+              b.drawImage(m_images.logo_owg, 0, window.innerHeight - 120, 240, 86);
               if(m_debug) {
                 b.fillStyle = "#F00", b.font = "8pt TitanOne", b.textAlign = "left", b.fillText("State:" + m_state, 5, 80), b.fillText("Flystate:" + m_flystate, 5, 90)
               }
@@ -1671,7 +1679,7 @@ GlobeGame.prototype.EnterIdle = function() {
     m_ui.setOpacity(0);
     a.EnterChallenge()
   });
-  this.FlyAround()
+  m_flystate != GlobeGame.FLYSTATE.FLYAROUND && this.FlyAround()
 };
 GlobeGame.prototype.EnterChallenge = function() {
   m_state = GlobeGame.STATE.CHALLENGE;
@@ -1690,15 +1698,22 @@ GlobeGame.prototype.EnterHighscore = function() {
     m_player.playerName = c;
     b.Destroy();
     m_soundhandler.Play("highscores");
-    jQuery.get("db.php?action=append&name=" + m_player.playerName + "&score=" + m_player.playerScore, function(b) {
-      b = eval(b);
-      (new HighScoreDialog(m_ui, b, 500, 650, m_player)).RegisterCallback(function() {
-        m_score && m_score.Destroy();
-        m_qCount = 0;
-        m_gameData = new GameData(function() {
-          a.StopFlyTo();
-          m_ui.setOpacity(0);
-          a.EnterChallenge()
+    jQuery.get("hash.php", function(b) {
+      jQuery.get("db.php?action=append&name=" + m_player.playerName + "&score=" + m_player.playerScore + "&hash=" + b, function(c) {
+        var c = eval(c), f = new HighScoreDialog(m_ui, c, b, 500, 650, m_player);
+        setTimeout(function() {
+          m_state == GlobeGame.STATE.HIGHSCORE && (m_score && m_score.Destroy(), m_qCount = 0, f.Destroy(), m_gameData = new GameData(function() {
+            a.EnterIdle()
+          }))
+        }, 2E4);
+        f.RegisterCallback(function() {
+          m_score && m_score.Destroy();
+          m_qCount = 0;
+          m_gameData = new GameData(function() {
+            a.StopFlyTo();
+            m_ui.setOpacity(0);
+            a.EnterChallenge()
+          })
         })
       })
     })

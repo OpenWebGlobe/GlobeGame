@@ -2,9 +2,9 @@
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
     if($_GET['action'] == "append")
     {
-        if(!preg_match('/[.#\\-$><?!()&%]/', $_GET['name']) && is_numeric($_GET['score']))
+        if(!preg_match('/[.#\\-$><?!()&%]/', $_GET['name']) && is_numeric($_GET['score']) && !preg_match('/[.\\-$><?!()&%]/', $_GET['hash']) )
         {
-            Append($_GET['name'],$_GET['score']);
+            Append($_GET['name'],$_GET['score'],$_GET['hash']);
         }
     }
 
@@ -18,10 +18,10 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE);
     $output = $output."]";
     echo $output;
 
-    function Append($name,$score)
+    function Append($name,$score,$hash)
     {
         $praefix = "gg_";
-        $statement = "INSERT INTO `".$praefix."highscore`(`name`,`date`,`score`) VALUES('".$name."', '".date("Y-m-d H:i:s")."', ".$score.")";
+        $statement = "INSERT INTO `".$praefix."highscore`(`name`,`hash`,`date`,`score`) VALUES('".$name."','".$hash."', '".date("Y-m-d H:i:s")."', ".$score.")";
         MysqlExec($statement);
     }
 

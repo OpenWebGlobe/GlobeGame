@@ -1,25 +1,25 @@
 /*******************************************************************************
-#      ____               __          __  _      _____ _       _               #
-#     / __ \              \ \        / / | |    / ____| |     | |              #
-#    | |  | |_ __   ___ _ __ \  /\  / /__| |__ | |  __| | ___ | |__   ___      #
-#    | |  | | '_ \ / _ \ '_ \ \/  \/ / _ \ '_ \| | |_ | |/ _ \| '_ \ / _ \     #
-#    | |__| | |_) |  __/ | | \  /\  /  __/ |_) | |__| | | (_) | |_) |  __/     #
-#     \____/| .__/ \___|_| |_|\/  \/ \___|_.__/ \_____|_|\___/|_.__/ \___|     #
-#           | |                                                                #
-#           |_|                 _____ _____  _  __                             #
-#                              / ____|  __ \| |/ /                             #
-#                             | (___ | |  | | ' /                              #
-#                              \___ \| |  | |  <                               #
-#                              ____) | |__| | . \                              #
-#                             |_____/|_____/|_|\_\                             #
-#                                                                              #
-#                              (c) 2011-2012 by                                #
-#           University of Applied Sciences Northwestern Switzerland            #
-#                     Institute of Geomatics Engineering                       #
-#                          Author:robert.wst@gmail.com                         #
-********************************************************************************
-*     Licensed under MIT License. Read the file LICENSE for more information   *
-*******************************************************************************/
+ #      ____               __          __  _      _____ _       _               #
+ #     / __ \              \ \        / / | |    / ____| |     | |              #
+ #    | |  | |_ __   ___ _ __ \  /\  / /__| |__ | |  __| | ___ | |__   ___      #
+ #    | |  | | '_ \ / _ \ '_ \ \/  \/ / _ \ '_ \| | |_ | |/ _ \| '_ \ / _ \     #
+ #    | |__| | |_) |  __/ | | \  /\  /  __/ |_) | |__| | | (_) | |_) |  __/     #
+ #     \____/| .__/ \___|_| |_|\/  \/ \___|_.__/ \_____|_|\___/|_.__/ \___|     #
+ #           | |                                                                #
+ #           |_|                 _____ _____  _  __                             #
+ #                              / ____|  __ \| |/ /                             #
+ #                             | (___ | |  | | ' /                              #
+ #                              \___ \| |  | |  <                               #
+ #                              ____) | |__| | . \                              #
+ #                             |_____/|_____/|_|\_\                             #
+ #                                                                              #
+ #                              (c) 2011-2012 by                                #
+ #           University of Applied Sciences Northwestern Switzerland            #
+ #                     Institute of Geomatics Engineering                       #
+ #                          Author:robert.wst@gmail.com                         #
+ ********************************************************************************
+ *     Licensed under MIT License. Read the file LICENSE for more information   *
+ *******************************************************************************/
 /* GUI Elements */
 goog.provide('owg.gg.Button01');
 goog.provide('owg.gg.Button02');
@@ -46,155 +46,153 @@ goog.provide('owg.gg.ScoreCount');
  * @param {string} caption
  * @param {number} fontsize
  */
-function Button01(layer, name, x, y, width, height, caption, fontsize)
-{
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.state = 0;
-    this.caption = caption;
-    this.fontsize = fontsize;
-    this.name = name;
-    this.enabled = true;
-    this.layer = layer;
+function Button01(layer, name, x, y, width, height, caption, fontsize) {
+   this.x = x;
+   this.y = y;
+   this.width = width;
+   this.height = height;
+   this.state = 0;
+   this.caption = caption;
+   this.fontsize = fontsize;
+   this.name = name;
+   this.enabled = true;
+   this.layer = layer;
 
-    this.onClickEvent = function() {};
-    this.onMouseOverEvent = function() {};
-    this.onMouseOutEvent = function() {};
-    this.onMouseDownEvent = function() {};
-    this.onMouseUpEvent = function() {};
-    var thaat = this;
+   this.onClickEvent = function () {
+   };
+   this.onMouseOverEvent = function () {
+   };
+   this.onMouseOutEvent = function () {
+   };
+   this.onMouseDownEvent = function () {
+   };
+   this.onMouseUpEvent = function () {
+   };
+   var thaat = this;
 
-    this.shape = new Kinetic.Shape({drawFunc:function(canvas){
-        var ctx = canvas.getContext();
-        var clickOffset = 0;
-        if(thaat.enabled == false)
-        {
-            ctx.drawImage(m_images["btn_01_d"], x, y, width, height);
-        }
-        else if(thaat.state == 0)
-        {
-            ctx.drawImage(m_images["btn_01"], x, y, width, height);
-        }
-        else if(thaat.state == 1)
-        {
-            ctx.drawImage(m_images["btn_01_h"], x, y, width, height);
-        }
-        else if(thaat.state == 2)
-        {
-            ctx.drawImage(m_images["btn_01_c"], x, y, width, height);
-            clickOffset = 2;
-        }
-        else if(thaat.state == 3)
-        {
-            ctx.drawImage(m_images["btn_01_t"], x, y, width, height);
-        }
-        else if(thaat.state == 4)
-        {
-            ctx.drawImage(m_images["btn_01_f"], x, y, width, height);
-        }
-        else if(thaat.state == 5)
-        {
-            ctx.drawImage(m_images["btn_01_o"], x, y, width, height);
-        }
-        ctx.beginPath();
-        ctx.rect(x, y, width, height);
-        ctx.closePath();
-       canvas.fillStroke(this);
-        ctx.font = fontsize+"pt TitanOne";
-        ctx.fillStyle = "#FFF";
-       var textWidth = ctx.measureText(thaat.caption).width;
-       var tX = x + ((width-textWidth)/2);
-       var tY = y+ 3*(height/5)+clickOffset;
-        ctx.fillText(thaat.caption, tX, tY);
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = "#000"; // stroke color
-        ctx.strokeText(thaat.caption, tX, tY);
+   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+      var ctx = canvas.getContext();
+      var clickOffset = 0;
+      if (thaat.enabled == false) {
+         ctx.drawImage(m_images["btn_01_d"], x, y, width, height);
+      }
+      else if (thaat.state == 0) {
+         ctx.drawImage(m_images["btn_01"], x, y, width, height);
+      }
+      else if (thaat.state == 1) {
+         ctx.drawImage(m_images["btn_01_h"], x, y, width, height);
+      }
+      else if (thaat.state == 2) {
+         ctx.drawImage(m_images["btn_01_c"], x, y, width, height);
+         clickOffset = 2;
+      }
+      else if (thaat.state == 3) {
+         ctx.drawImage(m_images["btn_01_t"], x, y, width, height);
+      }
+      else if (thaat.state == 4) {
+         ctx.drawImage(m_images["btn_01_f"], x, y, width, height);
+      }
+      else if (thaat.state == 5) {
+         ctx.drawImage(m_images["btn_01_o"], x, y, width, height);
+      }
+      ctx.beginPath();
+      ctx.rect(x, y, width, height);
+      ctx.closePath();
+      canvas.fillStroke(this);
+      ctx.font = fontsize + "pt TitanOne";
+      ctx.fillStyle = "#FFF";
+      var textWidth = ctx.measureText(thaat.caption).width;
+      var tX = x + ((width - textWidth) / 2);
+      var tY = y + 3 * (height / 5) + clickOffset;
+      ctx.fillText(thaat.caption, tX, tY);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#000"; // stroke color
+      ctx.strokeText(thaat.caption, tX, tY);
 
-    }});
+   }});
 
-    this.shape.on("mouseout", function(){
-        if(thaat.enabled){
-           thaat.onMouseOutEvent();
-            if(thaat.state < 3)
-            {thaat.state = 0;}
-        }
-
-    });
-    this.shape.on("mouseover", function(){
-        if(thaat.enabled){
-           thaat.onMouseOverEvent();
-            if(thaat.state < 3)
-            {thaat.state = 1;}
-        }
-
-    });
-    this.shape.on("mousedown", function(){
-        if(thaat.enabled){
-           thaat.onMouseDownEvent();
-            if(thaat.state < 3)
-            {thaat.state = 2;}
-        }
-
-    });
-    this.shape.on("mouseup", function(){
-        if(thaat.enabled){
-
-           thaat.onMouseUpEvent();
-            if(thaat.state < 3)
-            {thaat.state = 1;
-               thaat.onClickEvent();
-            }
-        }
-
-    });
-   this.shape.on("touchstart", function(){
-      if(thaat.enabled){
-         thaat.onMouseDownEvent();
-         if(thaat.state < 3)
-         {thaat.state = 2;}
+   this.shape.on("mouseout", function () {
+      if (thaat.enabled) {
+         thaat.onMouseOutEvent();
+         if (thaat.state < 3) {
+            thaat.state = 0;
+         }
       }
 
    });
-   this.shape.on("touchend", function(){
-      if(thaat.enabled){
+   this.shape.on("mouseover", function () {
+      if (thaat.enabled) {
+         thaat.onMouseOverEvent();
+         if (thaat.state < 3) {
+            thaat.state = 1;
+         }
+      }
+
+   });
+   this.shape.on("mousedown", function () {
+      if (thaat.enabled) {
+         thaat.onMouseDownEvent();
+         if (thaat.state < 3) {
+            thaat.state = 2;
+         }
+      }
+
+   });
+   this.shape.on("mouseup", function () {
+      if (thaat.enabled) {
 
          thaat.onMouseUpEvent();
-         if(thaat.state < 3)
-         {thaat.state = 1;
+         if (thaat.state < 3) {
+            thaat.state = 1;
             thaat.onClickEvent();
          }
       }
 
    });
-    this.shape.name = name;
-    layer.add(this.shape);
+   this.shape.on("touchstart", function () {
+      if (thaat.enabled) {
+         thaat.onMouseDownEvent();
+         if (thaat.state < 3) {
+            thaat.state = 2;
+         }
+      }
+
+   });
+   this.shape.on("touchend", function () {
+      if (thaat.enabled) {
+
+         thaat.onMouseUpEvent();
+         if (thaat.state < 3) {
+            thaat.state = 1;
+            thaat.onClickEvent();
+         }
+      }
+
+   });
+   this.shape.name = name;
+   layer.add(this.shape);
 }
 //-----------------------------------------------------------------------------
 /**
  * @description change enable state
  * @param {boolean} enabled
  */
-Button01.prototype.SetEnabled = function(enabled)
-{
-    this.enabled = enabled;
+Button01.prototype.SetEnabled = function (enabled) {
+   this.enabled = enabled;
 };
 //-----------------------------------------------------------------------------
 /**
  * @description change state
  * @param {number} state
  */
-Button01.prototype.SetState = function(state)
-{
-    this.state = state;
+Button01.prototype.SetState = function (state) {
+   this.state = state;
 };
 //-----------------------------------------------------------------------------
 /**
  * @description destroy button
  */
-Button01.prototype.Destroy = function()
-{
+Button01.prototype.Destroy = function () {
    this.shape.remove();
 };
 
@@ -221,124 +219,130 @@ goog.exportProperty(Button01.prototype, 'Destroy', Button01.prototype.Destroy);
  * @param {number} fontsize
  * @param {(function()|null)} clickevent
  */
-function Button02(layer, name, x, y, width, height, caption, fontsize, clickevent)
-{
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.state = 0;
-    this.caption = caption;
-    this.fontsize = fontsize;
-    this.name = name;
-    this.enabled = true;
-    this.layer = layer;
+function Button02(layer, name, x, y, width, height, caption, fontsize, clickevent) {
+   this.x = x;
+   this.y = y;
+   this.width = width;
+   this.height = height;
+   this.state = 0;
+   this.caption = caption;
+   this.fontsize = fontsize;
+   this.name = name;
+   this.enabled = true;
+   this.layer = layer;
 
-    if(clickevent == null)
-    {this.onClickEvent = function(sender) {};}
-    else
-    {this.onClickEvent = clickevent;}
-    this.onMouseOverEvent = function() {};
-    this.onMouseOutEvent = function() {};
-    this.onMouseDownEvent = function() {};
-    this.onMouseUpEvent = function() {};
-    var that = this;
+   if (clickevent == null) {
+      this.onClickEvent = function (sender) {
+      };
+   }
+   else {
+      this.onClickEvent = clickevent;
+   }
+   this.onMouseOverEvent = function () {
+   };
+   this.onMouseOutEvent = function () {
+   };
+   this.onMouseDownEvent = function () {
+   };
+   this.onMouseUpEvent = function () {
+   };
+   var that = this;
 
-    this.shape = new Kinetic.Shape({drawFunc:function(canvas){
-        var ctx = canvas.getContext();
-        var clickOffset = 0;
-        if(that.state == 0)
-        {
-            ctx.drawImage(m_images["btn_02"], x, y, width, height);
-        }
-        else if(that.state == 1)
-        {
-            ctx.drawImage(m_images["btn_02_h"], x, y, width, height);
-        }
-        else if(that.state == 2)
-        {
-            ctx.drawImage(m_images["btn_02_c"], x, y, width, height);
-            clickOffset = 2;
-        }
-        ctx.beginPath();
-        ctx.rect(x, y, width, height);
-        ctx.closePath();
-        canvas.fillStroke(this);
-        ctx.font = fontsize+"pt TitanOne";
-        ctx.fillStyle = "#FFF";
-        var textWidth = ctx.measureText(that.caption).width;
-        var tX = x + ((width-textWidth)/2);
-        var tY = y+ 3*(height/5)+clickOffset;
-        ctx.fillText(that.caption, tX, tY);
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = "#000"; // stroke color
-        ctx.strokeText(that.caption, tX, tY);
+   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+      var ctx = canvas.getContext();
+      var clickOffset = 0;
+      if (that.state == 0) {
+         ctx.drawImage(m_images["btn_02"], x, y, width, height);
+      }
+      else if (that.state == 1) {
+         ctx.drawImage(m_images["btn_02_h"], x, y, width, height);
+      }
+      else if (that.state == 2) {
+         ctx.drawImage(m_images["btn_02_c"], x, y, width, height);
+         clickOffset = 2;
+      }
+      ctx.beginPath();
+      ctx.rect(x, y, width, height);
+      ctx.closePath();
+      canvas.fillStroke(this);
+      ctx.font = fontsize + "pt TitanOne";
+      ctx.fillStyle = "#FFF";
+      var textWidth = ctx.measureText(that.caption).width;
+      var tX = x + ((width - textWidth) / 2);
+      var tY = y + 3 * (height / 5) + clickOffset;
+      ctx.fillText(that.caption, tX, tY);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#000"; // stroke color
+      ctx.strokeText(that.caption, tX, tY);
 
-    }});
+   }});
 
 
-    this.shape.on("mouseout", function(){
-        if(that.enabled){
-            that.onMouseOutEvent();
-            if(that.state < 3)
-            {that.state = 0;}
-        }
-
-    });
-    this.shape.on("mouseover", function(){
-        if(that.enabled){
-            that.onMouseOverEvent();
-            if(that.state < 3)
-            {that.state = 1;}
-        }
-
-    });
-    this.shape.on("mousedown", function(){
-        if(that.enabled){
-            that.onMouseDownEvent();
-            if(that.state < 3)
-            {that.state = 2;}
-        }
-
-    });
-    this.shape.on("mouseup", function(){
-        if(that.enabled){
-            that.onMouseUpEvent();
-            if(that.state < 3)
-            {that.state = 1;
-                that.onClickEvent(that);
-            }
-        }
-
-    });
-   this.shape.on("touchstart", function(){
-      if(that.enabled){
-         that.onMouseDownEvent();
-         if(that.state < 3)
-         {that.state = 2;}
+   this.shape.on("mouseout", function () {
+      if (that.enabled) {
+         that.onMouseOutEvent();
+         if (that.state < 3) {
+            that.state = 0;
+         }
       }
 
    });
-   this.shape.on("touchend", function(){
-      if(that.enabled){
+   this.shape.on("mouseover", function () {
+      if (that.enabled) {
+         that.onMouseOverEvent();
+         if (that.state < 3) {
+            that.state = 1;
+         }
+      }
+
+   });
+   this.shape.on("mousedown", function () {
+      if (that.enabled) {
+         that.onMouseDownEvent();
+         if (that.state < 3) {
+            that.state = 2;
+         }
+      }
+
+   });
+   this.shape.on("mouseup", function () {
+      if (that.enabled) {
          that.onMouseUpEvent();
-         if(that.state < 3)
-         {that.state = 1;
+         if (that.state < 3) {
+            that.state = 1;
             that.onClickEvent(that);
          }
       }
 
    });
-    this.shape.name = name;
-    layer.add(this.shape);
+   this.shape.on("touchstart", function () {
+      if (that.enabled) {
+         that.onMouseDownEvent();
+         if (that.state < 3) {
+            that.state = 2;
+         }
+      }
+
+   });
+   this.shape.on("touchend", function () {
+      if (that.enabled) {
+         that.onMouseUpEvent();
+         if (that.state < 3) {
+            that.state = 1;
+            that.onClickEvent(that);
+         }
+      }
+
+   });
+   this.shape.name = name;
+   layer.add(this.shape);
 }
 
 //-----------------------------------------------------------------------------
 /**
  * @description destroy button
  */
-Button02.prototype.Destroy = function()
-{
+Button02.prototype.Destroy = function () {
    this.shape.remove();
 };
 
@@ -358,135 +362,128 @@ goog.exportProperty(Button02.prototype, 'Destroy', Button02.prototype.Destroy);
  * @param {number} y
  * @param {number} seconds
  */
-function Clock(layer, x, y, seconds)
-{
-    this.layer = layer;
-    this.x = x;
-    this.y = y;
-    this.seconds = seconds;
-    this.visible = true;
-    this.obsolete = false;
-    var unit = 2.0/60;
-    var that = this;
-    this.running = false;
-    this.onTimeoutEvent = function() {};
+function Clock(layer, x, y, seconds) {
+   this.layer = layer;
+   this.x = x;
+   this.y = y;
+   this.seconds = seconds;
+   this.visible = true;
+   this.obsolete = false;
+   var unit = 2.0 / 60;
+   var that = this;
+   this.running = false;
+   this.onTimeoutEvent = function () {
+   };
 
-    this.shape = new Kinetic.Shape({drawFunc:function(canvas){
+   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
 
-        if(that.visible == true)
-        {
-            var ctx = canvas.getContext();
-            var pos = unit*that.seconds-0.5;
-            ctx.drawImage(m_images["clock"], x, y, 220, 260);
-            ctx.beginPath();
-            ctx.arc(x+110, y+153, 84, pos*Math.PI, 1.5*Math.PI, false);
-            ctx.lineTo(x+110, y+153);
-            ctx.closePath();
-            var pattern = ctx.createPattern(m_images["dial"], "no-repeat");
-            ctx.fillStyle = pattern;
-            ctx.translate(x+25, y+65);
-            ctx.fill();
-            if(that.seconds > 10) {ctx.fillStyle = "#FFF";} else {ctx.fillStyle = "#F00";}
-            ctx.font = "40pt TitanOne";
-           ctx.textAlign = "center";
-            var secs = "" +that.seconds;
-            ctx.fillText(secs, 85, 110);
-            ctx.lineWidth = 3;
+      if (that.visible == true) {
+         var ctx = canvas.getContext();
+         var pos = unit * that.seconds - 0.5;
+         ctx.drawImage(m_images["clock"], x, y, 220, 260);
+         ctx.beginPath();
+         ctx.arc(x + 110, y + 153, 84, pos * Math.PI, 1.5 * Math.PI, false);
+         ctx.lineTo(x + 110, y + 153);
+         ctx.closePath();
+         var pattern = ctx.createPattern(m_images["dial"], "no-repeat");
+         ctx.fillStyle = pattern;
+         ctx.translate(x + 25, y + 65);
+         ctx.fill();
+         if (that.seconds > 10) {
+            ctx.fillStyle = "#FFF";
+         } else {
+            ctx.fillStyle = "#F00";
+         }
+         ctx.font = "40pt TitanOne";
+         ctx.textAlign = "center";
+         var secs = "" + that.seconds;
+         ctx.fillText(secs, 85, 110);
+         ctx.lineWidth = 3;
 
-            ctx.strokeStyle = "#000"; // stroke color
-            ctx.strokeText(secs, 85, 110);
-           canvas.fillStroke(this);
-        }
-    }});
-    layer.add(this.shape);
+         ctx.strokeStyle = "#000"; // stroke color
+         ctx.strokeText(secs, 85, 110);
+         canvas.fillStroke(this);
+      }
+   }});
+   layer.add(this.shape);
 };
 //-----------------------------------------------------------------------------
 /**
  * @description start timer
  */
-Clock.prototype.Start = function()
-{
-    this.running = true;
-    this.Countdown();
+Clock.prototype.Start = function () {
+   this.running = true;
+   this.Countdown();
 };
 //-----------------------------------------------------------------------------
 /**
  * @description pause timer
  */
-Clock.prototype.Pause = function()
-{
-    this.running = false;
+Clock.prototype.Pause = function () {
+   this.running = false;
 };
 //-----------------------------------------------------------------------------
 /**
  * @description resume timer
  */
-Clock.prototype.Resume = function()
-{
-    this.running = true;
+Clock.prototype.Resume = function () {
+   this.running = true;
 };
 //-----------------------------------------------------------------------------
 /**
  * @description recurring countdown function
  */
-Clock.prototype.Countdown = function()
-{
-    var that = this;
-    setTimeout(function(){
-        if(that.obsolete == true)
-        {
+Clock.prototype.Countdown = function () {
+   var that = this;
+   setTimeout(function () {
+      if (that.obsolete == true) {
 
-        }
-        else if(that.seconds > 0)
-        {that.Countdown();}
-        else
-        {
-            that.running = false;
-            m_soundhandler.Play("wrong");
-            that.onTimeoutEvent(); }
-    }, 1000);
-    if(this.running)
-    {
-        this.seconds = this.seconds -1;
-        if(this.seconds <= 10)
-        {
-           m_soundhandler.Play("ping2");
-        }
-    }
+      }
+      else if (that.seconds > 0) {
+         that.Countdown();
+      }
+      else {
+         that.running = false;
+         m_soundhandler.Play("wrong");
+         that.onTimeoutEvent();
+      }
+   }, 1000);
+   if (this.running) {
+      this.seconds = this.seconds - 1;
+      if (this.seconds <= 10) {
+         m_soundhandler.Play("ping2");
+      }
+   }
 };
 //-----------------------------------------------------------------------------
 /**
  * @description destroy clock
  */
-Clock.prototype.Destroy = function()
-{
-    this.obsolete = true;
-    this.OnDestroy();
+Clock.prototype.Destroy = function () {
+   this.obsolete = true;
+   this.OnDestroy();
 };
 //-----------------------------------------------------------------------------
 /**
  * @description on destroy function
  */
-Clock.prototype.OnDestroy = function()
-{
+Clock.prototype.OnDestroy = function () {
    this.shape.remove();
 };
 //-----------------------------------------------------------------------------
 /**
  * @description show/hide timer
  */
-Clock.prototype.SetVisible = function(visible)
-{
-    this.visible = visible;
+Clock.prototype.SetVisible = function (visible) {
+   this.visible = visible;
 };
 //-----------------------------------------------------------------------------
 /**
  * @description get current value of the timer
  * @return {number} seconds
  */
-Clock.prototype.GetSeconds = function()
-{
-    return this.seconds;
+Clock.prototype.GetSeconds = function () {
+   return this.seconds;
 };
 goog.exportSymbol('Clock', Clock);
 goog.exportProperty(Clock.prototype, 'Start', Clock.prototype.Start);
@@ -513,38 +510,36 @@ goog.exportProperty(Clock.prototype, 'GetSeconds', Clock.prototype.GetSeconds);
  * @param {number} fontsize
  * @param {string} align
  */
-function ScreenText(layer, text, x, y, fontsize, align)
-{
-    this.text = text;
-    this.x = x;
-    this.y = y;
-    this.fontsize = fontsize;
-    this.align = align;
-    this.layer = layer;
-    var that = this;
+function ScreenText(layer, text, x, y, fontsize, align) {
+   this.text = text;
+   this.x = x;
+   this.y = y;
+   this.fontsize = fontsize;
+   this.align = align;
+   this.layer = layer;
+   var that = this;
 
-    this.shape = new Kinetic.Shape({drawFunc:function(canvas){
-        var ctx = canvas.getContext();
-        ctx.textAlign = that.align;
-        ctx.fillStyle = "#FFF";
-        ctx.font = that.fontsize+"pt TitanOne";
-        ctx.textAlign = that.align;
-        ctx.fillText(that.text, that.x, that.y);
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = "#000"; // stroke color
-        ctx.strokeText(that.text,  that.x, that.y);
-       canvas.fillStroke(this);
-    }});
-    layer.add(this.shape);
+   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+      var ctx = canvas.getContext();
+      ctx.textAlign = that.align;
+      ctx.fillStyle = "#FFF";
+      ctx.font = that.fontsize + "pt TitanOne";
+      ctx.textAlign = that.align;
+      ctx.fillText(that.text, that.x, that.y);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#000"; // stroke color
+      ctx.strokeText(that.text, that.x, that.y);
+      canvas.fillStroke(this);
+   }});
+   layer.add(this.shape);
 }
 
 //-----------------------------------------------------------------------------
 /**
  * @description Destroy screen text
  */
-ScreenText.prototype.Destroy = function()
-{
-    this.shape.remove();
+ScreenText.prototype.Destroy = function () {
+   this.shape.remove();
 };
 goog.exportSymbol('ScreenText', ScreenText);
 goog.exportProperty(ScreenText.prototype, 'Destroy', ScreenText.prototype.Destroy);
@@ -562,65 +557,62 @@ goog.exportProperty(ScreenText.prototype, 'Destroy', ScreenText.prototype.Destro
  * @param {number} width
  * @param {number} height
  */
-function MessageDialog(layer, message, x, y,width, height)
-{
-    this.message = message;
-    this.layer = layer;
-    this.okayButton = null;
-    var that = this;
+function MessageDialog(layer, message, x, y, width, height) {
+   this.message = message;
+   this.layer = layer;
+   this.okayButton = null;
+   var that = this;
 
-    /** Inline Functions */
-    this.Callback = function(){};
-    this.OnOkay = function()
-    {
-        m_soundhandler.Play("ping1");
-        that.Destroy();
-        that.Callback();
-    };
+   /** Inline Functions */
+   this.Callback = function () {
+   };
+   this.OnOkay = function () {
+      m_soundhandler.Play("ping1");
+      that.Destroy();
+      that.Callback();
+   };
 
-    this.shape = new Kinetic.Shape({drawFunc:function(canvas){
-        var ctx = canvas.getContext();
-        ctx.beginPath();
-        ctx.rect(x-(width/2), y-(height/2), width, height);
-        ctx.closePath();
-        var grad = ctx.createLinearGradient(x, y-(height/2), x, y+(height/2));
-        grad.addColorStop(0, "#555"); // light blue
-        grad.addColorStop(1, "#CCC"); // dark blue
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = "#FFF";
-        ctx.stroke();
-        ctx.textAlign = "center";
-        ctx.fillStyle = "#FFF";
-        ctx.font = "18pt TitanOne";
-        ctx.textAlign = "center";
-        ctx.fillText(that.message, x, y-(height/2)+80);
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = "#000"; // stroke color
-        ctx.strokeText(that.message, x, y-(height/2)+80);
-        canvas.fillStroke(this);
-    }});
-    layer.add(this.shape);
+   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+      var ctx = canvas.getContext();
+      ctx.beginPath();
+      ctx.rect(x - (width / 2), y - (height / 2), width, height);
+      ctx.closePath();
+      var grad = ctx.createLinearGradient(x, y - (height / 2), x, y + (height / 2));
+      grad.addColorStop(0, "#555"); // light blue
+      grad.addColorStop(1, "#CCC"); // dark blue
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#FFF";
+      ctx.stroke();
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#FFF";
+      ctx.font = "18pt TitanOne";
+      ctx.textAlign = "center";
+      ctx.fillText(that.message, x, y - (height / 2) + 80);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#000"; // stroke color
+      ctx.strokeText(that.message, x, y - (height / 2) + 80);
+      canvas.fillStroke(this);
+   }});
+   layer.add(this.shape);
 
-    this.okayButton = new Button01(m_ui, "dialog", x-150, y+(height/2)-100, 300, 69, "OK", 15);
-    this.okayButton.onClickEvent = that.OnOkay;
+   this.okayButton = new Button01(m_ui, "dialog", x - 150, y + (height / 2) - 100, 300, 69, "OK", 15);
+   this.okayButton.onClickEvent = that.OnOkay;
 }
 //-----------------------------------------------------------------------------
 /**
  * @description define callbackfunction when hit okay
  * @param {function()} callback
  */
-MessageDialog.prototype.RegisterCallback = function(callback)
-{
-    this.Callback = callback;
+MessageDialog.prototype.RegisterCallback = function (callback) {
+   this.Callback = callback;
 };
 //-----------------------------------------------------------------------------
 /**
  * @description destroy the dialog
  */
-MessageDialog.prototype.Destroy = function()
-{
+MessageDialog.prototype.Destroy = function () {
    this.shape.remove();
    this.okayButton.shape.remove();
 };
@@ -638,42 +630,40 @@ goog.exportProperty(MessageDialog.prototype, 'Destroy', MessageDialog.prototype.
  *
  * @param {Object} layer
  */
-function ScoreCount(layer)
-{
-    this.layer = layer;
-    var that = this;
+function ScoreCount(layer) {
+   this.layer = layer;
+   var that = this;
 
-    this.shape = new Kinetic.Shape({drawFunc:function(canvas){
-        var ctx = canvas.getContext();
-        ctx.beginPath();
-        ctx.rect(2, 2, 273, 73);
-        var grad = ctx.createLinearGradient(10, 10, 10, 50);
-        grad.addColorStop(0, "#555");
-        grad.addColorStop(1, "#CCC");
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = "#FFF";
-        ctx.stroke();
-        ctx.textAlign = "center";
-        ctx.fillStyle = "#FFF";
-        ctx.font = "16pt TitanOne";
-        ctx.textAlign = "left";
-        ctx.fillText(m_locale["score"]+": "+m_player.playerScore, 25, 45);
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#000"; // stroke color
-        ctx.strokeText(m_locale["score"]+": "+m_player.playerScore, 25, 45);
-        canvas.fillStroke(this);
-    }});
-    layer.add(this.shape);
+   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+      var ctx = canvas.getContext();
+      ctx.beginPath();
+      ctx.rect(2, 2, 273, 73);
+      var grad = ctx.createLinearGradient(10, 10, 10, 50);
+      grad.addColorStop(0, "#555");
+      grad.addColorStop(1, "#CCC");
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#FFF";
+      ctx.stroke();
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#FFF";
+      ctx.font = "16pt TitanOne";
+      ctx.textAlign = "left";
+      ctx.fillText(m_locale["score"] + ": " + m_player.playerScore, 25, 45);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#000"; // stroke color
+      ctx.strokeText(m_locale["score"] + ": " + m_player.playerScore, 25, 45);
+      canvas.fillStroke(this);
+   }});
+   layer.add(this.shape);
 }
 
 //-----------------------------------------------------------------------------
 /**
  * @description destroy the widget
  */
-ScoreCount.prototype.Destroy = function()
-{
+ScoreCount.prototype.Destroy = function () {
    this.shape.remove();
 }
 goog.exportSymbol('ScoreCount', ScoreCount);
@@ -689,42 +679,39 @@ goog.exportProperty(ScoreCount.prototype, 'Destroy', ScoreCount.prototype.Destro
  *
  * @param {Object} layer
  */
-function ProgressCount(layer, qMax)
-{
-    this.layer = layer;
-    this.qCount = 0;
-    this.qMax = qMax;
-    var that = this;
+function ProgressCount(layer, qMax) {
+   this.layer = layer;
+   this.qCount = 0;
+   this.qMax = qMax;
+   var that = this;
 
-    this.shape = new Kinetic.Shape({drawFunc:function(canvas){
-        var ctx = canvas.getContext();
-        ctx.fillStyle = "#FFF";
-        ctx.font = "26pt TitanOne";
-        ctx.textAlign = "left";
-        ctx.fillText(that.qCount + "/" + that.qMax, 185, 50);
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#000"; // stroke color
-        ctx.strokeText(that.qCount + "/" + that.qMax, 185, 50);
-       canvas.fillStroke(this);
+   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+      var ctx = canvas.getContext();
+      ctx.fillStyle = "#FFF";
+      ctx.font = "26pt TitanOne";
+      ctx.textAlign = "left";
+      ctx.fillText(that.qCount + "/" + that.qMax, 185, 50);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#000"; // stroke color
+      ctx.strokeText(that.qCount + "/" + that.qMax, 185, 50);
+      canvas.fillStroke(this);
 
-    }});
-    layer.add(this.shape);
+   }});
+   layer.add(this.shape);
 }
 
 //-----------------------------------------------------------------------------
 /**
  * @description destroy the widget
  */
-ProgressCount.prototype.Inc = function()
-{
-    this.qCount +=1;
+ProgressCount.prototype.Inc = function () {
+   this.qCount += 1;
 };
 //-----------------------------------------------------------------------------
 /**
  * @description destroy the widget
  */
-ProgressCount.prototype.Destroy = function()
-{
+ProgressCount.prototype.Destroy = function () {
    this.shape.remove();
 };
 goog.exportSymbol('ProgressCount', ProgressCount);
@@ -744,31 +731,29 @@ goog.exportProperty(ProgressCount.prototype, 'Inc', ProgressCount.prototype.Inc)
  * @param {number} x
  * @param {number} y
  */
-function Pin(layer, image, x, y)
-{
-    this.layer = layer;
-    var that = this;
-    this.x = x;
-    this.y = y;
-    this.visible = true;
+function Pin(layer, image, x, y) {
+   this.layer = layer;
+   var that = this;
+   this.x = x;
+   this.y = y;
+   this.visible = true;
 
-    this.shape = new Kinetic.Shape({drawFunc:function(canvas){
-        if(that.visible == true)
-        {
-            var ctx = canvas.getContext();
-            ctx.beginPath();
-            ctx.drawImage(image, that.x-74, that.y-132, 86, 144);
-           canvas.fillStroke(this);
-        }
-       },
-          drawHitFunc: function(canvas) {
-             var context = canvas.getContext();
-             context.beginPath();
-             context.closePath();
-             canvas.fillStroke(this);
-          }
-    });
-    layer.add(this.shape);
+   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+      if (that.visible == true) {
+         var ctx = canvas.getContext();
+         ctx.beginPath();
+         ctx.drawImage(image, that.x - 74, that.y - 132, 86, 144);
+         canvas.fillStroke(this);
+      }
+   },
+      drawHitFunc: function (canvas) {
+         var context = canvas.getContext();
+         context.beginPath();
+         context.closePath();
+         canvas.fillStroke(this);
+      }
+   });
+   layer.add(this.shape);
 }
 
 //-----------------------------------------------------------------------------
@@ -777,10 +762,9 @@ function Pin(layer, image, x, y)
  * @param {number} x
  * @param {number} y
  */
-Pin.prototype.SetPos = function(x,y)
-{
-    this.x = x;
-    this.y = y;
+Pin.prototype.SetPos = function (x, y) {
+   this.x = x;
+   this.y = y;
 }
 
 //-----------------------------------------------------------------------------
@@ -788,16 +772,14 @@ Pin.prototype.SetPos = function(x,y)
  * @description set pin position
  * @param {boolean} visible
  */
-Pin.prototype.SetVisible = function(visible)
-{
-    this.visible = visible;
+Pin.prototype.SetVisible = function (visible) {
+   this.visible = visible;
 }
 //-----------------------------------------------------------------------------
 /**
  * @description destroy pin
  */
-Pin.prototype.Destroy = function()
-{
+Pin.prototype.Destroy = function () {
    this.shape.remove();
 }
 goog.exportSymbol('Pin', Pin);
@@ -816,75 +798,107 @@ goog.exportProperty(Pin.prototype, 'Destroy', Pin.prototype.Destroy);
  *
  * @param {Object} layer
  * @param {Array.<Array.<string>>} list
+ * @param {string} hash
  * @param {number} width
  * @param {number} height
  */
-function HighScoreDialog(layer, list, width, height, player)
-{
-    this.list = list;
-    this.layer = layer;
-    this.okayButton = null;
-    var that = this;
+function HighScoreDialog(layer, list, hash, width, height, player) {
+   this.list = list;
+   this.hash = hash;
+   this.layer = layer;
+   this.okayButton = null;
+   var that = this;
 
-    /** Inline Functions */
-    this.Callback = function(){};
-    this.OnOkay = function()
-    {
-        that.Destroy();
-        that.Callback();
-    };
+   /** Inline Functions */
+   this.Callback = function () {
+   };
+   this.OnOkay = function () {
+      that.Destroy();
+      that.Callback();
+   };
 
-    this.shape = new Kinetic.Shape({drawFunc:function(canvas){
-        var ctx = canvas.getContext();
-        ctx.beginPath();
-        ctx.rect((window.innerWidth/2)-(width/2), (window.innerHeight/2)-(height/2), width, height);
-        var grad = ctx.createLinearGradient(window.innerWidth/2, (window.innerHeight/2)-(height/2), window.innerWidth/2, (window.innerHeight/2)+(height/2));
-        grad.addColorStop(0, "#555"); // light blue
-        grad.addColorStop(1, "#CCC"); // dark blue
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = "#FFF";
-        ctx.stroke();
+   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+      var ctx = canvas.getContext();
+      ctx.beginPath();
+      ctx.rect((window.innerWidth / 2) - (width / 2), (window.innerHeight / 2) - (height / 2), width, height);
+      var grad = ctx.createLinearGradient(window.innerWidth / 2, (window.innerHeight / 2) - (height / 2), window.innerWidth / 2, (window.innerHeight / 2) + (height / 2));
+      grad.addColorStop(0, "#555"); // light blue
+      grad.addColorStop(1, "#CCC"); // dark blue
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#FFF";
+      ctx.stroke();
 
-        ctx.textAlign = "center";
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#000"; // stroke color
-        ctx.fillStyle = "#FF0";
-        ctx.font = "25pt TitanOne";
-        ctx.fillText(m_locale["highscores"], window.innerWidth/2, window.innerHeight/2-(height/2)+45);
-        ctx.strokeText(m_locale["highscores"], window.innerWidth/2, window.innerHeight/2-(height/2)+45);
-        ctx.font = "12pt TitanOne";
-        ctx.lineWidth = 1;
-        ctx.fillStyle = "#FFF";
-        ctx.textAlign = "left";
-        ctx.fillText("Swizz-Quiz Entwicklung:", 20, window.innerHeight-110);
-        ctx.strokeText("Swizz-Quiz Entwicklung:", 20, window.innerHeight-110);
-        ctx.fillText("Institut Vermessung und Geoinformation", 20, window.innerHeight-95);
-        ctx.strokeText("Institut Vermessung und Geoinformation", 20, window.innerHeight-95)
-        ctx.fillText("Robert Wüest (robert.wueest@fhnw.ch)", 26, window.innerHeight-78);
-        ctx.strokeText("Robert Wüest (robert.wueest@fhnw.ch)", 26, window.innerHeight-78);
-        ctx.fillText("Martin Christen (martin.christen@fhnw.ch)", 26, window.innerHeight-65);
-        ctx.strokeText("Martin Christen (martin.christen@fhnw.ch)", 26, window.innerHeight-65);
-        ctx.font = "15pt TitanOne";
-        ctx.textAlign = "center";
-        ctx.lineWidth = 2;
-        for(var i = 1; i <= that.list.length; i++)
-        {
-            if(i == 1) {ctx.fillStyle = "#FFAA33";} else if(player.playerName == that.list[i-1][0] && player.playerScore == that.list[i-1][2])
-            { ctx.fillStyle = "#0FF"; }
-            else { ctx.fillStyle = "#FFF";}
-            var textOut = i + ". "+ that.list[i-1][0] + "  " + that.list[i-1][2];
-            ctx.fillText(textOut, window.innerWidth/2, window.innerHeight/2-(height/2)+75+(i*22));
-            ctx.lineWidth = 1;
-            ctx.strokeText(textOut, window.innerWidth/2, window.innerHeight/2-(height/2)+75+(i*22));
-        }
-       canvas.fillStroke(this);
+      ctx.textAlign = "center";
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#000"; // stroke color
+      ctx.fillStyle = "#FF0";
+      ctx.font = "25pt TitanOne";
+      ctx.fillText(m_locale["highscores"], window.innerWidth / 2, window.innerHeight / 2 - (height / 2) + 45);
+      ctx.strokeText(m_locale["highscores"], window.innerWidth / 2, window.innerHeight / 2 - (height / 2) + 45);
+      ctx.font = "12pt TitanOne";
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "#FFF";
+      ctx.textAlign = "left";
+      ctx.fillText("Swizz-Quiz Entwicklung:", 20, window.innerHeight - 160);
+      ctx.strokeText("Swizz-Quiz Entwicklung:", 20, window.innerHeight - 160);
+      ctx.fillText("Institut Vermessung und Geoinformation", 20, window.innerHeight - 145);
+      ctx.strokeText("Institut Vermessung und Geoinformation", 20, window.innerHeight - 145)
+      ctx.fillText("Robert Wüest (robert.wueest@fhnw.ch)", 26, window.innerHeight - 128);
+      ctx.strokeText("Robert Wüest (robert.wueest@fhnw.ch)", 26, window.innerHeight - 128);
+      ctx.font = "15pt TitanOne";
+      ctx.textAlign = "center";
+      ctx.lineWidth = 2;
+      for (var i = 1; i <= that.list.length; i++) {
+         if (i == 1) {
+            ctx.fillStyle = "#FFAA33";
+         } else if (player.playerName == that.list[i - 1][0] && player.playerScore == that.list[i - 1][2]) {
+            ctx.fillStyle = "#0FF";
+         }
+         else {
+            ctx.fillStyle = "#FFF";
+         }
+         var textOut = i + ". " + that.list[i - 1][0] + "  " + that.list[i - 1][2];
+         ctx.fillText(textOut, window.innerWidth / 2, window.innerHeight / 2 - (height / 2) + 75 + (i * 22));
+         ctx.lineWidth = 1;
+         ctx.strokeText(textOut, window.innerWidth / 2, window.innerHeight / 2 - (height / 2) + 75 + (i * 22));
+      }
+      if(m_showhash)
+      {
+         ctx.beginPath();
+         var xx0 = (window.innerWidth / 2) + (width / 2) +25;
+         var yy0 = (window.innerHeight / 2) -75
+         ctx.rect(xx0, yy0 , 320, 150);
+         ctx.fillStyle = grad;
+         ctx.fill();
+         ctx.lineWidth = 3;
+         ctx.strokeStyle = "#FFF";
+         ctx.stroke();
+         ctx.closePath();
+         ctx.beginPath();
+         ctx.rect(xx0+40, yy0+60 , 240, 70);
+         ctx.fillStyle = "#FFC";
+         ctx.fill();
+         ctx.closePath();
+         ctx.font = "14pt TitanOne";
+         ctx.lineWidth = 1;
+         ctx.fillStyle = "#FFF";
+         ctx.textAlign = "center";
+         ctx.strokeStyle = "#000";
+         ctx.fillText(m_locale["hash"], xx0+160, yy0+30);
+         ctx.strokeText(m_locale["hash"], xx0+160, yy0+30);
+         ctx.fillStyle = "#000";
+         ctx.textAlign = "center";
+         ctx.font = "24pt Verdana";
+         ctx.fillText(that.hash, xx0+160, yy0+105);
+      }
+      canvas.fillStroke(this);
 
-    }});
-    layer.add(this.shape);
-    this.okayButton = new Button01(m_ui, "dialog", window.innerWidth/2-150, window.innerHeight/2+(height/2)-100, 300, 69, m_locale["playagain"], 15);
-    this.okayButton.onClickEvent = this.OnOkay;
+   }});
+   layer.add(this.shape);
+   this.okayButton = new Button01(m_ui, "dialog", window.innerWidth / 2 - 150, window.innerHeight / 2 + (height / 2) - 100, 300, 69, m_locale["playagain"], 15);
+   this.okayButton.onClickEvent = this.OnOkay;
 
 }
 //-----------------------------------------------------------------------------
@@ -892,16 +906,14 @@ function HighScoreDialog(layer, list, width, height, player)
  * @description define callbackfunction when hit okay
  * @param {function()} callback
  */
-HighScoreDialog.prototype.RegisterCallback = function(callback)
-{
-    this.Callback = callback;
+HighScoreDialog.prototype.RegisterCallback = function (callback) {
+   this.Callback = callback;
 };
 //-----------------------------------------------------------------------------
 /**
  * @description destroy the dialog
  */
-HighScoreDialog.prototype.Destroy = function()
-{
+HighScoreDialog.prototype.Destroy = function () {
    this.shape.remove();
    this.okayButton.shape.remove();
 };
