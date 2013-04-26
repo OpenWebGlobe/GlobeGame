@@ -144,14 +144,20 @@ DistrictChallenge.prototype.Score = function (timeleft) {
    m_soundhandler.Play("correct");
    if (m_player) {
       var score = 0;
-
-      score += Math.floor(this.baseScore / this.trials);
-      m_player.ScorePoints(score, "");
-      m_player.ScorePoints(Math.floor(timeleft / 5), m_locale["timebonus"]);
-      score += Math.floor(timeleft / 5);
-      if (timeleft > 50) {
-         m_player.ScorePoints(20, m_locale["speedbonus"]);
-         score += 20;
+      if(m_minimode)
+      {
+         m_player.ScorePoints(1, " ");
+         score = 1;
+      }else
+      {
+         score += Math.floor(this.baseScore / this.trials);
+         m_player.ScorePoints(score, "");
+         m_player.ScorePoints(Math.floor(timeleft / 5), m_locale["timebonus"]);
+         score += Math.floor(timeleft / 5);
+         if (timeleft > 50) {
+            m_player.ScorePoints(20, m_locale["speedbonus"]);
+            score += 20;
+         }
       }
       Timeout(function () {
          var coins = new Coins(m_ui, score);

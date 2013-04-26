@@ -1,5 +1,5 @@
 {
-    "entername":"Votre prenom et nom: ",
+    "entername":"Prenom et nom: ",
     "points": "points",
     "timebonus": "bonus de temps",
     "speedbonus": "bonus de vitesse",
@@ -9,5 +9,7 @@
     "highscores": "classement",
     "playagain": "Jouez encore",
     "pickhint": "Marquer la position avec le doigt (maintenez enfoncé pour agrandir). Appuyez sur OK ",
-   "hash": "Hash Code"
+   "hash": "Hash Code",
+   "yourscore" : "Your Score: ",
+   "of" : "de"
 }

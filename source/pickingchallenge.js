@@ -99,13 +99,22 @@ function PickingChallenge(baseScore, title, pos) {
       if (m_player) {
          if (distance < 50.0) {
             var score = 0;
-            m_player.ScorePoints(Math.floor((that.baseScore / 50.0) * (50.0 - distance)), m_locale["estimation"]);
-            score += Math.floor((that.baseScore / 50.0) * (50.0 - distance));
-            m_player.ScorePoints(Math.floor(that.clock.seconds / 5), m_locale["timebonus"]);
-            score += Math.floor(that.clock.seconds / 5);
-            if (that.clock.seconds > 50) {
-               m_player.ScorePoints(20, m_locale["speedbonus"]);
-               score += 20;
+            if(m_minimode)
+            {
+               if (distance < 20.0) {
+                  score = 1;
+                  m_player.ScorePoints(1, " ");
+               }
+            }else
+            {
+               m_player.ScorePoints(Math.floor((that.baseScore / 50.0) * (50.0 - distance)), m_locale["estimation"]);
+               score += Math.floor((that.baseScore / 50.0) * (50.0 - distance));
+               m_player.ScorePoints(Math.floor(that.clock.seconds / 5), m_locale["timebonus"]);
+               score += Math.floor(that.clock.seconds / 5);
+               if (that.clock.seconds > 50) {
+                  m_player.ScorePoints(20, m_locale["speedbonus"]);
+                  score += 20;
+               }
             }
             Timeout(function () {
                var coins = new Coins(m_ui, score);

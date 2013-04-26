@@ -47,6 +47,7 @@ var m_soundenabled = false;
 var m_datahost = "http://localhost";
 var m_callbacks = [];
 var m_resizeCallbacks = [];
+var m_minimode = false;
 
 //-----------------------------------------------------------------------------
 /**

@@ -1112,11 +1112,7 @@ LandmarkChallenge.prototype.PickOption = function(a, b) {
     m_soundhandler.Play("correct");
     if(m_player) {
       var d = 0;
-      m_player.ScorePoints(this.baseScore, "");
-      d += this.baseScore;
-      m_player.ScorePoints(Math.floor(b / 5), m_locale.timebonus);
-      d += Math.floor(b / 5);
-      b > 50 && (m_player.ScorePoints(20, m_locale.speedbonus), d += 20);
+      m_minimode ? (m_player.ScorePoints(1, " "), d = 1) : (m_player.ScorePoints(this.baseScore, ""), d += this.baseScore, m_player.ScorePoints(Math.floor(b / 5), m_locale.timebonus), d += Math.floor(b / 5), b > 50 && (m_player.ScorePoints(20, m_locale.speedbonus), d += 20));
       Timeout(function() {
         new Coins(m_ui, d)
       }, 800)
@@ -1175,11 +1171,7 @@ function PickingChallenge(a, b, c) {
     }
     if(m_player && c < 50) {
       var k = 0;
-      m_player.ScorePoints(Math.floor(d.baseScore / 50 * (50 - c)), m_locale.estimation);
-      k += Math.floor(d.baseScore / 50 * (50 - c));
-      m_player.ScorePoints(Math.floor(d.clock.seconds / 5), m_locale.timebonus);
-      k += Math.floor(d.clock.seconds / 5);
-      d.clock.seconds > 50 && (m_player.ScorePoints(20, m_locale.speedbonus), k += 20);
+      m_minimode ? c < 20 && (k = 1, m_player.ScorePoints(1, " ")) : (m_player.ScorePoints(Math.floor(d.baseScore / 50 * (50 - c)), m_locale.estimation), k += Math.floor(d.baseScore / 50 * (50 - c)), m_player.ScorePoints(Math.floor(d.clock.seconds / 5), m_locale.timebonus), k += Math.floor(d.clock.seconds / 5), d.clock.seconds > 50 && (m_player.ScorePoints(20, m_locale.speedbonus), k += 20));
       Timeout(function() {
         new Coins(m_ui, k)
       }, 800)
@@ -1383,11 +1375,7 @@ DistrictChallenge.prototype.Score = function(a) {
   m_soundhandler.Play("correct");
   if(m_player) {
     var c = 0;
-    c += Math.floor(this.baseScore / this.trials);
-    m_player.ScorePoints(c, "");
-    m_player.ScorePoints(Math.floor(a / 5), m_locale.timebonus);
-    c += Math.floor(a / 5);
-    a > 50 && (m_player.ScorePoints(20, m_locale.speedbonus), c += 20);
+    m_minimode ? (m_player.ScorePoints(1, " "), c = 1) : (c += Math.floor(this.baseScore / this.trials), m_player.ScorePoints(c, ""), m_player.ScorePoints(Math.floor(a / 5), m_locale.timebonus), c += Math.floor(a / 5), a > 50 && (m_player.ScorePoints(20, m_locale.speedbonus), c += 20));
     Timeout(function() {
       new Coins(m_ui, c)
     }, 800)
@@ -1573,9 +1561,9 @@ TouchKeyboard.prototype.Destroy = function() {
 owg.gg.GlobeGame = {};
 GlobeGame.STATE = {IDLE:0, CHALLENGE:1, HIGHSCORE:2};
 GlobeGame.FLYSTATE = {IDLE:0, FLYAROUND:1};
-var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_scene = null, m_stage = null, m_ui = null, m_static = null, m_camera = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "none", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 10, m_progress = null, m_soundhandler = new SoundHandler, m_soundenabled = !0, m_showhash = !1, m_state = GlobeGame.STATE.IDLE, 
-m_flystate = GlobeGame.FLYSTATE.IDLE, m_score = null, m_gameData = null, m_globeGame = null, m_debug = !1, m_loaded = !1;
-function GlobeGame(a, b, c, d) {
+var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_scene = null, m_stage = null, m_ui = null, m_static = null, m_camera = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "none", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 2, m_progress = null, m_soundhandler = new SoundHandler, m_soundenabled = !0, m_showhash = !1, m_state = GlobeGame.STATE.IDLE, 
+m_flystate = GlobeGame.FLYSTATE.IDLE, m_score = null, m_gameData = null, m_globeGame = null, m_debug = !1, m_loaded = !1, m_minimode = !1;
+function GlobeGame(a, b, c, d, e) {
   b && (m_datahost = b);
   m_qCount = 0;
   this.currentChallenge = null;
@@ -1586,7 +1574,8 @@ function GlobeGame(a, b, c, d) {
   m_ui = new Kinetic.Layer;
   m_static = new Kinetic.Layer;
   m_soundenabled = c;
-  m_showhash = d
+  m_showhash = d;
+  m_minimode = e
 }
 GlobeGame.prototype.Init = function(a, b) {
   var c = this, d = {btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", btn_02:"art/btn_02.png", btn_02_c:"art/btn_02_c.png", btn_02_h:"art/btn_02_h.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png", nw_logo:"art/nw_logo.png", logo:"art/logo.png", 
@@ -1698,30 +1687,48 @@ GlobeGame.prototype.EnterHighscore = function() {
   m_ui.setOpacity(1);
   m_state = GlobeGame.STATE.HIGHSCORE;
   this.FlyAround();
-  var b = new TouchKeyboard(m_ui, "keys", window.innerWidth / 2 - 426, window.innerHeight / 2 - 195, m_locale.entername, function(c) {
-    m_player.playerName = c;
-    b.Destroy();
-    m_soundhandler.Play("highscores");
-    jQuery.get("hash.php", function(b) {
-      jQuery.get("db.php?action=append&name=" + m_player.playerName + "&score=" + m_player.playerScore + "&hash=" + b, function(c) {
-        var c = eval(c), f = new HighScoreDialog(m_ui, c, b, 500, 650, m_player);
-        setTimeout(function() {
-          m_state == GlobeGame.STATE.HIGHSCORE && (m_score && m_score.Destroy(), m_qCount = 0, f.Destroy(), m_gameData = new GameData(function() {
-            a.EnterIdle()
-          }))
-        }, 2E4);
-        f.RegisterCallback(function() {
-          m_score && m_score.Destroy();
-          m_qCount = 0;
-          m_gameData = new GameData(function() {
-            a.StopFlyTo();
-            m_ui.setOpacity(0);
-            a.EnterChallenge()
+  if(m_minimode == !1) {
+    var b = new TouchKeyboard(m_ui, "keys", window.innerWidth / 2 - 426, window.innerHeight / 2 - 195, m_locale.entername, function(c) {
+      m_player.playerName = c;
+      b.Destroy();
+      m_soundhandler.Play("highscores");
+      jQuery.get("hash.php", function(b) {
+        jQuery.get("db.php?action=append&name=" + m_player.playerName + "&score=" + m_player.playerScore + "&hash=" + b, function(c) {
+          var c = eval(c), d = new HighScoreDialog(m_ui, c, b, 500, 650, m_player);
+          setTimeout(function() {
+            m_state == GlobeGame.STATE.HIGHSCORE && (m_score && m_score.Destroy(), m_qCount = 0, d.Destroy(), m_gameData = new GameData(function() {
+              a.EnterIdle()
+            }))
+          }, 2E4);
+          d.RegisterCallback(function() {
+            m_score && m_score.Destroy();
+            m_qCount = 0;
+            m_gameData = new GameData(function() {
+              a.StopFlyTo();
+              m_ui.setOpacity(0);
+              a.EnterChallenge()
+            })
           })
         })
       })
     })
-  })
+  }else {
+    var c = new MessageDialog(m_ui, m_locale.yourscore + m_player.playerScore.toString() + " " + m_locale.of + " " + m_qMax.toString(), window.innerWidth / 2, window.innerHeight / 2 - 110, 500, 220);
+    c.RegisterCallback(function() {
+      m_score && m_score.Destroy();
+      m_qCount = 0;
+      m_gameData = new GameData(function() {
+        a.StopFlyTo();
+        m_ui.setOpacity(0);
+        a.EnterChallenge()
+      })
+    });
+    setTimeout(function() {
+      m_state == GlobeGame.STATE.HIGHSCORE && (m_score && m_score.Destroy(), c.Destroy(), m_qCount = 0, m_gameData = new GameData(function() {
+        a.EnterIdle()
+      }))
+    }, 2E4)
+  }
 };
 GlobeGame.prototype.FlyAround = function() {
   m_flystate = GlobeGame.FLYSTATE.FLYAROUND;

@@ -1,5 +1,5 @@
 {
-    "entername":"Ihr Vorname und Name: ",
+    "entername":"Vorname und Name: ",
     "points": "Punkte",
     "timebonus": "Zeitbonus",
     "speedbonus": "Geschwindigkeit",
@@ -9,5 +9,7 @@
     "highscores": "Bestenliste",
     "playagain": "Nochmal spielen",
     "pickhint": "Position durch Berühren markieren (Gedrückthalten um zu vergrössern). Bestätigen mit OK",
-    "hash": "Persönlicher Code"
+    "hash": "Persönlicher Code",
+    "yourscore" : "Deine Punkte: ",
+   "of" : "von"
 }

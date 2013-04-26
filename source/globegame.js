@@ -90,6 +90,7 @@ var m_gameData = null;
 var m_globeGame = null;
 var m_debug = false;
 var m_loaded = false;
+var m_minimode = false;
 
 /**
  * @class GlobeGame
@@ -103,7 +104,7 @@ var m_loaded = false;
  * @param {boolean} soundenabled
  * @param {boolean} showhash
  */
-function GlobeGame(canvasDiv, datapath, soundenabled, showhash) {
+function GlobeGame(canvasDiv, datapath, soundenabled, showhash, minimode) {
    if (datapath) {
       m_datahost = datapath;
    }
@@ -124,6 +125,7 @@ function GlobeGame(canvasDiv, datapath, soundenabled, showhash) {
    m_static = new Kinetic.Layer();
    m_soundenabled = soundenabled;
    m_showhash = showhash;
+   m_minimode = minimode;
 }
 
 //-----------------------------------------------------------------------------
@@ -365,44 +367,73 @@ GlobeGame.prototype.EnterHighscore = function () {
    m_ui.setOpacity(1.0);
    m_state = GlobeGame.STATE.HIGHSCORE;
    this.FlyAround();
-   var keyboard = new TouchKeyboard(m_ui, "keys", (window.innerWidth / 2) - 426, (window.innerHeight / 2) - 195, m_locale["entername"],
-      function (name) {
-         m_player.playerName = name;
-         keyboard.Destroy();
-         m_soundhandler.Play("highscores");
-         jQuery.get('hash.php', function (data1) {
-            jQuery.get('db.php?action=append&name=' + m_player.playerName + '&score=' + m_player.playerScore + "&hash=" + data1, function (data2) {
+   if(m_minimode == false)
+   {
+      var keyboard = new TouchKeyboard(m_ui, "keys", (window.innerWidth / 2) - 426, (window.innerHeight / 2) - 195, m_locale["entername"],
+         function (name) {
+            m_player.playerName = name;
+            keyboard.Destroy();
+            m_soundhandler.Play("highscores");
+            jQuery.get('hash.php', function (data1) {
+               jQuery.get('db.php?action=append&name=' + m_player.playerName + '&score=' + m_player.playerScore + "&hash=" + data1, function (data2) {
 
-               var hash = data1;
-               var list = /** @type {Array} */eval(data2);
-               var highscore = new HighScoreDialog(m_ui, list, hash, 500, 650, m_player);
-               setTimeout(function(){
-                  if(m_state == GlobeGame.STATE.HIGHSCORE)
-                  {
+                  var hash = data1;
+                  var list = /** @type {Array} */eval(data2);
+                  var highscore = new HighScoreDialog(m_ui, list, hash, 500, 650, m_player);
+                  setTimeout(function(){
+                     if(m_state == GlobeGame.STATE.HIGHSCORE)
+                     {
+                        if (m_score)
+                           m_score.Destroy();
+                        m_qCount = 0;
+                        highscore.Destroy();
+                        m_gameData = new GameData(function () {
+                           that.EnterIdle();
+                        });
+                     }
+                  },20000);
+
+                  highscore.RegisterCallback(function () {
                      if (m_score)
                         m_score.Destroy();
                      m_qCount = 0;
-                     highscore.Destroy();
                      m_gameData = new GameData(function () {
-                        that.EnterIdle();
+                        that.StopFlyTo();
+                        m_ui.setOpacity(0.0);
+                        that.EnterChallenge();
                      });
-                  }
-               },20000);
 
-               highscore.RegisterCallback(function () {
-                  if (m_score)
-                     m_score.Destroy();
-                  m_qCount = 0;
-                  m_gameData = new GameData(function () {
-                     that.StopFlyTo();
-                     m_ui.setOpacity(0.0);
-                     that.EnterChallenge();
                   });
-
                });
             });
          });
+   }else
+   {
+      var message = m_locale["yourscore"] + m_player.playerScore.toString() + " "+ m_locale["of"] + " " + m_qMax.toString();
+      var pointMessage = new MessageDialog(m_ui, message, window.innerWidth / 2, (window.innerHeight / 2)-110, 500, 220);
+      pointMessage.RegisterCallback(function () {
+         if (m_score)
+            m_score.Destroy();
+         m_qCount = 0;
+         m_gameData = new GameData(function () {
+            that.StopFlyTo();
+            m_ui.setOpacity(0.0);
+            that.EnterChallenge();
+         });
       });
+      setTimeout(function(){
+         if(m_state == GlobeGame.STATE.HIGHSCORE)
+         {
+            if (m_score)
+               m_score.Destroy();
+            pointMessage.Destroy();
+            m_qCount = 0;
+            m_gameData = new GameData(function () {
+               that.EnterIdle();
+            });
+         }
+      },20000);
+   }
 };
 //-----------------------------------------------------------------------------
 /**

@@ -1,5 +1,5 @@
 {
-    "entername":"Your Surname and Name: ",
+    "entername":"Surname and Name: ",
     "points": "Points",
     "timebonus": "Timebonus",
     "speedbonus": "Speedbonus",
@@ -9,5 +9,7 @@
     "highscores": "Hall Of Fame",
     "playagain": "Play again",
     "pickhint": "Touch screen to mark position (hold to zoom in). Confirm by hitting OK",
-   "hash": "Personal hash code"
+   "hash": "Personal hash code",
+   "yourscore" : "Your Score: ",
+   "of" : "of"
 }
