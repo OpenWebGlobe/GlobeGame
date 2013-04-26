@@ -58,6 +58,7 @@ function DistrictChallenge(baseScore, correctPick, baseData, view, title, extent
    this.clickState = 0;
    this.extent = extent;
    this.trials = 0;
+   this.locked = false;
 }
 DistrictChallenge.prototype = new Challenge(0);
 DistrictChallenge.prototype.constructor = DistrictChallenge;
@@ -180,26 +181,31 @@ DistrictChallenge.prototype.CreateInteractiveSurface = function (fieldData) {
    };
 
    var onClickEvent = function () {
-      that.trials += 1;
-      if (that.correctPick == shape.name) {
-         shape.setFill("#00FF00");
-         that.Score(that.clock.GetSeconds());
-      }
-      else if (that.trials >= 8) {
-         m_soundhandler.Play("wrong");
-         for (var i = 0; i < that.shapes.length; i++) {
-            if (that.shapes[i]["name"] == that.correctPick) {
-               that.shapes[i].setFill("#FFFF00");
-               break;
-            }
+      if(that.locked == false && shape.getFill() == "#FFFFFF")
+      {
+         that.trials += 1;
+         if (that.correctPick == shape.name) {
+            shape.setFill("#00FF00");
+            that.locked = true;
+            that.Score(that.clock.GetSeconds());
          }
-         setTimeout(function () {
-            that.callback();
-         }, 2500);
-      }
-      else {
-         shape.setFill("#FF0000");
-         //var text = new FlyingText(m_static, "Nochmal versuchen!", "#FF6600");
+         else if (that.trials >= 8) {
+            that.locked = true;
+            m_soundhandler.Play("wrong");
+            for (var i = 0; i < that.shapes.length; i++) {
+               if (that.shapes[i]["name"] == that.correctPick) {
+                  that.shapes[i].setFill("#FFFF00");
+                  break;
+               }
+            }
+            setTimeout(function () {
+               that.callback();
+            }, 2500);
+         }
+         else {
+            shape.setFill("#FF0000");
+            //var text = new FlyingText(m_static, "Nochmal versuchen!", "#FF6600");
+         }
       }
    };
    var onMouseOverEvent = function () {
