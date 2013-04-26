@@ -1335,7 +1335,8 @@ function DistrictChallenge(a, b, c, d, e, f) {
   this.screenText = null;
   this.clickState = 0;
   this.extent = f;
-  this.trials = 0
+  this.trials = 0;
+  this.locked = !1
 }
 DistrictChallenge.prototype = new Challenge(0);
 DistrictChallenge.prototype.constructor = DistrictChallenge;
@@ -1396,23 +1397,25 @@ DistrictChallenge.prototype.Score = function(a) {
 };
 DistrictChallenge.prototype.CreateInteractiveSurface = function(a) {
   var b = this, c = new Kinetic.Path({x:(window.innerWidth - b.extent[0] * (window.innerHeight / b.extent[1])) / 2, y:0, data:a.path, fill:"#FFFFFF", stroke:"#FFFFFF", opacity:0.5, scale:window.innerHeight / b.extent[1]}), d = function() {
-    b.trials += 1;
-    if(b.correctPick == c.name) {
-      c.setFill("#00FF00"), b.Score(b.clock.GetSeconds())
-    }else {
-      if(b.trials >= 8) {
-        m_soundhandler.Play("wrong");
-        for(var a = 0;a < b.shapes.length;a++) {
-          if(b.shapes[a].name == b.correctPick) {
-            b.shapes[a].setFill("#FFFF00");
-            break
-          }
-        }
-        setTimeout(function() {
-          b.callback()
-        }, 2500)
+    if(b.locked == !1 && c.getFill() == "#FFFFFF") {
+      if(b.trials += 1, b.correctPick == c.name) {
+        c.setFill("#00FF00"), b.locked = !0, b.Score(b.clock.GetSeconds())
       }else {
-        c.setFill("#FF0000")
+        if(b.trials >= 8) {
+          b.locked = !0;
+          m_soundhandler.Play("wrong");
+          for(var a = 0;a < b.shapes.length;a++) {
+            if(b.shapes[a].name == b.correctPick) {
+              b.shapes[a].setFill("#FFFF00");
+              break
+            }
+          }
+          setTimeout(function() {
+            b.callback()
+          }, 2500)
+        }else {
+          c.setFill("#FF0000")
+        }
       }
     }
   };
@@ -1569,7 +1572,7 @@ TouchKeyboard.prototype.Destroy = function() {
 owg.gg.GlobeGame = {};
 GlobeGame.STATE = {IDLE:0, CHALLENGE:1, HIGHSCORE:2};
 GlobeGame.FLYSTATE = {IDLE:0, FLYAROUND:1};
-var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_scene = null, m_stage = null, m_ui = null, m_static = null, m_camera = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "none", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 1, m_progress = null, m_soundhandler = new SoundHandler, m_soundenabled = !0, m_showhash = !1, m_state = GlobeGame.STATE.IDLE, 
+var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_scene = null, m_stage = null, m_ui = null, m_static = null, m_camera = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "none", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 10, m_progress = null, m_soundhandler = new SoundHandler, m_soundenabled = !0, m_showhash = !1, m_state = GlobeGame.STATE.IDLE, 
 m_flystate = GlobeGame.FLYSTATE.IDLE, m_score = null, m_gameData = null, m_globeGame = null, m_debug = !1, m_loaded = !1;
 function GlobeGame(a, b, c, d) {
   b && (m_datahost = b);
