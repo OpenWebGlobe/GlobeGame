@@ -69,6 +69,7 @@ function PickingChallenge(baseScore, title, pos) {
     * @description ok okay button event
     */
    this.OnOkay = function () {
+      that.okayBtn.SetEnabled(false);
       var cartesian = ogToCartesian(m_scene, that.solutionPos[0], that.solutionPos[1], that.solutionPos[2]);
       var screenPos = ogWorldToWindow(m_scene, cartesian[0], cartesian[1], cartesian[2]);
       var distance = ogCalcDistanceWGS84(that.solutionPos[0], that.solutionPos[1], that.pickPos[1], that.pickPos[2]);

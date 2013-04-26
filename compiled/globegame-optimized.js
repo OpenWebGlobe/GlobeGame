@@ -1150,6 +1150,7 @@ function PickingChallenge(a, b, c) {
   this.mouseLock = !1;
   this.hint = this.distanceLine = this.ogFrameLayer = this.clock = null;
   this.OnOkay = function() {
+    d.okayBtn.SetEnabled(!1);
     var a = ogToCartesian(m_scene, d.solutionPos[0], d.solutionPos[1], d.solutionPos[2]), b = ogWorldToWindow(m_scene, a[0], a[1], a[2]), c = ogCalcDistanceWGS84(d.solutionPos[0], d.solutionPos[1], d.pickPos[1], d.pickPos[2]), c = Math.round(c / 1E3 * Math.pow(10, 1)) / Math.pow(10, 1);
     d.resultPin.SetPos(b[0], b[1]);
     m_soundhandler.Play("ping1");
