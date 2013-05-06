@@ -367,7 +367,7 @@ goog.scope = function(a) {
 };
 var owg = {gg:{}};
 owg.gg.Editor = {};
-var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_context, m_globe, m_stage, m_scene, m_camera, m_ui = new Kinetic.Layer, m_static = new Kinetic.Layer, m_centerX = (window.innerWidth - 350) / 2, m_centerY = window.innerHeight / 2, m_challenge = null, m_cType = 0, m_pin, m_pick = [!1, 0, 0, 0], m_zoom = !1, m_pickOverlay, trLayer = null, m_elev, m_views = [], m_soundenabled = !1, m_datahost = "http://localhost", m_callbacks = [], m_resizeCallbacks = [];
+var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_context, m_globe, m_stage, m_scene, m_camera, m_ui = new Kinetic.Layer, m_static = new Kinetic.Layer, m_centerX = (window.innerWidth - 350) / 2, m_centerY = window.innerHeight / 2, m_challenge = null, m_cType = 0, m_pin, m_pick = [!1, 0, 0, 0], m_zoom = !1, m_pickOverlay, trLayer = null, m_elev, m_views = [], m_soundenabled = !1, m_datahost = "http://localhost", m_callbacks = [], m_resizeCallbacks = [], m_minimode = !1;
 function SelectAllText(a) {
   document.getElementById(a).focus();
   document.getElementById(a).select()
@@ -380,7 +380,7 @@ function LoadImages(a) {
     m_images[b] = new Image, m_images[b].src = a[b]
   }
 }
-function Init(a) {
+function Init(a, b) {
   a && (m_datahost = a);
   ogSetArtworkDirectory("../WebViewer/art/");
   m_context = ogCreateContext({canvas:"canvas", fullscreen:!0});
@@ -395,10 +395,11 @@ function Init(a) {
   ogSetRenderQuality(m_globe, 3);
   ogSetRenderFunction(m_context, OnRender);
   ogSetResizeFunction(m_context, OnResize);
-  a = ogGetActiveCamera(m_scene);
-  ogSetPosition(a, 8.225578, 46.8248707, 28E4);
-  ogSetOrientation(a, 0, -90, 0);
+  var c = ogGetActiveCamera(m_scene);
+  ogSetPosition(c, 8.225578, 46.8248707, 28E4);
+  ogSetOrientation(c, 0, -90, 0);
   ogSetCanvasSizeOffset(m_scene, 360, 1);
+  ogSetRenderQuality(m_globe, b);
   m_pin = new Pin(m_static, m_images.pin_red, 0, 0);
   m_pickOverlay = new Kinetic.Rect({x:0, y:0, width:window.innerWidth, height:window.innerHeight});
   m_static.add(m_pickOverlay);

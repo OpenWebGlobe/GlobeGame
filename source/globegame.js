@@ -218,10 +218,10 @@ GlobeGame.prototype.Init = function (renderCallback, renderQuality) {
 
                      ctx.fillStyle = "#FFF";
                      ctx.font = "10pt TitanOne";
-                     ctx.fillText("SWISSIMAGE, DHM25 © swisstopo JD100033", 5, window.innerHeight - 5);
+                     ctx.fillText("Image data © MAPPULS", 5, window.innerHeight - 5);
                      ctx.lineWidth = 1;
                      ctx.strokeStyle = "#000"; // stroke color
-                     ctx.strokeText("SWISSIMAGE, DHM25 © swisstopo JD100033", 5, window.innerHeight - 5);
+                     ctx.strokeText("Image data © MAPPULS", 5, window.innerHeight - 5);
 
                      ctx.drawImage(m_images["logo_owg"], 0, window.innerHeight - 120, 240, 86);
 

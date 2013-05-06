@@ -831,7 +831,7 @@ function ScoreCount(a) {
   this.shape = new Kinetic.Shape({drawFunc:function(a) {
     var c = a.getContext();
     c.beginPath();
-    c.rect(2, 2, 273, 73);
+    c.rect(2, 2, 273, 82);
     var d = c.createLinearGradient(10, 10, 10, 50);
     d.addColorStop(0, "#555");
     d.addColorStop(1, "#CCC");
@@ -1561,7 +1561,7 @@ TouchKeyboard.prototype.Destroy = function() {
 owg.gg.GlobeGame = {};
 GlobeGame.STATE = {IDLE:0, CHALLENGE:1, HIGHSCORE:2};
 GlobeGame.FLYSTATE = {IDLE:0, FLYAROUND:1};
-var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_scene = null, m_stage = null, m_ui = null, m_static = null, m_camera = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "none", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 2, m_progress = null, m_soundhandler = new SoundHandler, m_soundenabled = !0, m_showhash = !1, m_state = GlobeGame.STATE.IDLE, 
+var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_scene = null, m_stage = null, m_ui = null, m_static = null, m_camera = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "none", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 10, m_progress = null, m_soundhandler = new SoundHandler, m_soundenabled = !0, m_showhash = !1, m_state = GlobeGame.STATE.IDLE, 
 m_flystate = GlobeGame.FLYSTATE.IDLE, m_score = null, m_gameData = null, m_globeGame = null, m_debug = !1, m_loaded = !1, m_minimode = !1;
 function GlobeGame(a, b, c, d, e) {
   b && (m_datahost = b);
@@ -1603,10 +1603,10 @@ GlobeGame.prototype.Init = function(a, b) {
               b.strokeText("www.openwebglobe.org", 5, window.innerHeight - 22);
               b.fillStyle = "#FFF";
               b.font = "10pt TitanOne";
-              b.fillText("SWISSIMAGE, DHM25 \u00a9 swisstopo JD100033", 5, window.innerHeight - 5);
+              b.fillText("Image data \u00a9 MAPPULS", 5, window.innerHeight - 5);
               b.lineWidth = 1;
               b.strokeStyle = "#000";
-              b.strokeText("SWISSIMAGE, DHM25 \u00a9 swisstopo JD100033", 5, window.innerHeight - 5);
+              b.strokeText("Image data \u00a9 MAPPULS", 5, window.innerHeight - 5);
               b.drawImage(m_images.logo_owg, 0, window.innerHeight - 120, 240, 86);
               if(m_debug) {
                 b.fillStyle = "#F00", b.font = "8pt TitanOne", b.textAlign = "left", b.fillText("State:" + m_state, 5, 80), b.fillText("Flystate:" + m_flystate, 5, 90)

@@ -77,8 +77,9 @@ function LoadImages(sources) {
 /**
  * @description init editor
  * @param {(string|null)} datapath
+ * @param {number} renderquality
  */
-function Init(datapath) {
+function Init(datapath,renderquality) {
    if (datapath) {
       m_datahost = datapath;
    }
@@ -142,6 +143,7 @@ function Init(datapath) {
    ogSetPosition(camId, 8.225578, 46.8248707, 280000.0);
    ogSetOrientation(camId, 0.0, -90.0, 0.0);
    ogSetCanvasSizeOffset(m_scene, 360, 1);
+   ogSetRenderQuality(m_globe, renderquality);
    m_pin = new Pin(m_static, m_images["pin_red"], 0, 0);
    m_pickOverlay = new Kinetic.Rect({
       x: 0,
