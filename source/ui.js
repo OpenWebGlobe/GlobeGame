@@ -637,7 +637,7 @@ function ScoreCount(layer) {
    this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
       var ctx = canvas.getContext();
       ctx.beginPath();
-      ctx.rect(2, 2, 273, 82);
+      ctx.rect(2, 2, 300, 70);
  var grad = ctx.createLinearGradient(10, 10, 10, 50);
  grad.addColorStop(0, "#555");
  grad.addColorStop(1, "#CCC");
