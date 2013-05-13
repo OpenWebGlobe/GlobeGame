@@ -69,6 +69,10 @@ var Kinetic = {
       "setZIndex": function () {
       },
       "setPosition": function () {
+      },
+      "setFill": function () {
+      },
+      "getFill": function () {
       }
    },
    "Rect": function () {
@@ -87,4 +91,8 @@ var Kinetic = {
    },
    "Path": function () {
    }
+};
+
+var canvas = {
+   "fillStroke" : function(a) {}
 };
