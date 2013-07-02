@@ -489,7 +489,13 @@ function SoundHandler() {
   this.sounds = {}
 }
 SoundHandler.prototype.Play = function(a) {
-  m_soundenabled && this.sounds[a].play()
+  if(m_soundenabled) {
+    try {
+      this.sounds[a].play()
+    }catch(b) {
+      m_soundenabled = !1
+    }
+  }
 };
 goog.exportSymbol("SoundHandler", SoundHandler);
 goog.exportProperty(SoundHandler.prototype, "Play", SoundHandler.prototype.Play);
@@ -1257,7 +1263,7 @@ PickingChallenge.prototype.Prepare = function(a) {
     ogSetPosition(m_camera, 8.225578, 46.8248707, 28E4);
     ogSetOrientation(m_camera, 0, -90, 0);
     ogSetInPositionFunction(m_context, b.FlightCallback);
-    b.ogFrameLayer = ogAddImageLayer(m_globe, {url:[m_datahost], layer:"ch_boundaries", service:"owg"})
+    b.ogFrameLayer = ogAddImageLayer(m_globe, {url:["http://www.openwebglobe.org/data/img"], layer:"ch_boundaries", service:"owg"})
   };
   a > 0 ? setTimeout(function() {
     c()
@@ -1562,8 +1568,8 @@ owg.gg.GlobeGame = {};
 GlobeGame.STATE = {IDLE:0, CHALLENGE:1, HIGHSCORE:2};
 GlobeGame.FLYSTATE = {IDLE:0, FLYAROUND:1};
 var m_images = {}, m_loadedImages = 0, m_numImages = 0, m_loadedSounds = 0, m_numSounds = 0, m_context = null, m_globe = null, m_scene = null, m_stage = null, m_ui = null, m_static = null, m_camera = null, m_centerX = window.innerWidth / 2, m_centerY = window.innerHeight / 2, m_lang = "none", m_datahost = "http://localhost", m_locale = [], m_player = null, m_qCount = 0, m_qMax = 10, m_progress = null, m_soundhandler = new SoundHandler, m_soundenabled = !0, m_showhash = !1, m_state = GlobeGame.STATE.IDLE, 
-m_flystate = GlobeGame.FLYSTATE.IDLE, m_score = null, m_gameData = null, m_globeGame = null, m_debug = !1, m_loaded = !1, m_minimode = !1;
-function GlobeGame(a, b, c, d, e) {
+m_flystate = GlobeGame.FLYSTATE.IDLE, m_score = null, m_gameData = null, m_globeGame = null, m_debug = !1, m_loaded = !1, m_minimode = !1, m_chooselang = !1;
+function GlobeGame(a, b, c, d, e, f) {
   b && (m_datahost = b);
   m_qCount = 0;
   this.currentChallenge = null;
@@ -1575,7 +1581,8 @@ function GlobeGame(a, b, c, d, e) {
   m_static = new Kinetic.Layer;
   m_soundenabled = c;
   m_showhash = d;
-  m_minimode = e
+  m_minimode = e;
+  m_chooselang = f
 }
 GlobeGame.prototype.Init = function(a, b) {
   var c = this, d = {btn_01:"art/btn_01.png", btn_01_c:"art/btn_01_c.png", btn_01_h:"art/btn_01_h.png", btn_01_d:"art/btn_01_d.png", btn_01_f:"art/btn_01_f.png", btn_01_t:"art/btn_01_t.png", btn_01_o:"art/btn_01_o.png", btn_02:"art/btn_02.png", btn_02_c:"art/btn_02_c.png", btn_02_h:"art/btn_02_h.png", clock:"art/clock.png", dial:"art/dial.png", pin_blue:"art/pin_blue.png", pin_red:"art/pin_red.png", pin_green:"art/pin_green.png", pin_yellow:"art/pin_yellow.png", nw_logo:"art/nw_logo.png", logo:"art/logo.png", 
@@ -1615,49 +1622,57 @@ GlobeGame.prototype.Init = function(a, b) {
             }});
             m_static.add(a);
             if(m_soundenabled) {
-              m_soundhandler.sounds.track01.volume = 0.25, m_soundhandler.sounds.track01.addEventListener("ended", function() {
-                m_soundhandler.sounds.track02.play()
-              }, !0), m_soundhandler.sounds.track02.volume = 0.25, m_soundhandler.sounds.track02.addEventListener("ended", function() {
-                m_soundhandler.sounds.track03.play()
-              }, !0), m_soundhandler.sounds.track03.volume = 0.25, m_soundhandler.sounds.track03.addEventListener("ended", function() {
-                m_soundhandler.sounds.track04.play()
-              }, !0), m_soundhandler.sounds.track04.volume = 0.25, m_soundhandler.sounds.track04.addEventListener("ended", function() {
-                m_soundhandler.sounds.track01.play()
-              }, !0), m_soundhandler.sounds["track0" + Math.floor(Math.random() * 4 + 1)].play()
+              try {
+                m_soundhandler.sounds.track01.volume = 0.25, m_soundhandler.sounds.track01.addEventListener("ended", function() {
+                  m_soundhandler.sounds.track02.play()
+                }, !0), m_soundhandler.sounds.track02.volume = 0.25, m_soundhandler.sounds.track02.addEventListener("ended", function() {
+                  m_soundhandler.sounds.track03.play()
+                }, !0), m_soundhandler.sounds.track03.volume = 0.25, m_soundhandler.sounds.track03.addEventListener("ended", function() {
+                  m_soundhandler.sounds.track04.play()
+                }, !0), m_soundhandler.sounds.track04.volume = 0.25, m_soundhandler.sounds.track04.addEventListener("ended", function() {
+                  m_soundhandler.sounds.track01.play()
+                }, !0), m_soundhandler.sounds["track0" + Math.floor(Math.random() * 4 + 1)].play()
+              }catch(b) {
+                m_soundenabled = !1
+              }
             }
             m_gameData = new GameData(function() {
               c.EnterIdle()
             })
           }
         })
-      }, b = new Button02(m_ui, "btn_de", window.innerWidth / 2 - 120, 300, 76, 69, "DEU", 15, function() {
-        m_lang = "de";
-        b.Destroy();
-        d.Destroy();
-        g.Destroy();
-        a()
-      }), d = new Button02(m_ui, "btn_fr", window.innerWidth / 2 - 40, 300, 76, 69, "FRA", 15, function() {
-        m_lang = "fr";
-        b.Destroy();
-        d.Destroy();
-        g.Destroy();
-        a()
-      }), g = new Button02(m_ui, "btn_en", window.innerWidth / 2 + 40, 300, 76, 69, "ENG", 15, function() {
-        m_lang = "en";
-        b.Destroy();
-        d.Destroy();
-        g.Destroy();
-        a()
-      })
+      };
+      if(m_chooselang == !0) {
+        var b = new Button02(m_ui, "btn_de", window.innerWidth / 2 - 120, 300, 76, 69, "DEU", 15, function() {
+          m_lang = "de";
+          b.Destroy();
+          d.Destroy();
+          g.Destroy();
+          a()
+        }), d = new Button02(m_ui, "btn_fr", window.innerWidth / 2 - 40, 300, 76, 69, "FRA", 15, function() {
+          m_lang = "fr";
+          b.Destroy();
+          d.Destroy();
+          g.Destroy();
+          a()
+        }), g = new Button02(m_ui, "btn_en", window.innerWidth / 2 + 40, 300, 76, 69, "ENG", 15, function() {
+          m_lang = "en";
+          b.Destroy();
+          d.Destroy();
+          g.Destroy();
+          a()
+        })
+      }else {
+        m_lang = "de", a()
+      }
     })
   });
   m_context = ogCreateContext({canvas:"canvas", fullscreen:!0});
   m_scene = ogCreateScene(m_context, OG_SCENE_3D_ELLIPSOID_WGS84, {rendertotexture:!1});
   m_globe = ogCreateWorld(m_scene);
   m_camera = ogGetActiveCamera(m_scene);
-  ogAddImageLayer(m_globe, {url:[m_datahost], layer:"bluemarble", service:"owg"});
-  ogAddImageLayer(m_globe, {url:[m_datahost], layer:"swissimage", service:"owg"});
-  ogAddElevationLayer(m_globe, {url:[m_datahost], layer:"DHM25", service:"owg"});
+  ogAddImageLayer(m_globe, {url:["http://geoapp.openwebglobe.org/mapcache/owg"], layer:"world3", service:"owg"});
+  ogAddElevationLayer(m_globe, {url:["http://tile1.openwebglobe.org/mapcache/owg", "http://tile2.openwebglobe.org/mapcache/owg", "http://tile3.openwebglobe.org/mapcache/owg"], layer:"aster", service:"owg"});
   b != null && ogSetRenderQuality(m_globe, b);
   ogSetRenderFunction(m_context, this.OnOGRender);
   ogSetResizeFunction(m_context, this.OnOGResize);
@@ -1789,10 +1804,14 @@ GlobeGame.prototype.LoadSounds = function(a, b) {
     for(var c in a) {
       m_numSounds++
     }
-    for(c in a) {
-      m_soundhandler.sounds[c] = document.createElement("audio"), m_soundhandler.sounds[c].setAttribute("src", a[c]), m_soundhandler.sounds[c].load(), m_soundhandler.sounds[c].addEventListener("canplay", function() {
-        ++m_loadedSounds >= m_numSounds && b != null && b()
-      }, !0)
+    try {
+      for(c in a) {
+        m_soundhandler.sounds[c] = document.createElement("audio"), m_soundhandler.sounds[c].setAttribute("src", a[c]), m_soundhandler.sounds[c].load(), m_soundhandler.sounds[c].addEventListener("canplay", function() {
+          ++m_loadedSounds >= m_numSounds && b != null && b()
+        }, !0)
+      }
+    }catch(d) {
+      m_soundenabled = !1
     }
   }else {
     b()

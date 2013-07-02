@@ -290,7 +290,14 @@ function SoundHandler() {
  */
 SoundHandler.prototype.Play = function (id) {
    if (m_soundenabled) {
-      this.sounds[id].play();
+      try
+      {
+         this.sounds[id].play();
+      }
+      catch(err)
+      {
+         m_soundenabled = false;
+      }
    }
 };
 

@@ -29,6 +29,7 @@
 <meta http-equiv="cache-control" content="no-cache">
 <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
 <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <head>
     <script type="text/javascript" src="compiled/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="compiled/owg-optimized.js"></script>
@@ -50,10 +51,15 @@
 
 
 <script type="text/javascript">
+   var playsound = false;
+   if($.browser.webkit == true)
+   {
+      playsound = true;
+   }
    document.oncontextmenu = function(e) { return false; }
    document.onrightmousedown = function(e) { return false; }
    ogSetArtworkDirectory("");
-   var globeGame = new GlobeGame("main_div", "http://10.42.2.41/www/", /*Sound*/true, /*hashcode*/true, /*minimode*/false);
+   var globeGame = new GlobeGame("main_div", "", /*Sound*/playsound, /*hashcode*/false, /*minimode*/false, /* choose lang*/ false);
    var loaded = false;
 
 

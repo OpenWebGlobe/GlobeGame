@@ -638,25 +638,25 @@ function ScoreCount(layer) {
       var ctx = canvas.getContext();
       ctx.beginPath();
       ctx.rect(2, 2, 300, 70);
- var grad = ctx.createLinearGradient(10, 10, 10, 50);
- grad.addColorStop(0, "#555");
- grad.addColorStop(1, "#CCC");
- ctx.fillStyle = grad;
- ctx.fill();
- ctx.lineWidth = 3;
- ctx.strokeStyle = "#FFF";
- ctx.stroke();
- ctx.textAlign = "center";
- ctx.fillStyle = "#FFF";
- ctx.font = "16pt TitanOne";
- ctx.textAlign = "left";
- ctx.fillText(m_locale["score"] + ": " + m_player.playerScore, 25, 45);
- ctx.lineWidth = 2;
- ctx.strokeStyle = "#000"; // stroke color
- ctx.strokeText(m_locale["score"] + ": " + m_player.playerScore, 25, 45);
- canvas.fillStroke(this);
- }});
- layer.add(this.shape);
+      var grad = ctx.createLinearGradient(10, 10, 10, 50);
+      grad.addColorStop(0, "#555");
+      grad.addColorStop(1, "#CCC");
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#FFF";
+      ctx.stroke();
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#FFF";
+      ctx.font = "16pt TitanOne";
+      ctx.textAlign = "left";
+      ctx.fillText(m_locale["score"] + ": " + m_player.playerScore, 25, 45);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#000"; // stroke color
+      ctx.strokeText(m_locale["score"] + ": " + m_player.playerScore, 25, 45);
+      canvas.fillStroke(this);
+   }});
+   layer.add(this.shape);
  }
 
  //-----------------------------------------------------------------------------

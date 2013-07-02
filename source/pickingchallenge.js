@@ -257,7 +257,7 @@ PickingChallenge.prototype.Prepare = function (delay) {
 
       ogSetInPositionFunction(m_context, that.FlightCallback);
       that.ogFrameLayer = ogAddImageLayer(m_globe, {
-         url: [m_datahost],
+         url: ["http://www.openwebglobe.org/data/img"],
          layer: "ch_boundaries",
          service: "owg"
       });
