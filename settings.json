@@ -1,0 +1,20 @@
+{
+   "project_name" : "GlobeGame",
+   "deployment":
+   {
+      "files": [
+         "index.html",
+         "db.php",
+         "config.php",
+         "getChallenges.php",
+         "getData.php",
+         "hash.php"
+      ],
+      "folders": [
+         "data",
+         "css",
+         "art",
+         "sfx"
+      ]
+   }
+}
