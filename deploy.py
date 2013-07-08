@@ -1,4 +1,7 @@
-#!c:\python27\python.exe
+################################################################################
+#!/usr/bin/python
+# python deployment
+################################################################################
 # Author: Robert Wueest, robert.wueest@fhnw.ch
 #
 # (c) 2013 by FHNW University of Applied Sciences and Arts Northwestern Switzerland
@@ -10,15 +13,11 @@ import json
 import shutil
 from subprocess import call
 
-#call(["ls", "-l"])
-
 
 f = open("settings.json", 'r')
 s_settings = f.read()
 f.close()
-
 settings = json.loads(s_settings)
-
 
 bTarget = 0;
 bUser    = 0;
@@ -27,7 +26,6 @@ bSSH     = 0;
 bPlatform = 0;
 bMethod = 0;
 
-
 target = ""
 username = ""
 host = ""
@@ -35,6 +33,9 @@ sshkey = ""
 platform = "linux"
 method = "local"
 
+################################################################################
+# Params
+################################################################################
 for i in range(1,len(sys.argv)):
    if not(sys.argv[i].startswith('--')):
       if bTarget == 1:
@@ -91,7 +92,10 @@ for i in range(1,len(sys.argv)):
       bSSH     = 0
       bPlatform  = 0
       bMethod     = 1
-      
+
+################################################################################
+# Test params
+################################################################################
 if len(target) == 0 or ((method == "scp" or method == "ftp") and (len(user) == 0 or len(sshkey) == 0 or len(host) == 0)):
    print('usage:\n')
    print('-p platform (win/default:linux)')
@@ -104,10 +108,13 @@ if len(target) == 0 or ((method == "scp" or method == "ftp") and (len(user) == 0
       
 fileList = []
 
+
+################################################################################
+# Generate file list
+################################################################################
 for i in range(0,len(settings["deployment"]["files"])):
    #print settings["deployment"]["files"][i]
    fileList.append(settings["deployment"]["files"][i])
-   
    
 for h in range(0,len(settings["deployment"]["folders"])):
    #print settings["deployment"]["folders"][h]
@@ -119,14 +126,16 @@ for h in range(0,len(settings["deployment"]["folders"])):
 
 cmdparams = " -i "+sshkey+" -r tmp "+username+"@"+host+":"+target
 
+################################################################################
+# Prepare and execute deployment procedure
+################################################################################
 if method == "local":
    if os.path.exists(target):
       shutil.rmtree(target+"/")
    for j in range(0,len(fileList)):
       if not os.path.exists(target+'/'+os.path.dirname(fileList[j])):
          os.makedirs(target+'/'+os.path.dirname(fileList[j]))
-      shutil.copy(fileList[j], target+'/'+fileList[j])
-   
+      shutil.copy(fileList[j], target+'/'+fileList[j]) 
 else:
    for k in range(0,len(fileList)):
       if not os.path.exists('tmp/'+os.path.dirname(fileList[k])):
@@ -139,9 +148,9 @@ else:
    elif platform == "windows":
       print "Platform: windows\n"
    shutil.rmtree("tmp/")
-   
 
-#print "scp -i "+sshkey+" -r tmp "+username+"@"+host+":"+target
-
+################################################################################
+# Feedback
+################################################################################
 print "\n Copy: ".join(fileList)
 print "\n"+str(len(fileList))+" Files copied!"
