@@ -7,6 +7,7 @@
 import sys
 import os
 import json
+import shutil
 
 #from subprocess import call
 #call(["ls", "-l"])
@@ -69,15 +70,22 @@ for i in range(1,len(sys.argv)):
       
 fileList = []
 
-for i in range(1,len(settings["deployment"]["files"])):
+for i in range(0,len(settings["deployment"]["files"])):
    #print settings["deployment"]["files"][i]
    fileList.append(settings["deployment"]["files"][i])
    
-for h in range(1,len(settings["deployment"]["folders"])):
+   
+for h in range(0,len(settings["deployment"]["folders"])):
    #print settings["deployment"]["folders"][h]
    rootdir = settings["deployment"]["folders"][h]
    for root, subFolders, files in os.walk(rootdir):
       for file in files:
          f = os.path.join(root,file)
          fileList.append(f)
+
+for j in range(0,len(fileList)):
+   if not os.path.exists('tmp/'+os.path.dirname(fileList[j])):
+      os.makedirs('tmp/'+os.path.dirname(fileList[j]))
+   shutil.copy(fileList[j], 'tmp/'+fileList[j])
+
 print "\n".join(fileList)
