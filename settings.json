@@ -13,7 +13,7 @@
          "compiled/kineticjs.js",
          "compiled/owg-optimized.js",
          "compiled/jquery-1.7.1.min.js",
-         "compiled/jquery-ui-1.8.18.custom.minjs"
+         "compiled/jquery-ui-1.8.18.custom.min.js"
       ],
       "folders": [
          "data",
