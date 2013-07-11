@@ -95,10 +95,6 @@ function Button01(layer, name, x, y, width, height, caption, fontsize) {
       else if (thaat.state == 5) {
          ctx.drawImage(m_images["btn_01_o"], x, y, width, height);
       }
-      ctx.beginPath();
-      ctx.rect(x, y, width, height);
-      ctx.closePath();
-      canvas.fillStroke(this);
       ctx.font = fontsize + "pt TitanOne";
       ctx.fillStyle = "#FFF";
       var textWidth = ctx.measureText(thaat.caption).width;
@@ -108,7 +104,10 @@ function Button01(layer, name, x, y, width, height, caption, fontsize) {
       ctx.lineWidth = 1;
       ctx.strokeStyle = "#000"; // stroke color
       ctx.strokeText(thaat.caption, tX, tY);
-
+      ctx.beginPath();
+      ctx.rect(x, y, width, height);
+      ctx.closePath();
+      canvas.fillStroke(this);
    }});
 
    this.shape.on("mouseout", function () {
@@ -261,10 +260,6 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
          ctx.drawImage(m_images["btn_02_c"], x, y, width, height);
          clickOffset = 2;
       }
-      ctx.beginPath();
-      ctx.rect(x, y, width, height);
-      ctx.closePath();
-      canvas.fillStroke(this);
       ctx.font = fontsize + "pt TitanOne";
       ctx.fillStyle = "#FFF";
       var textWidth = ctx.measureText(that.caption).width;
@@ -274,7 +269,10 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
       ctx.lineWidth = 1;
       ctx.strokeStyle = "#000"; // stroke color
       ctx.strokeText(that.caption, tX, tY);
-
+      ctx.beginPath();
+      ctx.rect(x, y, width, height);
+      ctx.closePath();
+      canvas.fillStroke(this);
    }});
 
 

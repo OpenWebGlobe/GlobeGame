@@ -79,8 +79,13 @@ function GameData(callback) {
                var title = /** @type {string} */val.Title;
                var dataFile = /** @type {string} */val.DataFile;
                var extent = /** @type {Array.<number>} */val.SceneExtent;
+               var offset = [0,0];
+               if(goog.isDef(val.Offset))
+               {
+                  offset = /** @type {Array.<number>} */val.Offset;
+               }
                var view = { "longitude": lng, "latitude": lat, "elevation": elv, "yaw": yaw, "pitch": pitch, "roll": roll};
-               var districtchallenge = new DistrictChallenge(baseScore, correctPick, that.baseData[dataFile], view, title, extent);
+               var districtchallenge = new DistrictChallenge(baseScore, correctPick, that.baseData[dataFile], view, title, extent, offset);
                items.push(districtchallenge);
             }
          });

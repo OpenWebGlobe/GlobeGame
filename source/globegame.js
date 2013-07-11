@@ -204,30 +204,19 @@ GlobeGame.prototype.Init = function (renderCallback, renderQuality) {
                   /* nw logo & swisstopo copyright */
                   var statics = new Kinetic.Shape({drawFunc: function (canvas) {
                      var ctx = canvas.getContext();
-                     ctx.drawImage(m_images["nw_logo"], window.innerWidth - 365, window.innerHeight - 40, 360, 44);
                      if (m_state != GlobeGame.STATE.CHALLENGE) {
                         ctx.drawImage(m_images["logo"], window.innerWidth / 2 - 352, 30, 705, 206);
                      }
                      else {
                         ctx.drawImage(m_images["logo_sm"], window.innerWidth - 260, 4, 254, 50);
                      }
-                     ctx.textAlign = "left";
                      ctx.fillStyle = "#FFF";
-                     ctx.font = "14pt TitanOne";
-                     ctx.fillText("www.openwebglobe.org", 5, window.innerHeight - 22);
+                     ctx.font = "11pt TitanOne";
+                     ctx.fillText("Image data © MAPPULS", (window.innerWidth / 2)-100, window.innerHeight - 5);
                      ctx.lineWidth = 1;
                      ctx.strokeStyle = "#000"; // stroke color
-                     ctx.strokeText("www.openwebglobe.org", 5, window.innerHeight - 22);
-
-                     ctx.fillStyle = "#FFF";
-                     ctx.font = "10pt TitanOne";
-                     ctx.fillText("Image data © MAPPULS", 5, window.innerHeight - 5);
-                     ctx.lineWidth = 1;
-                     ctx.strokeStyle = "#000"; // stroke color
-                     ctx.strokeText("Image data © MAPPULS", 5, window.innerHeight - 5);
-
+                     ctx.strokeText("Image data © MAPPULS", (window.innerWidth / 2)-100, window.innerHeight - 5);
                      ctx.drawImage(m_images["logo_owg"], 0, window.innerHeight - 120, 240, 86);
-
                      if (m_debug) {
                         ctx.fillStyle = "#F00";
                         ctx.font = "8pt TitanOne";
@@ -236,10 +225,49 @@ GlobeGame.prototype.Init = function (renderCallback, renderQuality) {
                         ctx.fillText("Flystate:" + m_flystate, 5, 90);
                      }
                      canvas.fillStroke(this);
-
                   }});
-
                   m_static.add(statics);
+
+
+                  var nw_logo = new Kinetic.Shape({drawFunc: function (canvas) {
+                     var ctx = canvas.getContext();
+                     ctx.drawImage(m_images["nw_logo"], window.innerWidth - 365, window.innerHeight - 40, 360, 44);
+                     ctx.beginPath();
+                     ctx.rect(window.innerWidth - 365, window.innerHeight - 40, 360, 44);
+                     ctx.closePath();
+                     canvas.fillStroke(this);
+                  }});
+                  nw_logo.on("mouseup", function () {
+                     window.open("http://www.fhnw.ch/habg/ivgi");
+                  });
+                  nw_logo.on("touchend", function () {
+                     window.open("http://www.fhnw.ch/habg/ivgi");
+                  });
+                  m_static.add(nw_logo);
+
+                  var owg_link = new Kinetic.Shape({drawFunc: function (canvas) {
+                     var ctx = canvas.getContext();
+                     ctx.textAlign = "left";
+                     ctx.fillStyle = "#FFF";
+                     ctx.font = "14pt TitanOne";
+                     ctx.fillText("www.openwebglobe.org",8, window.innerHeight - 15);
+                     ctx.lineWidth = 1;
+                     ctx.strokeStyle = "#000"; // stroke color
+                     ctx.strokeText("www.openwebglobe.org", 8, window.innerHeight - 15);
+                     var textWidth = ctx.measureText("www.openwebglobe.org").width;
+                     ctx.beginPath();
+                     ctx.rect( 8, window.innerHeight - 35, textWidth, 30);
+                     ctx.closePath();
+                     canvas.fillStroke(this);
+                  }});
+                  owg_link.on("mouseup", function () {
+                     window.open("http://www.openwebglobe.org");
+                  });
+                  owg_link.on("touchend", function () {
+                     window.open("http://www.openwebglobe.org");
+                  });
+                  m_static.add(owg_link);
+
                   if (m_soundenabled) {
                      try
                      {
@@ -319,7 +347,7 @@ GlobeGame.prototype.Init = function (renderCallback, renderQuality) {
 
 
 
-   ogAddImageLayer(m_globe, {
+      ogAddImageLayer(m_globe, {
       url: ["http://geoapp.openwebglobe.org/mapcache/owg"],
       layer: "world3",
       service: "owg"

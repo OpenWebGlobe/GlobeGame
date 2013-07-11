@@ -42,9 +42,10 @@ goog.require('owg.gg.Clock');
  * @param {Object} view
  * @param {string} title
  * @param {Array.<number>} extent
+ * @param {Array.<number>} offset
  *
  */
-function DistrictChallenge(baseScore, correctPick, baseData, view, title, extent) {
+function DistrictChallenge(baseScore, correctPick, baseData, view, title, extent, offset) {
    this.correctPick = correctPick;
    this.data = baseData;
    this.baseScore = baseScore;
@@ -59,6 +60,7 @@ function DistrictChallenge(baseScore, correctPick, baseData, view, title, extent
    this.extent = extent;
    this.trials = 0;
    this.locked = false;
+   this.offset = offset;
 }
 DistrictChallenge.prototype = new Challenge(0);
 DistrictChallenge.prototype.constructor = DistrictChallenge;
@@ -172,8 +174,8 @@ DistrictChallenge.prototype.CreateInteractiveSurface = function (fieldData) {
    var that = this;
 
    var shape = new Kinetic.Path({
-      x: ((window.innerWidth - (that.extent[0] * (window.innerHeight / that.extent[1]))) / 2),
-      y: 0,
+      x: ((window.innerWidth - (that.extent[0] * (window.innerHeight / that.extent[1]))) / 2)+that.offset[0],
+      y: 0+(that.offset[1]* (window.innerHeight / that.extent[1])),
       data: fieldData["path"],
       fill: '#FFFFFF',
       stroke: '#FFFFFF',
@@ -182,7 +184,7 @@ DistrictChallenge.prototype.CreateInteractiveSurface = function (fieldData) {
    });
 
    var updateShape = function () {
-      shape.setPosition(((window.innerWidth - (that.extent[0] * (window.innerHeight / that.extent[1]))) / 2), 0);
+      shape.setPosition(((window.innerWidth - (that.extent[0] * (window.innerHeight / that.extent[1]))) / 2)+that.offset[0], (that.offset[1]* (window.innerHeight / that.extent[1])));
       shape.setScale((window.innerHeight / that.extent[1]));
    };
 
