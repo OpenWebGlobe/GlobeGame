@@ -1,8 +1,8 @@
 {
     "Type": 2,
-    "BaseScore": 100,
-    "Title": "Kantoneraten: Wo ist Basel?",
-    "CorrectPick": "Basel",
+    "BaseScore": 50,
+    "Title": "Wo befindet sich der Kanton Zug?",
+    "CorrectPick": "Zug",
     "DataFile": "kantone_schweiz",
     "Longitude": 8.190,
     "Latitude": 46.797,

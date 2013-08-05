@@ -1,0 +1,15 @@
+{
+    "Type": 2,
+    "BaseScore": 50,
+    "Title": "Kantoneraten: Wo befindet sich der Kanton Thurgau?",
+    "CorrectPick": "Thurgau",
+    "DataFile": "kantone_schweiz",
+    "Longitude": 8.190,
+    "Latitude": 46.797,
+    "Elevation": 302721.31,
+    "Yaw": 0.0,
+    "Pitch": -90.1,
+    "Roll": 0.7,
+    "SceneExtent": [1651,1000],
+    "Offset" : [0,50]
+}

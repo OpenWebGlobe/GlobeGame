@@ -42,6 +42,7 @@ goog.require('owg.gg.Button02');
  */
 function TouchKeyboard(layer, name, x, y, caption, callback) {
    this.caption = caption;
+   this.destroyed = false;
    this.callback = callback;
    this.layer = layer;
    this.x = x;
@@ -88,6 +89,10 @@ function TouchKeyboard(layer, name, x, y, caption, callback) {
    this.Space = function () {
       that.input = that.input + " ";
    };
+   this.AppendKeyCode = function(key)
+   {
+      that.input = that.input + String.fromCharCode(key).toUpperCase();
+   }
    /* buttons */
    this.spaceButton = new Button01(layer, "btn_space", this.oX + 267, this.oY + 276, 300, 69, " ", 15);
    this.spaceButton.onClickEvent = this.Space;
@@ -146,6 +151,7 @@ function TouchKeyboard(layer, name, x, y, caption, callback) {
  */
 TouchKeyboard.prototype.Destroy = function () {
    this.shape.remove();
+   this.destroyed = true;
    for (var i = 0; i < this.buttonArray.length; i++) {
       this.buttonArray[i].Destroy();
    }

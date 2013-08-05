@@ -57,6 +57,7 @@ GlobeGame.FLYSTATE =
  * Members
  * */
 var m_images = {};
+var m_containerObject = null;
 var m_loadedImages = 0;
 var m_numImages = 0;
 var m_loadedSounds = 0;
@@ -75,7 +76,7 @@ var m_datahost = "http://localhost";
 var m_locale = [];
 var m_player = null;
 var m_qCount = 0;
-var m_qMax = 10;
+var m_qMax = 1;
 var m_progress = null;
 var m_soundhandler = new SoundHandler();
 var m_soundenabled = true;
@@ -107,6 +108,7 @@ var m_chooselang = false;
  * @param {boolean} chooselang
  */
 function GlobeGame(canvasDiv, datapath, soundenabled, showhash, minimode, chooselang) {
+   m_containerObject = canvasDiv;
    if (datapath) {
       m_datahost = datapath;
    }
@@ -453,6 +455,25 @@ GlobeGame.prototype.EnterHighscore = function () {
                });
             });
          });
+      jQuery(document).keypress(function(e) {
+            keyboard.AppendKeyCode(e.which);
+      });
+      $(document).keydown(function(e) {
+         var nodeName = e.target.nodeName.toLowerCase();
+
+         if (e.which === 8) {
+            if ((nodeName === 'input' && e.target.type === 'text') ||
+               nodeName === 'textarea') {
+               // do nothing
+            } else {
+               if(!keyboard.destroyed)
+               {
+                  keyboard.Backspace();
+                  e.preventDefault();
+               }
+            }
+         }
+      });
    }else
    {
       var message = m_locale["yourscore"] + m_player.playerScore.toString() + " "+ m_locale["of"] + " " + m_qMax.toString();
