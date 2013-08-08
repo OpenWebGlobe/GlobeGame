@@ -92,7 +92,9 @@ var m_globeGame = null;
 var m_debug = false;
 var m_loaded = false;
 var m_minimode = false;
+var m_onlinemode = true;
 var m_chooselang = false;
+var m_rootPath = "";
 
 /**
  * @class GlobeGame
@@ -109,6 +111,8 @@ var m_chooselang = false;
  */
 function GlobeGame(canvasDiv, datapath, soundenabled, showhash, minimode, chooselang) {
    m_containerObject = canvasDiv;
+   var loc = location+"";
+   m_rootPath = loc.substr(0,loc.lastIndexOf("/")+1);
    if (datapath) {
       m_datahost = datapath;
    }
@@ -166,7 +170,10 @@ GlobeGame.prototype.Init = function (renderCallback, renderQuality) {
       logo: "art/logo.png",
       logo_sm: "art/logo_sm.png",
       coins: "art/coins.png",
-      logo_owg: "art/logo_owg.png"
+      logo_owg: "art/logo_owg.png",
+      screenshot: "art/screen.png",
+      twitter: "art/twitter.png",
+      facebook: "art/facebook.png"
    };
    // Preload sounds
    var sounds = {
@@ -409,6 +416,7 @@ GlobeGame.prototype.EnterChallenge = function () {
  * @description STATE function enter highscore
  */
 GlobeGame.prototype.EnterHighscore = function () {
+
    var that = this;
    if (m_progress)
       m_progress.Destroy();
@@ -427,31 +435,155 @@ GlobeGame.prototype.EnterHighscore = function () {
 
                   var hash = data1;
                   var list = /** @type {Array} */eval(data2);
-                  var highscore = new HighScoreDialog(m_ui, list, hash, 500, 650, m_player);
-                  setTimeout(function(){
-                     if(m_state == GlobeGame.STATE.HIGHSCORE)
-                     {
+
+                  if (m_onlinemode)
+                  {
+                     var shareDialog = new ShareDialog(m_ui, hash, 700, 700, m_player);
+
+                     var pointLayer = new Kinetic.Layer();
+
+                     m_stage.add(pointLayer);
+                     pointLayer.setSize(640,480);
+                     pointLayer.setPosition(Math.floor((window.innerWidth-640)/2), Math.floor((window.innerHeight-450)/2)-88);
+                     var pointShape = new Kinetic.Shape({drawFunc: function (canvas) {
+                        var ctx = canvas.getContext();
+                        ctx.drawImage(m_images["screenshot"], 0, 0, 640, 480);
+                        ctx.drawImage(m_images["logo"], 80, 20, 480, 150);
+                        ctx.fillStyle = "#FD6";
+                        ctx.font = "40pt TitanOne";
+                        ctx.textAlign = "left";
+                        var textWidth = ctx.measureText(m_player.playerName).width;
+                        var tX = (640 - textWidth) / 2;
+                        ctx.fillText(m_player.playerName, tX, 260);
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = "#000"; // stroke color
+                        ctx.strokeText(m_player.playerName, tX, 260);
+                        ctx.fillStyle = "#8FF";
+                        ctx.font = "42pt TitanOne";
+                        textWidth = ctx.measureText(m_player.playerScore+ " " + m_locale["points"]).width;
+                        tX = (640 - textWidth) / 2;
+                        ctx.fillText(m_player.playerScore+ " " + m_locale["points"], tX, 330);
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = "#000"; // stroke color
+                        ctx.strokeText(m_player.playerScore+ " " + m_locale["points"], tX, 330);
+                        ctx.fillStyle = "#FFF";
+                        ctx.font = "14pt TitanOne";
+                        ctx.fillText("www.openwebglobe.org",8, 470);
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = "#000"; // stroke color
+                        ctx.strokeText("www.openwebglobe.org", 8, 470);
+                        ctx.drawImage(m_images["logo_owg"], 0, 370, 240, 86);
+                        ctx.drawImage(m_images["nw_logo"], 280, 435, 360, 44);
+                        ctx.closePath();
+                     }});
+
+                     var facebook_share = new Kinetic.Shape({drawFunc: function (canvas) {
+                        var ctx = canvas.getContext();
+                        ctx.drawImage(m_images["facebook"], 25, 485, 75, 75);
+                        ctx.font = "18pt TitanOne";
+                        ctx.fillStyle = "#FFF";
+                        ctx.fillText("Share",110, 528);
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = "#000"; // stroke color
+                        ctx.strokeText("Share", 110, 528);
+                        ctx.beginPath();
+                        ctx.rect(25, 485, 250, 75);
+                        ctx.closePath();
+                        canvas.fillStroke(this);
+                     }});
+
+                     var twitter_share = new Kinetic.Shape({drawFunc: function (canvas) {
+                        var ctx = canvas.getContext();
+                        ctx.drawImage(m_images["twitter"], 400, 485, 75, 75);
+                        ctx.font = "18pt TitanOne";
+                        ctx.fillStyle = "#FFF";
+                        ctx.fillText("Tweet",490, 528);
+                        ctx.lineWidth = 2;
+                        ctx.strokeStyle = "#000"; // stroke color
+                        ctx.strokeText("Tweet", 490, 528);
+                        ctx.beginPath();
+                        ctx.rect(400, 485, 250, 75);
+                        ctx.closePath();
+                        canvas.fillStroke(this);
+                     }});
+
+                     pointLayer.add(pointShape);
+                     pointLayer.add(facebook_share);
+                     pointLayer.add(twitter_share);
+                     setTimeout(function(){
+                        var dataUrl = pointLayer.toDataURL();
+                        var dynamicCanvas = document.createElement("canvas");
+                        var dynamicContext = dynamicCanvas.getContext("2d");
+                        dynamicCanvas.height="480";
+                        dynamicCanvas.width="640";
+                        var imageObj = new Image();
+                        imageObj.src = dataUrl;
+                        imageObj.onload = function() {
+                           dynamicContext.drawImage(imageObj, -Math.floor((window.innerWidth-640)/2), -Math.floor((window.innerHeight-450)/2)+88);
+                           jQuery.ajax({
+                              type: "POST",
+                              url: "ul.php",
+                              data: { "data" : dynamicCanvas.toDataURL("image/jpeg", 0.65)},
+                              success: function(response){ /*window.open(response);*/
+                                 var linkFB = "http://www.facebook.com/sharer/sharer.php?s=100&p[title]="+encodeURIComponent(m_player.playerName + " reached " + m_player.playerScore + " points in SwissQuiz")+"&p[url]="+encodeURIComponent("http://www.swizzquiz.ch")+"&p[summary]="+encodeURIComponent("SwizzQuiz")+"&p[images][0]="+encodeURIComponent(m_rootPath+response);
+                                 var linkTW = "https://twitter.com/share?url="+encodeURIComponent(m_rootPath+response)+"&text="+encodeURIComponent("Just played SwizzQuiz and earned "+ m_player.playerScore+ " points. See http://www.swizzquiz.ch for more");
+                                 facebook_share.on("mouseup", function () {
+                                    window.open(linkFB);
+                                 });
+                                 facebook_share.on("touchend", function () {
+                                   window.open(linkFB);
+                                 });
+                                 twitter_share.on("mouseup", function () {
+                                    window.open(linkTW);
+                                 });
+                                 twitter_share.on("touchend", function () {
+                                    window.open(linkTW);
+                                 });
+                              },
+                              cache: false
+                           });
+                        };
+                     }, 10);
+                     shareDialog.RegisterCallback(function () {
+                        if (m_score)
+                           m_score.Destroy();
+                        pointShape.remove();
+                        pointLayer.remove();
+                        m_qCount = 0;
+                        m_gameData = new GameData(function () {
+                           that.StopFlyTo();
+                           m_ui.setOpacity(0.0);
+                           that.EnterChallenge();
+                        });
+                     });
+                  }
+                  else
+                  {
+                     var highscore = new HighScoreDialog(m_ui, list, hash, 500, 650, m_player);
+                     setTimeout(function(){
+                        if(m_state == GlobeGame.STATE.HIGHSCORE)
+                        {
+                           if (m_score)
+                              m_score.Destroy();
+                           m_qCount = 0;
+                           highscore.Destroy();
+                           m_gameData = new GameData(function () {
+                              that.EnterIdle();
+                           });
+                        }
+                     },20000);
+
+                     highscore.RegisterCallback(function () {
                         if (m_score)
                            m_score.Destroy();
                         m_qCount = 0;
-                        highscore.Destroy();
                         m_gameData = new GameData(function () {
-                           that.EnterIdle();
+                           that.StopFlyTo();
+                           m_ui.setOpacity(0.0);
+                           that.EnterChallenge();
                         });
-                     }
-                  },20000);
-
-                  highscore.RegisterCallback(function () {
-                     if (m_score)
-                        m_score.Destroy();
-                     m_qCount = 0;
-                     m_gameData = new GameData(function () {
-                        that.StopFlyTo();
-                        m_ui.setOpacity(0.0);
-                        that.EnterChallenge();
                      });
-
-                  });
+                  }
                });
             });
          });
@@ -474,7 +606,8 @@ GlobeGame.prototype.EnterHighscore = function () {
             }
          }
       });
-   }else
+   }
+   else
    {
       var message = m_locale["yourscore"] + m_player.playerScore.toString() + " "+ m_locale["of"] + " " + m_qMax.toString();
       var pointMessage = new MessageDialog(m_ui, message, window.innerWidth / 2, (window.innerHeight / 2)-110, 500, 220);

@@ -9,6 +9,7 @@
          "getChallenges.php",
          "getData.php",
          "hash.php",
+         "ul.php",
          "compiled/globegame-optimized.js",
          "compiled/kineticjs.js",
          "compiled/owg-optimized.js",
@@ -19,7 +20,8 @@
          "data",
          "css",
          "art",
-         "sfx"
+         "sfx",
+         "ul"
       ]
    }
 }

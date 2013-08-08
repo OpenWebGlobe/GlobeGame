@@ -918,3 +918,87 @@ HighScoreDialog.prototype.Destroy = function () {
 goog.exportSymbol('HighScoreDialog', HighScoreDialog);
 goog.exportProperty(HighScoreDialog.prototype, 'RegisterCallback', HighScoreDialog.prototype.RegisterCallback);
 goog.exportProperty(HighScoreDialog.prototype, 'Destroy', HighScoreDialog.prototype.Destroy);
+
+
+//-----------------------------------------------------------------------------
+/**
+ * @class ShareDialog Image
+ * @constructor
+ *
+ * @description draw share dialog on screen
+ *
+ * @author Robert Wüest robert.wst@gmail.ch
+ *
+ * @param {Object} layer
+ * @param {string} hash
+ * @param {number} width
+ * @param {number} height
+ */
+function ShareDialog(layer, hash, width, height, player) {
+   this.hash = hash;
+   this.layer = layer;
+   this.okayButton = null;
+   var that = this;
+
+   /** Inline Functions */
+   this.Callback = function () {
+   };
+   this.OnOkay = function () {
+      that.Destroy();
+      that.Callback();
+   };
+
+   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+      var ctx = canvas.getContext();
+      ctx.beginPath();
+      ctx.rect((window.innerWidth / 2) - (width / 2), (window.innerHeight / 2) - (height / 2), width, height);
+      var grad = ctx.createLinearGradient(window.innerWidth / 2, (window.innerHeight / 2) - (height / 2), window.innerWidth / 2, (window.innerHeight / 2) + (height / 2));
+      grad.addColorStop(0, "#555"); // light blue
+      grad.addColorStop(1, "#CCC"); // dark blue
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#FFF";
+      ctx.stroke();
+
+      ctx.font = "12pt TitanOne";
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "#FFF";
+      ctx.strokeStyle = "#000";
+      ctx.textAlign = "left";
+      ctx.fillText("Swizz-Quiz Entwicklung:", 20, window.innerHeight - 160);
+      ctx.strokeText("Swizz-Quiz Entwicklung:", 20, window.innerHeight - 160);
+      ctx.fillText("Institut Vermessung und Geoinformation", 20, window.innerHeight - 145);
+      ctx.strokeText("Institut Vermessung und Geoinformation", 20, window.innerHeight - 145)
+      ctx.fillText("Robert Wüest (robert.wueest@fhnw.ch)", 26, window.innerHeight - 128);
+      ctx.strokeText("Robert Wüest (robert.wueest@fhnw.ch)", 26, window.innerHeight - 128);
+      ctx.font = "15pt TitanOne";
+      ctx.textAlign = "center";
+      ctx.lineWidth = 2;
+      canvas.fillStroke(this);
+
+   }});
+   layer.add(this.shape);
+   this.okayButton = new Button01(m_ui, "dialog1", window.innerWidth / 2 - 150, window.innerHeight / 2 + (height / 2) - 100, 300, 69, m_locale["playagain"], 15);
+   this.okayButton.onClickEvent = this.OnOkay;
+
+}
+//-----------------------------------------------------------------------------
+/**
+ * @description define callbackfunction when hit okay
+ * @param {function()} callback
+ */
+ShareDialog.prototype.RegisterCallback = function (callback) {
+   this.Callback = callback;
+};
+//-----------------------------------------------------------------------------
+/**
+ * @description destroy the dialog
+ */
+ShareDialog.prototype.Destroy = function () {
+   this.shape.remove();
+   this.okayButton.shape.remove();
+};
+goog.exportSymbol('ShareDialog', ShareDialog);
+goog.exportProperty(ShareDialog.prototype, 'RegisterCallback', ShareDialog.prototype.RegisterCallback);
+goog.exportProperty(ShareDialog.prototype, 'Destroy', ShareDialog.prototype.Destroy);
