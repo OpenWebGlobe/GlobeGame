@@ -53,8 +53,8 @@ function FlyingText(layer, text, fontcolor) {
 
    var t0 = new Date();
    var t1;
-   var uniqueId = m_globeGame.GenerateUniqueId();
-   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+   var uniqueId = gg["globeGame"].GenerateUniqueId();
+   this.shape = new Kinetic.Shape({"drawFunc": function (canvas) {
       t1 = new Date();
       var delta = t1.valueOf() - t0.valueOf();
       that.alpha = 1.0 - (delta / 1800);
@@ -103,10 +103,10 @@ function Coins(layer, score) {
    this.layer = layer;
    var that = this;
    var inc = 0;
-   m_soundhandler.Play("coins");
+   gg["soundhandler"].Play("coins");
    var t0 = new Date();
    var t1;
-   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+   this.shape = new Kinetic.Shape({"drawFunc": function (canvas) {
       t1 = new Date();
       var delta = t1.valueOf() - t0.valueOf();
       that.alpha = 1 - (delta / 1200);
@@ -126,7 +126,7 @@ function Coins(layer, score) {
          ctx.lineWidth = 3;
          ctx.strokeStyle = "#000"; // stroke color
          ctx.strokeText("+" + that.score, tX, tY);
-         ctx.drawImage(m_images["coins"], 248 - inc, 20, 80, 100);
+         ctx.drawImage(gg["images"]["coins"], 248 - inc, 20, 80, 100);
          this.setOpacity(that.alpha);
          canvas.fillStroke(this);
       }
@@ -148,15 +148,15 @@ function FadeOut(callback) {
       var alpha = 1.0 - (delta / 1000);
 
       if (alpha > 0.0) {
-         m_ui.setOpacity(alpha);
+         gg["ui"].setOpacity(alpha);
       }
       else {
-         m_ui.setOpacity(0.0);
-         m_globeGame.UnregisterCycleCallback("fadeout");
+         gg["ui"].setOpacity(0.0);
+         gg["globeGame"].UnregisterCycleCallback("fadeout");
          callback();
       }
    };
-   m_globeGame.RegisterCycleCallback("fadeout", _fadeOut);
+   gg["globeGame"].RegisterCycleCallback("fadeout", _fadeOut);
 }
 goog.exportSymbol('FadeOut', FadeOut);
 //-----------------------------------------------------------------------------
@@ -172,15 +172,15 @@ function FadeIn(callback) {
       var delta = t1.valueOf() - t0.valueOf();
       var alpha = 0.0 + (delta / 1000);
       if (alpha < 1.0) {
-         m_ui.setOpacity(alpha);
+         gg["ui"].setOpacity(alpha);
       }
       else {
-         m_ui.setOpacity(1.0);
-         m_globeGame.UnregisterCycleCallback("fadein");
+         gg["ui"].setOpacity(1.0);
+         gg["globeGame"].UnregisterCycleCallback("fadein");
          callback();
       }
    };
-   m_globeGame.RegisterCycleCallback("fadein", _fadeIn);
+   gg["globeGame"].RegisterCycleCallback("fadein", _fadeIn);
 }
 goog.exportSymbol('FadeIn', FadeIn);//-----------------------------------------------------------------------------
 /**
@@ -198,7 +198,7 @@ function BlackScreen(duration, callback) {
       fill: "#000000",
       opacity: 0.0
    });
-   m_static.add(blackScreen);
+   gg["static"].add(blackScreen);
    blackScreen.setZIndex(-100);
    var t0 = new Date();
    var t1;
@@ -216,7 +216,7 @@ function BlackScreen(duration, callback) {
          }
       } else {
          blackScreen.setOpacity(0.0);
-         m_globeGame.UnregisterCycleCallback("blackFadeOut");
+         gg["globeGame"].UnregisterCycleCallback("blackFadeOut");
          blackScreen.remove();
          callback();
       }
@@ -237,13 +237,13 @@ function BlackScreen(duration, callback) {
       } else {
 
          t0 = new Date();
-         m_globeGame.UnregisterCycleCallback("blackFadeIn");
-         m_globeGame.RegisterCycleCallback("blackFadeOut", recurOut);
+         gg["globeGame"].UnregisterCycleCallback("blackFadeIn");
+         gg["globeGame"].RegisterCycleCallback("blackFadeOut", recurOut);
 
       }
    };
 
-   m_globeGame.RegisterCycleCallback("blackFadeIn", recurIn);
+   gg["globeGame"].RegisterCycleCallback("blackFadeIn", recurIn);
 }
 goog.exportSymbol('FadeIn', FadeIn);
 //-----------------------------------------------------------------------------
@@ -289,14 +289,14 @@ function SoundHandler() {
  * @param {string} id sound id
  */
 SoundHandler.prototype.Play = function (id) {
-   if (m_soundenabled) {
+   if (gg["soundenabled"]) {
       try
       {
          this.sounds[id].play();
       }
       catch(err)
       {
-         m_soundenabled = false;
+         gg["soundenabled"] = false;
       }
    }
 };

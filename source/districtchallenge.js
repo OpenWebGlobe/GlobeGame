@@ -75,10 +75,10 @@ DistrictChallenge.prototype.Prepare = function (delay) {
       for (var i = 0; i < that.data.length; i++) {
          that.CreateInteractiveSurface(that.data[i]);
       }
-      that.screenText = new ScreenText(m_ui, that.text, m_centerX, window.innerHeight - 180, 26, "center");
-      that.clock = new Clock(m_ui, 50, 82, 60);
-      ogSetPosition(m_camera, that.view.longitude, that.view.latitude, that.view.elevation);
-      ogSetOrientation(m_camera, that.view["yaw"], that.view["pitch"], that.view["roll"]);
+      that.screenText = new ScreenText(gg["ui"], that.text, gg["centerX"], window.innerHeight - 180, 26, "center");
+      that.clock = new Clock(gg["ui"], 50, 82, 60);
+      ogSetPosition(gg["camera"], that.view.longitude, that.view.latitude, that.view.elevation);
+      ogSetOrientation(gg["camera"], that.view["yaw"], that.view["pitch"], that.view["roll"]);
    };
    if (delay > 0) {
       setTimeout(prepFunc, delay);
@@ -106,7 +106,7 @@ DistrictChallenge.prototype.Activate = function () {
 DistrictChallenge.prototype.Destroy = function (event) {
    if (!this.destroyed) {
       this.eventDestroyed = event;
-      ogSetInPositionFunction(m_context, function () {
+      ogSetInPositionFunction(gg["context"], function () {
       });
       this.clock.Pause();
       this.OnDestroy();
@@ -143,26 +143,26 @@ DistrictChallenge.prototype.OnDestroy = function () {
  */
 DistrictChallenge.prototype.Score = function (timeleft) {
    var that = this;
-   m_soundhandler.Play("correct");
-   if (m_player) {
+   gg["soundhandler"].Play("correct");
+   if (gg["player"]) {
       var score = 0;
-      if(m_minimode)
+      if(gg["minimode"])
       {
-         m_player.ScorePoints(1, " ");
+         gg["player"].ScorePoints(1, " ");
          score = 1;
       }else
       {
          score += Math.floor(this.baseScore / this.trials);
-         m_player.ScorePoints(score, "");
-         m_player.ScorePoints(Math.floor(timeleft / 5), m_locale["timebonus"]);
+         gg["player"].ScorePoints(score, "");
+         gg["player"].ScorePoints(Math.floor(timeleft / 5), gg["locale"]["timebonus"]);
          score += Math.floor(timeleft / 5);
          if (timeleft > 50) {
-            m_player.ScorePoints(20, m_locale["speedbonus"]);
+            gg["player"].ScorePoints(20, gg["locale"]["speedbonus"]);
             score += 20;
          }
       }
       Timeout(function () {
-         var coins = new Coins(m_ui, score);
+         var coins = new Coins(gg["ui"], score);
       }, 800);
    }
    setTimeout(function () {
@@ -199,7 +199,7 @@ DistrictChallenge.prototype.CreateInteractiveSurface = function (fieldData) {
          }
          else if (that.trials >= 8) {
             that.locked = true;
-            m_soundhandler.Play("wrong");
+            gg["soundhandler"].Play("wrong");
             for (var i = 0; i < that.shapes.length; i++) {
                if (that.shapes[i]["name"] == that.correctPick) {
                   that.shapes[i].setFill("#FFFF00");
@@ -212,7 +212,7 @@ DistrictChallenge.prototype.CreateInteractiveSurface = function (fieldData) {
          }
          else {
             shape.setFill("#FF0000");
-            //var text = new FlyingText(m_static, "Nochmal versuchen!", "#FF6600");
+            //var text = new FlyingText(gg["static"], "Nochmal versuchen!", "#FF6600");
          }
       }
    };
@@ -225,7 +225,7 @@ DistrictChallenge.prototype.CreateInteractiveSurface = function (fieldData) {
    var onMouseUpEvent = function () {
    };
 
-   m_globeGame.RegisterResizeCallback(fieldData["label"]["text"], updateShape);
+   gg["globeGame"].RegisterResizeCallback(fieldData["label"]["text"], updateShape);
 
    shape.on("mouseout", function () {
       onMouseOutEvent();
@@ -268,12 +268,12 @@ DistrictChallenge.prototype.CreateInteractiveSurface = function (fieldData) {
    });
    shape.name = fieldData["label"]["text"];
    this.shapes.push(shape);
-   m_ui.add(shape);
+   gg["ui"].add(shape);
 };
 
 DistrictChallenge.prototype.RemoveAllSurfaces = function () {
    for (var i = 0; i < this.shapes.length; i++) {
-      m_globeGame.UnregisterResizeCallback(this.shapes[i].name);
+      gg["globeGame"].UnregisterResizeCallback(this.shapes[i].name);
       this.shapes[i].remove();
    }
 };

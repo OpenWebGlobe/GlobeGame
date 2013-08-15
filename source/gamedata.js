@@ -44,45 +44,45 @@ function GameData(callback) {
    jQuery.get('getData.php', function (data) {
       that.baseData = jQuery.parseJSON(data);
 
-      jQuery.get('getChallenges.php?lang=' + m_lang, function (data) {
+      jQuery.get('getChallenges.php?lang=' + gg["lang"], function (data) {
          var jsonData = jQuery.parseJSON(data);
          var items = [];
          /** @type {{Type:number}} */
          jQuery.each(jsonData, function (key, val) {
-            if (val.Type == 0) {
-               var baseScore = /** @type {number} */val.BaseScore;
-               var options = /** @type {Array} */val.Options;
-               var correctOption = /** @type {number} */val.CorrectOption;
-               var views = /** @type {Array} */val.Views;
-               var title = /** @type {string} */val.Title;
+            if (val["Type"] == 0) {
+               var baseScore = /** @type {number} */val["BaseScore"];
+               var options = /** @type {Array} */val["Options"];
+               var correctOption = /** @type {number} */val["CorrectOption"];
+               var views = /** @type {Array} */val["Views"];
+               var title = /** @type {string} */val["Title"];
                var landmarkchallenge = new LandmarkChallenge(baseScore, options, correctOption, views, title);
                items.push(landmarkchallenge);
-            } else if (val.Type == 1) {
-               var lng = /** @type {number} */val.Longitude;
-               var lat = /** @type {number} */val.Latitude;
-               var elv = /** @type {number} */val.Elevation;
-               var baseScore = /** @type {number} */val.BaseScore;
-               var title = /** @type {string} */val.Title;
+            } else if (val["Type"] == 1) {
+               var lng = /** @type {number} */val["Longitude"];
+               var lat = /** @type {number} */val["Latitude"];
+               var elv = /** @type {number} */val["Elevation"];
+               var baseScore = /** @type {number} */val["BaseScore"];
+               var title = /** @type {string} */val["Title"];
                var pos = [ lng, lat, elv];
                var pickingchallenge = new PickingChallenge(baseScore, title, pos);
                items.push(pickingchallenge);
             }
-            else if (val.Type == 2) {
-               var lng = /** @type {number} */val.Longitude;
-               var lat = /** @type {number} */val.Latitude;
-               var elv = /** @type {number} */val.Elevation;
-               var yaw = /** @type {number} */val.Yaw;
-               var pitch = /** @type {number} */val.Pitch;
-               var roll = /** @type {number} */val.Roll;
-               var baseScore = /** @type {number} */val.BaseScore;
-               var correctPick = /** @type {string} */val.CorrectPick;
-               var title = /** @type {string} */val.Title;
-               var dataFile = /** @type {string} */val.DataFile;
-               var extent = /** @type {Array.<number>} */val.SceneExtent;
+            else if (val["Type"] == 2) {
+               var lng = /** @type {number} */val["Longitude"];
+               var lat = /** @type {number} */val["Latitude"];
+               var elv = /** @type {number} */val["Elevation"];
+               var yaw = /** @type {number} */val["Yaw"];
+               var pitch = /** @type {number} */val["Pitch"];
+               var roll = /** @type {number} */val["Roll"];
+               var baseScore = /** @type {number} */val["BaseScore"];
+               var correctPick = /** @type {string} */val["CorrectPick"];
+               var title = /** @type {string} */val["Title"];
+               var dataFile = /** @type {string} */val["DataFile"];
+               var extent = /** @type {Array.<number>} */val["SceneExtent"];
                var offset = [0,0];
-               if(goog.isDef(val.Offset))
+               if(goog.isDef(val["Offset"]))
                {
-                  offset = /** @type {Array.<number>} */val.Offset;
+                  offset = /** @type {Array.<number>} */val["Offset"];
                }
                var view = { "longitude": lng, "latitude": lat, "elevation": elv, "yaw": yaw, "pitch": pitch, "roll": roll};
                var districtchallenge = new DistrictChallenge(baseScore, correctPick, that.baseData[dataFile], view, title, extent, offset);

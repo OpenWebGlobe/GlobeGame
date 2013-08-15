@@ -13,6 +13,15 @@ import json
 import shutil
 from subprocess import call
 
+target = ""
+username = ""
+host = ""
+sshkey = ""
+platform = "linux"
+method = "local"
+
+os.chdir("../")
+
 
 f = open("settings.json", 'r')
 s_settings = f.read()
@@ -26,12 +35,7 @@ bSSH     = 0;
 bPlatform = 0;
 bMethod = 0;
 
-target = ""
-username = ""
-host = ""
-sshkey = ""
-platform = "linux"
-method = "local"
+
 
 ################################################################################
 # Params

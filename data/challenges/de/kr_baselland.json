@@ -2,7 +2,7 @@
     "Type": 2,
     "BaseScore": 100,
     "Title": "Kantoneraten: Wo befindet sich das Baselbiet?",
-    "CorrectPick": "Basel-Land",
+    "CorrectPick": "Basel_Land",
     "DataFile": "kantone_schweiz",
     "Longitude": 8.190,
     "Latitude": 46.797,

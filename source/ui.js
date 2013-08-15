@@ -70,30 +70,30 @@ function Button01(layer, name, x, y, width, height, caption, fontsize) {
    };
    var thaat = this;
 
-   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+   this.shape = new Kinetic.Shape({"drawFunc": function (canvas) {
       var ctx = canvas.getContext();
       var clickOffset = 0;
       if (thaat.enabled == false) {
-         ctx.drawImage(m_images["btn_01_d"], x, y, width, height);
+         ctx.drawImage(gg["images"]["btn_01_d"], x, y, width, height);
       }
       else if (thaat.state == 0) {
-         ctx.drawImage(m_images["btn_01"], x, y, width, height);
+         ctx.drawImage(gg["images"]["btn_01"], x, y, width, height);
       }
       else if (thaat.state == 1) {
-         ctx.drawImage(m_images["btn_01_h"], x, y, width, height);
+         ctx.drawImage(gg["images"]["btn_01_h"], x, y, width, height);
       }
       else if (thaat.state == 2) {
-         ctx.drawImage(m_images["btn_01_c"], x, y, width, height);
+         ctx.drawImage(gg["images"]["btn_01_c"], x, y, width, height);
          clickOffset = 2;
       }
       else if (thaat.state == 3) {
-         ctx.drawImage(m_images["btn_01_t"], x, y, width, height);
+         ctx.drawImage(gg["images"]["btn_01_t"], x, y, width, height);
       }
       else if (thaat.state == 4) {
-         ctx.drawImage(m_images["btn_01_f"], x, y, width, height);
+         ctx.drawImage(gg["images"]["btn_01_f"], x, y, width, height);
       }
       else if (thaat.state == 5) {
-         ctx.drawImage(m_images["btn_01_o"], x, y, width, height);
+         ctx.drawImage(gg["images"]["btn_01_o"], x, y, width, height);
       }
       ctx.font = fontsize + "pt TitanOne";
       ctx.fillStyle = "#FFF";
@@ -247,17 +247,17 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
    };
    var that = this;
 
-   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+   this.shape = new Kinetic.Shape({"drawFunc": function (canvas) {
       var ctx = canvas.getContext();
       var clickOffset = 0;
       if (that.state == 0) {
-         ctx.drawImage(m_images["btn_02"], x, y, width, height);
+         ctx.drawImage(gg["images"]["btn_02"], x, y, width, height);
       }
       else if (that.state == 1) {
-         ctx.drawImage(m_images["btn_02_h"], x, y, width, height);
+         ctx.drawImage(gg["images"]["btn_02_h"], x, y, width, height);
       }
       else if (that.state == 2) {
-         ctx.drawImage(m_images["btn_02_c"], x, y, width, height);
+         ctx.drawImage(gg["images"]["btn_02_c"], x, y, width, height);
          clickOffset = 2;
       }
       ctx.font = fontsize + "pt TitanOne";
@@ -373,17 +373,17 @@ function Clock(layer, x, y, seconds) {
    this.onTimeoutEvent = function () {
    };
 
-   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+   this.shape = new Kinetic.Shape({"drawFunc": function (canvas) {
 
       if (that.visible == true) {
          var ctx = canvas.getContext();
          var pos = unit * that.seconds - 0.5;
-         ctx.drawImage(m_images["clock"], x, y, 220, 260);
+         ctx.drawImage(gg["images"]["clock"], x, y, 220, 260);
          ctx.beginPath();
          ctx.arc(x + 110, y + 153, 84, pos * Math.PI, 1.5 * Math.PI, false);
          ctx.lineTo(x + 110, y + 153);
          ctx.closePath();
-         var pattern = ctx.createPattern(m_images["dial"], "no-repeat");
+         var pattern = ctx.createPattern(gg["images"]["dial"], "no-repeat");
          ctx.fillStyle = pattern;
          ctx.translate(x + 25, y + 65);
          ctx.fill();
@@ -442,14 +442,14 @@ Clock.prototype.Countdown = function () {
       }
       else {
          that.running = false;
-         m_soundhandler.Play("wrong");
+         gg["soundhandler"].Play("wrong");
          that.onTimeoutEvent();
       }
    }, 1000);
    if (this.running) {
       this.seconds = this.seconds - 1;
       if (this.seconds <= 10) {
-         m_soundhandler.Play("ping2");
+         gg["soundhandler"].Play("ping2");
       }
    }
 };
@@ -517,7 +517,7 @@ function ScreenText(layer, text, x, y, fontsize, align) {
    this.layer = layer;
    var that = this;
 
-   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+   this.shape = new Kinetic.Shape({"drawFunc": function (canvas) {
       var ctx = canvas.getContext();
       ctx.textAlign = that.align;
       ctx.fillStyle = "#FFF";
@@ -527,7 +527,6 @@ function ScreenText(layer, text, x, y, fontsize, align) {
       ctx.lineWidth = 3;
       ctx.strokeStyle = "#000"; // stroke color
       ctx.strokeText(that.text, that.x, that.y);
-      canvas.fillStroke(this);
    }});
    layer.add(this.shape);
 }
@@ -565,12 +564,12 @@ function MessageDialog(layer, message, x, y, width, height) {
    this.Callback = function () {
    };
    this.OnOkay = function () {
-      m_soundhandler.Play("ping1");
+      gg["soundhandler"].Play("ping1");
       that.Destroy();
       that.Callback();
    };
 
-   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+   this.shape = new Kinetic.Shape({"drawFunc": function (canvas) {
       var ctx = canvas.getContext();
       ctx.beginPath();
       ctx.rect(x - (width / 2), y - (height / 2), width, height);
@@ -595,7 +594,7 @@ function MessageDialog(layer, message, x, y, width, height) {
    }});
    layer.add(this.shape);
 
-   this.okayButton = new Button01(m_ui, "dialog", x - 150, y + (height / 2) - 100, 300, 69, "OK", 15);
+   this.okayButton = new Button01(gg["ui"], "dialog", x - 150, y + (height / 2) - 100, 300, 69, "OK", 15);
    this.okayButton.onClickEvent = that.OnOkay;
 }
 //-----------------------------------------------------------------------------
@@ -632,7 +631,7 @@ function ScoreCount(layer) {
    this.layer = layer;
    var that = this;
 
-   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+   this.shape = new Kinetic.Shape({"drawFunc": function (canvas) {
       var ctx = canvas.getContext();
       ctx.beginPath();
       ctx.rect(2, 2, 300, 70);
@@ -648,10 +647,10 @@ function ScoreCount(layer) {
       ctx.fillStyle = "#FFF";
       ctx.font = "16pt TitanOne";
       ctx.textAlign = "left";
-      ctx.fillText(m_locale["score"] + ": " + m_player.playerScore, 25, 45);
+      ctx.fillText(gg["locale"]["score"] + ": " + gg["player"].playerScore, 25, 45);
       ctx.lineWidth = 2;
       ctx.strokeStyle = "#000"; // stroke color
-      ctx.strokeText(m_locale["score"] + ": " + m_player.playerScore, 25, 45);
+      ctx.strokeText(gg["locale"]["score"] + ": " + gg["player"].playerScore, 25, 45);
       canvas.fillStroke(this);
    }});
    layer.add(this.shape);
@@ -683,7 +682,7 @@ function ProgressCount(layer, qMax) {
    this.qMax = qMax;
    var that = this;
 
-   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+   this.shape = new Kinetic.Shape({"drawFunc": function (canvas) {
       var ctx = canvas.getContext();
       ctx.fillStyle = "#FFF";
       ctx.font = "26pt TitanOne";
@@ -736,19 +735,19 @@ function Pin(layer, image, x, y) {
    this.y = y;
    this.visible = true;
 
-   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+   this.shape = new Kinetic.Shape({"drawFunc": function (canvas) {
       if (that.visible == true) {
          var ctx = canvas.getContext();
          ctx.beginPath();
          ctx.drawImage(image, that.x - 74, that.y - 132, 86, 144);
-         canvas.fillStroke(this);
+         //canvas.fillStroke(this);
       }
    },
-      drawHitFunc: function (canvas) {
+      "drawHitFunc": function (canvas) {
          var context = canvas.getContext();
          context.beginPath();
          context.closePath();
-         canvas.fillStroke(this);
+         //canvas.fillStroke(this);
       }
    });
    layer.add(this.shape);
@@ -815,7 +814,7 @@ function HighScoreDialog(layer, list, hash, width, height, player) {
       that.Callback();
    };
 
-   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+   this.shape = new Kinetic.Shape({"drawFunc": function (canvas) {
       var ctx = canvas.getContext();
       ctx.beginPath();
       ctx.rect((window.innerWidth / 2) - (width / 2), (window.innerHeight / 2) - (height / 2), width, height);
@@ -833,8 +832,8 @@ function HighScoreDialog(layer, list, hash, width, height, player) {
       ctx.strokeStyle = "#000"; // stroke color
       ctx.fillStyle = "#FF0";
       ctx.font = "25pt TitanOne";
-      ctx.fillText(m_locale["highscores"], window.innerWidth / 2, window.innerHeight / 2 - (height / 2) + 45);
-      ctx.strokeText(m_locale["highscores"], window.innerWidth / 2, window.innerHeight / 2 - (height / 2) + 45);
+      ctx.fillText(gg["locale"]["highscores"], window.innerWidth / 2, window.innerHeight / 2 - (height / 2) + 45);
+      ctx.strokeText(gg["locale"]["highscores"], window.innerWidth / 2, window.innerHeight / 2 - (height / 2) + 45);
       ctx.font = "12pt TitanOne";
       ctx.lineWidth = 1;
       ctx.fillStyle = "#FFF";
@@ -862,7 +861,7 @@ function HighScoreDialog(layer, list, hash, width, height, player) {
          ctx.lineWidth = 1;
          ctx.strokeText(textOut, window.innerWidth / 2, window.innerHeight / 2 - (height / 2) + 75 + (i * 22));
       }
-      if(m_showhash)
+      if(gg["showhash"])
       {
          ctx.beginPath();
          var xx0 = (window.innerWidth / 2) + (width / 2) +25;
@@ -884,8 +883,8 @@ function HighScoreDialog(layer, list, hash, width, height, player) {
          ctx.fillStyle = "#FFF";
          ctx.textAlign = "center";
          ctx.strokeStyle = "#000";
-         ctx.fillText(m_locale["hash"], xx0+160, yy0+30);
-         ctx.strokeText(m_locale["hash"], xx0+160, yy0+30);
+         ctx.fillText(gg["locale"]["hash"], xx0+160, yy0+30);
+         ctx.strokeText(gg["locale"]["hash"], xx0+160, yy0+30);
          ctx.fillStyle = "#000";
          ctx.textAlign = "center";
          ctx.font = "24pt Verdana";
@@ -895,7 +894,7 @@ function HighScoreDialog(layer, list, hash, width, height, player) {
 
    }});
    layer.add(this.shape);
-   this.okayButton = new Button01(m_ui, "dialog", window.innerWidth / 2 - 150, window.innerHeight / 2 + (height / 2) - 100, 300, 69, m_locale["playagain"], 15);
+   this.okayButton = new Button01(gg["ui"], "dialog", window.innerWidth / 2 - 150, window.innerHeight / 2 + (height / 2) - 100, 300, 69, gg["locale"]["playagain"], 15);
    this.okayButton.onClickEvent = this.OnOkay;
 
 }
@@ -948,7 +947,7 @@ function ShareDialog(layer, hash, width, height, player) {
       that.Callback();
    };
 
-   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+   this.shape = new Kinetic.Shape({"drawFunc": function (canvas) {
       var ctx = canvas.getContext();
       ctx.beginPath();
       ctx.rect((window.innerWidth / 2) - (width / 2), (window.innerHeight / 2) - (height / 2), width, height);
@@ -979,7 +978,7 @@ function ShareDialog(layer, hash, width, height, player) {
 
    }});
    layer.add(this.shape);
-   this.okayButton = new Button01(m_ui, "dialog1", window.innerWidth / 2 - 150, window.innerHeight / 2 + (height / 2) - 100, 300, 69, m_locale["playagain"], 15);
+   this.okayButton = new Button01(gg["ui"], "dialog1", window.innerWidth / 2 - 150, window.innerHeight / 2 + (height / 2) - 100, 300, 69, gg["locale"]["playagain"], 15);
    this.okayButton.onClickEvent = this.OnOkay;
 
 }

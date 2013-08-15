@@ -70,14 +70,14 @@ function PickingChallenge(baseScore, title, pos) {
     */
    this.OnOkay = function () {
       that.okayBtn.SetEnabled(false);
-      var cartesian = ogToCartesian(m_scene, that.solutionPos[0], that.solutionPos[1], that.solutionPos[2]);
-      var screenPos = ogWorldToWindow(m_scene, cartesian[0], cartesian[1], cartesian[2]);
+      var cartesian = ogToCartesian(gg["scene"], that.solutionPos[0], that.solutionPos[1], that.solutionPos[2]);
+      var screenPos = ogWorldToWindow(gg["scene"], cartesian[0], cartesian[1], cartesian[2]);
       var distance = ogCalcDistanceWGS84(that.solutionPos[0], that.solutionPos[1], that.pickPos[1], that.pickPos[2]);
       distance = Math.round((distance / 1000) * Math.pow(10, 1)) / Math.pow(10, 1);
       that.resultPin.SetPos(screenPos[0], screenPos[1]);
-      m_soundhandler.Play("ping1");
+      gg["soundhandler"].Play("ping1");
       if (that.posPin) {
-         that.distanceLine = new Kinetic.Shape({drawFunc: function (canvas) {
+         that.distanceLine = new Kinetic.Shape({"drawFunc": function (canvas) {
             var ctx = canvas.getContext();
             ctx.moveTo(screenPos[0], screenPos[1]);
             ctx.lineTo(that.posPin.x, that.posPin.y);
@@ -94,30 +94,30 @@ function PickingChallenge(baseScore, title, pos) {
             ctx.strokeText(distance + "km", screenPos[0], screenPos[1]);
             canvas.fillStroke(this);
          }});
-         m_ui.add(that.distanceLine);
+         gg["ui"].add(that.distanceLine);
       }
-      if (m_player) {
+      if (gg["player"]) {
          if (distance < 50.0) {
             var score = 0;
-            if(m_minimode)
+            if(gg["minimode"])
             {
                if (distance < 20.0) {
                   score = 1;
-                  m_player.ScorePoints(1, " ");
+                  gg["player"].ScorePoints(1, " ");
                }
             }else
             {
-               m_player.ScorePoints(Math.floor((that.baseScore / 50.0) * (50.0 - distance)), m_locale["estimation"]);
+               gg["player"].ScorePoints(Math.floor((that.baseScore / 50.0) * (50.0 - distance)), gg["locale"]["estimation"]);
                score += Math.floor((that.baseScore / 50.0) * (50.0 - distance));
-               m_player.ScorePoints(Math.floor(that.clock.seconds / 5), m_locale["timebonus"]);
+               gg["player"].ScorePoints(Math.floor(that.clock.seconds / 5), gg["locale"]["timebonus"]);
                score += Math.floor(that.clock.seconds / 5);
                if (that.clock.seconds > 50) {
-                  m_player.ScorePoints(20, m_locale["speedbonus"]);
+                  gg["player"].ScorePoints(20, gg["locale"]["speedbonus"]);
                   score += 20;
                }
             }
             Timeout(function () {
-               var coins = new Coins(m_ui, score);
+               var coins = new Coins(gg["ui"], score);
             }, 800);
          }
       }
@@ -149,21 +149,23 @@ function PickingChallenge(baseScore, title, pos) {
          that.hint = null;
       }
       if (that.mouseLock == false) {
-         var pos = m_stage.getMousePosition();
+         var pos = gg["stage"].getMousePosition();
          if (that.posPin)
             that.posPin.SetPos(pos.x, pos.y);
          if (that.flystate == true) {
-            ogStopFlyTo(m_scene);
+            ogStopFlyTo(gg["scene"]);
          }
-         var ori = ogGetOrientation(m_scene);
-         var result = ogPickGlobe(m_scene, pos.x, pos.y);
-         that.ZoomIn(result, ori);
-         m_soundhandler.Play("swoosh");
-         if (that.posPin == null) {
-            that.posPin = new Pin(m_ui, m_images["pin_blue"], pos.x, pos.y);
+         var ori = ogGetOrientation(gg["scene"]);
+         var result = ogPickGlobe(gg["scene"], pos.x, pos.y);
+         if(result[0] > 0)
+         {
+            that.ZoomIn(result, ori);
+            gg["soundhandler"].Play("swoosh");
+            if (that.posPin == null) {
+               that.posPin = new Pin(gg["ui"], gg["images"]["pin_blue"], pos.x, pos.y);
+            }
+            that.zoomState = true;
          }
-         that.zoomState = true;
-
       }
    };
    //-----------------------------------------------------------------------------
@@ -173,15 +175,29 @@ function PickingChallenge(baseScore, title, pos) {
    this.OnMouseUp = function () {
       if (that.mouseLock == false) {
          that.zoomState = false;
-         var pos = m_stage.getMousePosition();
+         var pos = gg["stage"].getMousePosition();
          var mx = pos.x - 10;
          var my = pos.y - 10;
-         that.pickPos = ogPickGlobe(m_scene, pos.x, pos.y);
-         m_soundhandler.Play("pick");
+         that.pickPos = ogPickGlobe(gg["scene"], pos.x, pos.y);
+         var Repick = function()
+         {
+            if(!(that.pickPos[0] > 0))
+            {
+               var min = -20;
+               var max = 20;
+               var addX = Math.floor(Math.random() * (max - min + 1)) + min;
+               var addY = Math.floor(Math.random() * (max - min + 1)) + min;
+               that.pickPos = ogPickGlobe(gg["scene"], pos.x+addX, pos.y+addY);
+               Repick();
+            }
+         }
+         Repick();
+
+         gg["soundhandler"].Play("pick");
          if (that.posPin != null)
             that.posPin.SetVisible(false);
          if (that.flystate == true) {
-            ogStopFlyTo(m_scene);
+            ogStopFlyTo(gg["scene"]);
          }
 
          that.ZoomOut();
@@ -193,7 +209,7 @@ function PickingChallenge(baseScore, title, pos) {
     */
    this.OnMouseMove = function () {
       if (that.zoomState == true) {
-         var pos = m_stage.getMousePosition();
+         var pos = gg["stage"].getMousePosition();
          if (that.posPin != null)
             that.posPin.SetPos(pos.x, pos.y);
 
@@ -205,7 +221,7 @@ function PickingChallenge(baseScore, title, pos) {
     */
    this.FlightCallback = function () {
       that.flystate = false;
-      var pos = ogWorldToWindow(m_scene, that.pickPos[4], that.pickPos[5], that.pickPos[6]);
+      var pos = ogWorldToWindow(gg["scene"], that.pickPos[4], that.pickPos[5], that.pickPos[6]);
       if (that.posPin != null && that.zoomState == false) {
          that.posPin.SetVisible(true);
          that.posPin.SetPos(pos[0], pos[1]);
@@ -221,7 +237,7 @@ PickingChallenge.prototype.constructor = PickingChallenge;
 PickingChallenge.prototype.Prepare = function (delay) {
    var that = this;
    var prepFunc = function () {
-      that.screenText = new ScreenText(m_ui, that.text, m_centerX, window.innerHeight - 255, 26, "center");
+      that.screenText = new ScreenText(gg["ui"], that.text, gg["centerX"], window.innerHeight - 255, 26, "center");
       that.pickOverlay = new Kinetic.Rect({
          x: 0,
          y: 0,
@@ -231,35 +247,35 @@ PickingChallenge.prototype.Prepare = function (delay) {
       that.pickOverlay.on("mousedown", that.OnMouseDown);
       that.pickOverlay.on("mouseup", that.OnMouseUp);
       that.pickOverlay.on("mousemove", that.OnMouseMove);
-      m_ui.add(that.pickOverlay);
-      that.okayBtn = new Button01(m_ui, "okbtn1", m_centerX - 150, window.innerHeight - 180, 300, 69, "OK", 15);
-      that.resultPin = new Pin(m_ui, m_images["pin_green"], -1, -1);
+      gg["ui"].add(that.pickOverlay);
+      that.okayBtn = new Button01(gg["ui"], "okbtn1", gg["centerX"] - 150, window.innerHeight - 180, 300, 69, "OK", 15);
+      that.resultPin = new Pin(gg["ui"], gg["images"]["pin_green"], -1, -1);
       that.okayBtn.onClickEvent = that.OnOkay;
       that.okayBtn.onMouseOverEvent = that.MouseOverOkBtn;
       that.okayBtn.onMouseOutEvent = that.MouseOutOkBtn;
-      that.hint = new Kinetic.Shape({drawFunc: function (canvas) {
+      that.hint = new Kinetic.Shape({"drawFunc": function (canvas) {
          var ctx = canvas.getContext();
          ctx.beginPath(); // !!!
          ctx.font = "22pt TitanOne";
          ctx.fillStyle = "#0FF";
          ctx.textAlign = "center";
-         ctx.fillText(m_locale["pickhint"], window.innerWidth / 2, window.innerHeight / 2);
+         ctx.fillText(gg["locale"]["pickhint"], window.innerWidth / 2, window.innerHeight / 2);
          ctx.lineWidth = 3;
          ctx.strokeStyle = "#000"; // stroke color
-         ctx.strokeText(m_locale["pickhint"], window.innerWidth / 2, window.innerHeight / 2);
+         ctx.strokeText(gg["locale"]["pickhint"], window.innerWidth / 2, window.innerHeight / 2);
       }});
-      m_ui.add(that.hint);
 
-      that.clock = new Clock(m_ui, 50, 82, 60);
 
-      ogSetPosition(m_camera, 8.225578, 46.8248707, 280000.0);
-      ogSetOrientation(m_camera, 0.0, -90.0, 0.0);
+      that.clock = new Clock(gg["ui"], 50, 82, 60);
 
-      ogSetInPositionFunction(m_context, that.FlightCallback);
-      that.ogFrameLayer = ogAddImageLayer(m_globe, {
-         url: ["http://www.openwebglobe.org/data/img"],
-         layer: "ch_boundaries",
-         service: "owg"
+      ogSetPosition(gg["camera"], 8.225578, 46.8248707, 280000.0);
+      ogSetOrientation(gg["camera"], 0.0, -90.0, 0.0);
+
+      ogSetInPositionFunction(gg["context"], that.FlightCallback);
+      that.ogFrameLayer = ogAddImageLayer(gg["globe"], {
+         "url": ["http://www.openwebglobe.org/data/img"],
+         "layer": "ch_boundaries",
+         "service": "owg"
       });
    };
    if (delay > 0) {
@@ -281,6 +297,7 @@ PickingChallenge.prototype.Activate = function () {
          that.callback()
       };
       that.clock.Start();
+      gg["static"].add(that.hint);
    });
 };
 //-----------------------------------------------------------------------------
@@ -290,7 +307,7 @@ PickingChallenge.prototype.Activate = function () {
 PickingChallenge.prototype.Destroy = function (event) {
    if (!this.destroyed) {
       this.eventDestroyed = event;
-      ogSetInPositionFunction(m_context, function () {
+      ogSetInPositionFunction(gg["context"], function () {
       });
       this.clock.Pause();
       this.OnDestroy();
@@ -347,9 +364,9 @@ PickingChallenge.prototype.OnDestroy = function () {
  */
 PickingChallenge.prototype.ZoomIn = function (pos, ori) {
    this.flystate = true;
-   ogSetFlightDuration(m_scene, 500);
-   ogFlyToLookAtPosition(m_scene, pos[1], pos[2], pos[3], 26000, 0.00, -90.0, 0.0);
-   m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
+   ogSetFlightDuration(gg["scene"], 500);
+   ogFlyToLookAtPosition(gg["scene"], pos[1], pos[2], pos[3], 26000, 0.00, -90.0, 0.0);
+   gg["flystate"] = GlobeGame.FLYSTATE.FLYAROUND;
 };
 //-----------------------------------------------------------------------------
 /**
@@ -359,9 +376,9 @@ PickingChallenge.prototype.ZoomIn = function (pos, ori) {
 PickingChallenge.prototype.ZoomOut = function (ori) {
    this.flystate = true;
    //this.posPin.SetVisible(false);
-   ogSetFlightDuration(m_scene, 350);
-   ogFlyTo(m_scene, 8.225578, 46.8248707, 280000.0, 0.00, -90.0, 0.0);
-   m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
+   ogSetFlightDuration(gg["scene"], 350);
+   ogFlyTo(gg["scene"], 8.225578, 46.8248707, 280000.0, 0.00, -90.0, 0.0);
+   gg["flystate"] = GlobeGame.FLYSTATE.FLYAROUND;
 };
 
 goog.exportSymbol('PickingChallenge', PickingChallenge);

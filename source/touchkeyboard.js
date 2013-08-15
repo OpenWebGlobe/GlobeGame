@@ -54,7 +54,7 @@ function TouchKeyboard(layer, name, x, y, caption, callback) {
    var height = 390;
    var width = 853;
 
-   this.shape = new Kinetic.Shape({drawFunc: function (canvas) {
+   this.shape = new Kinetic.Shape({"drawFunc": function (canvas) {
       var ctx = canvas.getContext();
       ctx.beginPath();
       ctx.rect(that.x, that.y, width, height);

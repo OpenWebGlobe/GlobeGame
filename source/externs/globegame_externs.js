@@ -1,3 +1,5 @@
+var ggog = {};
+
 var Pin = {
    "SetVisible": {},
    "SetPos": {},
@@ -19,3 +21,5 @@ var PickingChallenge =
    "Destroy": {},
    "draftmode": {}
 };
+
+

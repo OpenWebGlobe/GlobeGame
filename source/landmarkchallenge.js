@@ -76,8 +76,8 @@ function LandmarkChallenge(baseScore, options, correctOption, views, title) {
       if (that.stop != true && that.flystate < that.views.length) {
          var oView = that.views[that.flystate];
          that.flystate += 1;
-         ogFlyTo(m_scene, oView["longitude"], oView["latitude"], oView["elevation"], oView["yaw"], oView["pitch"], oView["roll"]);
-         m_flystate = GlobeGame.FLYSTATE.FLYAROUND;
+         ogFlyTo(gg["scene"], oView["longitude"], oView["latitude"], oView["elevation"], oView["yaw"], oView["pitch"], oView["roll"]);
+         gg["flystate"] = GlobeGame.FLYSTATE.FLYAROUND;
       }
    };
 }
@@ -90,25 +90,25 @@ LandmarkChallenge.prototype.constructor = LandmarkChallenge;
 LandmarkChallenge.prototype.Prepare = function (delay) {
    var that = this;
    var prepFunc = function () {
-      that.screenText = new ScreenText(m_ui, that.text, m_centerX, window.innerHeight - 255, 26, "center");
-      that.clock = new Clock(m_ui, 50, 82, 60);
+      that.screenText = new ScreenText(gg["ui"], that.text, gg["centerX"], window.innerHeight - 255, 26, "center");
+      that.clock = new Clock(gg["ui"], 50, 82, 60);
 
       var flightduration = Math.floor(40 / (that.views.length - 1)) * 1000;
-      ogSetFlightDuration(m_scene, flightduration);
-      ogSetPosition(m_camera, that.views[0].longitude, that.views[0].latitude, that.views[0].elevation);
-      ogSetOrientation(m_camera, that.views[0]["yaw"], that.views[0]["pitch"], that.views[0]["roll"]);
-      ogSetInPositionFunction(m_context, that.FlightCallback);
+      ogSetFlightDuration(gg["scene"], flightduration);
+      ogSetPosition(gg["camera"], that.views[0].longitude, that.views[0].latitude, that.views[0].elevation);
+      ogSetOrientation(gg["camera"], that.views[0]["yaw"], that.views[0]["pitch"], that.views[0]["roll"]);
+      ogSetInPositionFunction(gg["context"], that.FlightCallback);
 
-      var b1 = new Button01(m_ui, "btn1", m_centerX - 310, window.innerHeight - 239, 300, 69, that.options[0], 15);
+      var b1 = new Button01(gg["ui"], "btn1", gg["centerX"] - 310, window.innerHeight - 239, 300, 69, that.options[0], 15);
       b1.onClickEvent = that.onOption1;
       that.buttonArray.push(b1);
-      var b2 = new Button01(m_ui, "btn2", m_centerX + 10, window.innerHeight - 239, 300, 69, that.options[1], 15);
+      var b2 = new Button01(gg["ui"], "btn2", gg["centerX"] + 10, window.innerHeight - 239, 300, 69, that.options[1], 15);
       b2.onClickEvent = that.onOption2;
       that.buttonArray.push(b2);
-      var b3 = new Button01(m_ui, "btn3", m_centerX - 310, window.innerHeight - 150, 300, 69, that.options[2], 15);
+      var b3 = new Button01(gg["ui"], "btn3", gg["centerX"] - 310, window.innerHeight - 150, 300, 69, that.options[2], 15);
       b3.onClickEvent = that.onOption3;
       that.buttonArray.push(b3);
-      var b4 = new Button01(m_ui, "btn4", m_centerX + 10, window.innerHeight - 150, 300, 69, that.options[3], 15);
+      var b4 = new Button01(gg["ui"], "btn4", gg["centerX"] + 10, window.innerHeight - 150, 300, 69, that.options[3], 15);
       b4.onClickEvent = that.onOption4;
       that.buttonArray.push(b4);
    };
@@ -150,10 +150,10 @@ LandmarkChallenge.prototype.Destroy = function (event) {
    if (!this.destroyed) {
       this.eventDestroyed = event;
       this.clock.Pause();
-      ogSetInPositionFunction(m_context, function () {
+      ogSetInPositionFunction(gg["context"], function () {
       });
       this.stop = true;
-      ogStopFlyTo(m_scene);
+      ogStopFlyTo(gg["scene"]);
       this.OnDestroy();
       this.destroyed = true;
    }
@@ -197,26 +197,26 @@ LandmarkChallenge.prototype.PickOption = function (option, timeleft) {
    this.buttonArray[3].SetEnabled(false);
    var that = this;
    if (this.correctOption == option) {
-      m_soundhandler.Play("correct");
-      if (m_player) {
+      gg["soundhandler"].Play("correct");
+      if (gg["player"]) {
          var score = 0;
-         if(m_minimode)
+         if(gg["minimode"])
          {
-            m_player.ScorePoints(1, " ");
+            gg["player"].ScorePoints(1, " ");
             score = 1;
          }else
          {
-            m_player.ScorePoints(this.baseScore, "");
+            gg["player"].ScorePoints(this.baseScore, "");
             score += this.baseScore;
-            m_player.ScorePoints(Math.floor(timeleft / 5), m_locale["timebonus"]);
+            gg["player"].ScorePoints(Math.floor(timeleft / 5), gg["locale"]["timebonus"]);
             score += Math.floor(timeleft / 5);
             if (timeleft > 50) {
-               m_player.ScorePoints(20, m_locale["speedbonus"]);
+               gg["player"].ScorePoints(20, gg["locale"]["speedbonus"]);
                score += 20;
             }
          }
          Timeout(function () {
-            var coins = new Coins(m_ui, score);
+            var coins = new Coins(gg["ui"], score);
          }, 800);
       }
       this.buttonArray[option - 1].SetEnabled(true);
@@ -225,7 +225,7 @@ LandmarkChallenge.prototype.PickOption = function (option, timeleft) {
          that.callback();
       }, 2000);
    } else {
-      m_soundhandler.Play("wrong");
+      gg["soundhandler"].Play("wrong");
       this.buttonArray[option - 1].SetEnabled(true);
       this.buttonArray[this.correctOption - 1].SetEnabled(true);
       this.buttonArray[option - 1].SetState(4);

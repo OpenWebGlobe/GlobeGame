@@ -22,32 +22,33 @@
  *******************************************************************************/
 goog.provide('owg.gg.Editor');
 /* Members */
-var m_images = {};
-var m_loadedImages = 0;
-var m_numImages = 0;
-var m_context;
-var m_globe;
-var m_stage;
-var m_scene;
-var m_camera;
-var m_ui = new Kinetic.Layer();
-var m_static = new Kinetic.Layer();
-var m_centerX = (window.innerWidth - 350) / 2;
-var m_centerY = window.innerHeight / 2;
-var m_challenge = null;
-var m_cType = 0;
-var m_pin;
-var m_pick = [false, 0, 0, 0];
-var m_zoom = false;
-var m_pickOverlay;
-var trLayer = null;
-var m_elev;
-var m_views = [];
-var m_soundenabled = false;
-var m_datahost = "http://localhost";
-var m_callbacks = [];
-var m_resizeCallbacks = [];
-var m_minimode = false;
+var gge = {};
+gge["images"] = {};
+gge["loadedImages"] = 0;
+gge["numImages"] = 0;
+gge["context"];
+gge["globe"];
+gge["stage"];
+gge["scene"];
+gge["camera"];
+gge["ui"] = new Kinetic.Layer();
+gge["static"] = new Kinetic.Layer();
+gge["centerX"] = (window.innerWidth - 350) / 2;
+gge["centerY"] = window.innerHeight / 2;
+gge["challenge"] = null;
+gge["cType"] = 0;
+gge["pin"];
+gge["pick"] = [false, 0, 0, 0];
+gge["zoom"] = false;
+gge["pickOverlay"];
+gge["trLayer"] = null;
+gge["elev"];
+gge["views"] = [];
+gge["soundenabled"] = false;
+gge["datahost"] = "http://localhost";
+gge["callbacks"] = [];
+gge["resizeCallbacks"] = [];
+gge["minimode"] = false;
 
 //-----------------------------------------------------------------------------
 /**
@@ -66,11 +67,11 @@ function SelectAllText(id) {
 function LoadImages(sources) {
    // get num of sources
    for (var src in sources) {
-      m_numImages++;
+      gge["numImages"]++;
    }
    for (var src in sources) {
-      m_images[src] = new Image();
-      m_images[src].src = sources[src];
+      gge["images"][src] = new Image();
+      gge["images"][src].src = sources[src];
    }
 }
 //-----------------------------------------------------------------------------
@@ -81,20 +82,20 @@ function LoadImages(sources) {
  */
 function Init(datapath,renderquality) {
    if (datapath) {
-      m_datahost = datapath;
+      gge["datahost"] = datapath;
    }
    ogSetArtworkDirectory("../WebViewer/art/");
-   m_context = ogCreateContext({canvas: "canvas",
+   gge["context"] = ogCreateContext({canvas: "canvas",
          fullscreen: true
       }
    );
-   m_scene = ogCreateScene(m_context, OG_SCENE_3D_ELLIPSOID_WGS84, {
+   gge["scene"] = ogCreateScene(gge["context"], OG_SCENE_3D_ELLIPSOID_WGS84, {
          rendertotexture: false
       }
    );
-   m_globe = ogCreateWorld(m_scene);
-   m_camera = ogGetActiveCamera(m_scene);
-   m_stage = new Kinetic.Stage({
+   gge["globe"] = ogCreateWorld(gge["scene"]);
+   gge["camera"] = ogGetActiveCamera(gge["scene"]);
+   gge["stage"] = new Kinetic.Stage({
       container: "main_ui",
       width: window.innerWidth,
       height: window.innerHeight,
@@ -120,52 +121,52 @@ function Init(datapath,renderquality) {
    LoadImages(sources);
 
    // Add OWG Data
-   ogAddImageLayer(m_globe, {
-      url: [m_datahost],
+   ogAddImageLayer(gge["globe"], {
+      url: [gge["datahost"]],
       layer: "bluemarble",
       service: "owg"
    });
-   ogAddImageLayer(m_globe, {
-      url: [m_datahost],
+   ogAddImageLayer(gge["globe"], {
+      url: [gge["datahost"]],
       layer: "swissimage",
       service: "owg"
    });
-   m_elev = ogAddElevationLayer(m_globe, {
-      url: [m_datahost],
+   gge["elev"] = ogAddElevationLayer(gge["globe"], {
+      url: [gge["datahost"]],
       layer: "DHM25",
       service: "owg"
    });
-   ogSetRenderQuality(m_globe, 3);
-   ogSetRenderFunction(m_context, OnRender);
-   ogSetResizeFunction(m_context, OnResize);
+   ogSetRenderQuality(gge["globe"], 3);
+   ogSetRenderFunction(gge["context"], OnRender);
+   ogSetResizeFunction(gge["context"], OnResize);
 
-   var camId = ogGetActiveCamera(m_scene);
+   var camId = ogGetActiveCamera(gge["scene"]);
    ogSetPosition(camId, 8.225578, 46.8248707, 280000.0);
    ogSetOrientation(camId, 0.0, -90.0, 0.0);
-   ogSetCanvasSizeOffset(m_scene, 360, 1);
-   ogSetRenderQuality(m_globe, renderquality);
-   m_pin = new Pin(m_static, m_images["pin_red"], 0, 0);
-   m_pickOverlay = new Kinetic.Rect({
+   ogSetCanvasSizeOffset(gge["scene"], 360, 1);
+   ogSetRenderQuality(gge["globe"], renderquality);
+   gge["pin"] = new Pin(gge["static"], gge["images"]["pin_red"], 0, 0);
+   gge["pickOverlay"] = new Kinetic.Rect({
       x: 0,
       y: 0,
       width: window.innerWidth,
       height: window.innerHeight
    });
-   m_static.add(m_pickOverlay);
-   m_pickOverlay.on("mousedown", PickMouseDown);
-   m_pickOverlay.on("mouseup", PickMouseUp);
-   m_pickOverlay.on("mousemove", PickMouseMove);
-   m_stage.add(m_ui);
+   gge["static"].add(gge["pickOverlay"]);
+   gge["pickOverlay"].on("mousedown", PickMouseDown);
+   gge["pickOverlay"].on("mouseup", PickMouseUp);
+   gge["pickOverlay"].on("mousemove", PickMouseMove);
+   gge["stage"].add(gge["ui"]);
 }
 //-----------------------------------------------------------------------------
 /**
  * @description mouse move on pick overlay
  */
 function PickMouseMove() {
-   if (m_zoom) {
-      var pos = m_stage.getMousePosition();
-      var scene = ogGetScene(m_context);
-      m_pin.SetPos(pos.x, pos.y);
+   if (gge["zoom"]) {
+      var pos = gge["stage"].getMousePosition();
+      var scene = ogGetScene(gge["context"]);
+      gge["pin"].SetPos(pos.x, pos.y);
    }
 
 }
@@ -174,28 +175,28 @@ function PickMouseMove() {
  * @description mouse down on pick overlay
  */
 function PickMouseDown() {
-   var pos = m_stage.getMousePosition();
-   var scene = ogGetScene(m_context);
+   var pos = gge["stage"].getMousePosition();
+   var scene = ogGetScene(gge["context"]);
    var camId = ogGetActiveCamera(scene);
    var pick = ogPickGlobe(scene, pos.x, pos.y);
    ogSetPosition(camId, pick[1], pick[2], 50000.0);
-   m_zoom = true;
+   gge["zoom"] = true;
 }
 //-----------------------------------------------------------------------------
 /**
  * @description mouse up on pick overlay
  */
 function PickMouseUp() {
-   var scene = ogGetScene(m_context);
+   var scene = ogGetScene(gge["context"]);
    var camId = ogGetActiveCamera(scene);
-   m_zoom = false;
-   var pos = m_stage.getMousePosition();
+   gge["zoom"] = false;
+   var pos = gge["stage"].getMousePosition();
    var pick = ogPickGlobe(scene, pos.x, pos.y);
-   m_pick = pick;
+   gge["pick"] = pick;
    ogSetPosition(camId, 8.225578, 46.8248707, 280000.0);
    setTimeout(function () {
-      var newPos = ogWorldToWindow(scene, m_pick[4], m_pick[5], m_pick[6]);
-      m_pin.SetPos(newPos[0], newPos[1]);
+      var newPos = ogWorldToWindow(scene, gge["pick"][4], gge["pick"][5], gge["pick"][6]);
+      gge["pin"].SetPos(newPos[0], newPos[1]);
    }, 100);
 }
 //-----------------------------------------------------------------------------
@@ -208,10 +209,10 @@ function TypeChanged(type) {
       jQuery('#picking_div').css("visibility", "hidden");
       jQuery('#landmark_div').css("visibility", "visible");
       jQuery('#main_ui').css("visibility", "hidden");
-      m_cType = 0;
-      m_static.remove();
-      m_elev = ogAddElevationLayer(m_globe, {
-         url: [m_datahost],
+      gge["cType"] = 0;
+      gge["static"].remove();
+      gge["elev"] = ogAddElevationLayer(gge["globe"], {
+         url: [gge["datahost"]],
          layer: "DHM25",
          service: "owg"
       });
@@ -220,29 +221,29 @@ function TypeChanged(type) {
       jQuery('#picking_div').css("visibility", "visible");
       jQuery('#landmark_div').css("visibility", "hidden");
       jQuery('#main_ui').css("visibility", "visible");
-      m_cType = 1;
-      var scene = ogGetScene(m_context);
+      gge["cType"] = 1;
+      var scene = ogGetScene(gge["context"]);
       var camId = ogGetActiveCamera(scene);
       ogSetPosition(camId, 8.225578, 46.8248707, 280000.0);
       ogSetOrientation(camId, 0.0, -90.0, 0.0);
-      m_stage.add(m_static);
-      ogRemoveImageLayer(m_elev);
+      gge["stage"].add(gge["static"]);
+      ogRemoveImageLayer(gge["elev"]);
    }
 }
 //-----------------------------------------------------------------------------
 /**
- * @description toggle OSM traffic layer
+ * @description toggele OSM traffic layer
  */
 function TrafficLayer(enabled) {
    if (enabled) {
-      trLayer = ogAddImageLayer(m_globe, {
-         url: [m_datahost],
+      gge["trLayer"] = ogAddImageLayer(gge["globe"], {
+         url: [gge["datahost"]],
          layer: "osm_transparent",
          service: "owg"
       });
    }
    else {
-      ogRemoveImageLayer(trLayer);
+      ogRemoveImageLayer(gge["trLayer"]);
    }
 }
 //-----------------------------------------------------------------------------
@@ -271,11 +272,11 @@ function ViewObj(lng, lat, elev, yaw, pitch, roll) {
  * @description append viewpos for landmark challenge
  */
 function AddView() {
-   var scene = ogGetScene(m_context);
+   var scene = ogGetScene(gge["context"]);
    var ori = ogGetOrientation(scene);
    var pos = ogGetPosition(scene);
    var view = new ViewObj(pos["longitude"], pos["latitude"], pos["elevation"], ori["yaw"], ori["pitch"], ori["roll"]);
-   m_views.push(view);
+   gge["views"].push(view);
 
 }
 //-----------------------------------------------------------------------------
@@ -284,18 +285,18 @@ function AddView() {
  */
 function Update() {
    var val = jQuery.parseJSON(document.getElementById('output').innerHTML);
-   if (m_cType == 0) {
-      m_challenge = new LandmarkChallenge(val["BaseScore"], val["Options"], val["CorrectOption"], val["Views"], val["Title"]);
-      m_challenge.draftmode = true;
-      m_challenge.Prepare(0);
-      m_challenge.Activate();
+   if (gge["cType"] == 0) {
+      gge["challenge"] = new LandmarkChallenge(val["BaseScore"], val["Options"], val["CorrectOption"], val["Views"], val["Title"]);
+      gge["challenge"].draftmode = true;
+      gge["challenge"].Prepare(0);
+      gge["challenge"].Activate();
    } else {
-      m_static.remove();
+      gge["static"].remove();
       var pos = [ val["Longitude"], val["Latitude"], val["Elevation"] ];
-      m_challenge = new PickingChallenge(val["BaseScore"], val["Title"], pos);
-      m_challenge.draftmode = true;
-      m_challenge.Prepare(0);
-      m_challenge.Activate();
+      gge["challenge"] = new PickingChallenge(val["BaseScore"], val["Title"], pos);
+      gge["challenge"].draftmode = true;
+      gge["challenge"].Prepare(0);
+      gge["challenge"].Activate();
    }
 }
 //-----------------------------------------------------------------------------
@@ -303,7 +304,7 @@ function Update() {
  * @description clear views for landmark challenge
  */
 function ClearViews() {
-   m_views = [];
+   gge["views"] = [];
 }
 //-----------------------------------------------------------------------------
 /**
@@ -323,16 +324,16 @@ function ShowChallenge() {
  * @description stop test mode
  */
 function HideChallenge() {
-   if (m_challenge) {
-      m_challenge.Destroy(OnChallengeReset);
+   if (gge["challenge"]) {
+      gge["challenge"].Destroy(OnChallengeReset);
    }
    jQuery('#testbtn').css("visibility", "visible");
    jQuery('#resetbtn').css("visibility", "hidden");
    jQuery('#details').css("visibility", "visible");
-   if (m_cType == 0) {
+   if (gge["cType"] == 0) {
       jQuery('#landmark_div').css("visibility", "visible");
    }
-   else if (m_cType == 1) {
+   else if (gge["cType"] == 1) {
       jQuery('#picking_div').css("visibility", "visible");
    }
 }
@@ -341,16 +342,16 @@ function HideChallenge() {
  * @description callback function for resetting the test mode challenge
  */
 function OnChallengeReset() {
-   var scene = ogGetScene(m_context);
+   var scene = ogGetScene(gge["context"]);
    var camId = ogGetActiveCamera(scene);
 
-   if (m_cType == 0) {
+   if (gge["cType"] == 0) {
       jQuery('#main_ui').css("visibility", "hidden");
    }
-   else if (m_cType == 1) {
+   else if (gge["cType"] == 1) {
       ogSetPosition(camId, 8.225578, 46.8248707, 280000.0);
       ogSetOrientation(camId, 0.0, -90.0, 0.0);
-      m_stage.add(m_static);
+      gge["stage"].add(gge["static"]);
    }
 }
 
@@ -361,7 +362,7 @@ function OnChallengeReset() {
  * @param {function()} callback
  */
 function RegisterCycleCallback(id, callback) {
-   m_callbacks.push([id, callback]);
+   gge["callbacks"].push([id, callback]);
 }
 
 //-----------------------------------------------------------------------------
@@ -370,9 +371,9 @@ function RegisterCycleCallback(id, callback) {
  * @param {string} id
  */
 function UnregisterCycleCallback(id) {
-   for (var i = 0; i < m_callbacks.length; i++) {
-      if (m_callbacks[i][0] == id) {
-         m_callbacks.splice(i, 1);
+   for (var i = 0; i < gge["callbacks"].length; i++) {
+      if (gge["callbacks"][i][0] == id) {
+         gge["callbacks"].splice(i, 1);
       }
    }
 }
@@ -384,7 +385,7 @@ function UnregisterCycleCallback(id) {
  * @param {function()} callback
  */
 function RegisterResizeCallback(id, callback) {
-   m_resizeCallbacks.push([id, callback]);
+   gge["resizeCallbacks"].push([id, callback]);
 }
 //-----------------------------------------------------------------------------
 /**
@@ -392,9 +393,9 @@ function RegisterResizeCallback(id, callback) {
  * @param {string} id
  */
 function UnregisterResizeCallback(id) {
-   for (var i = 0; i < m_resizeCallbacks.length; i++) {
-      if (m_resizeCallbacks[i][0] == id) {
-         m_resizeCallbacks.splice(i, 1);
+   for (var i = 0; i < gge["resizeCallbacks"].length; i++) {
+      if (gge["resizeCallbacks"][i][0] == id) {
+         gge["resizeCallbacks"].splice(i, 1);
       }
    }
 }
@@ -405,12 +406,12 @@ function UnregisterResizeCallback(id) {
  * @param {number} context
  */
 function OnRender(context) {
-   var scene = ogGetScene(m_context);
+   var scene = ogGetScene(gge["context"]);
    var ori = ogGetOrientation(scene);
    var pos = ogGetPosition(scene);
    document.getElementById('current').innerText = "yaw=" + ori["yaw"] + " pitch=" + ori["pitch"] + " roll=" + ori["roll"] +
       "lng=" + pos["longitude"] + " lat=" + pos["latitude"] + " elev=" + pos["elevation"];
-   if (m_cType == 0) {
+   if (gge["cType"] == 0) {
       var out = "{\n" +
          "   \"Type\": 0,\n" +
          "   \"BaseScore\": " + document.getElementById('basescore').value + ",\n" +
@@ -418,31 +419,31 @@ function OnRender(context) {
          "   \"CorrectOption\": " + document.getElementById('correctoption').value + ",\n" +
          "   \"Options\": [\"" + document.getElementById('option1').value + "\", \"" + document.getElementById('option2').value + "\", \"" + document.getElementById('option3').value + "\", \"" + document.getElementById('option4').value + "\"],\n" +
          "   \"Views\": [\n";
-      for (var i = 0; i < m_views.length; i++) {
-         out = out + "       { \"longitude\": " + m_views[i].longitude + ",\n        \"latitude\": " + m_views[i].latitude + ",\n        \"elevation\": " + m_views[i].elevation + ",\n " +
-            "       \"yaw\": " + m_views[i].yaw + ",\n        \"pitch\": " + m_views[i].pitch + ",\n        \"roll\": " + m_views[i].roll + "\n       }";
-         if (i < m_views.length - 1) {
+      for (var i = 0; i < gge["views"].length; i++) {
+         out = out + "       { \"longitude\": " + gge["views"][i].longitude + ",\n        \"latitude\": " + gge["views"][i].latitude + ",\n        \"elevation\": " + gge["views"][i].elevation + ",\n " +
+            "       \"yaw\": " + gge["views"][i].yaw + ",\n        \"pitch\": " + gge["views"][i].pitch + ",\n        \"roll\": " + gge["views"][i].roll + "\n       }";
+         if (i < gge["views"].length - 1) {
             out = out + ",\n";
          }
       }
       out = out + "   \n]\n}";
    }
-   else if (m_cType == 1) {
+   else if (gge["cType"] == 1) {
       var out = "{\n" +
          "   \"Type\": 1,\n" +
          "   \"BaseScore\": " + document.getElementById('qscore').value + ",\n" +
          "   \"Title\": \"" + document.getElementById('location').value + "\",\n" +
-         "   \"Longitude\": " + m_pick[1] + ",\n" +
-         "   \"Latitude\": " + m_pick[2] + ",\n" +
-         "   \"Elevation\": " + m_pick[3] + "\n" +
+         "   \"Longitude\": " + gge["pick"][1] + ",\n" +
+         "   \"Latitude\": " + gge["pick"][2] + ",\n" +
+         "   \"Elevation\": " + gge["pick"][3] + "\n" +
          "\n}";
    }
 
 
    document.getElementById('output').innerHTML = out;
-   m_stage.draw();
-   for (var i = 0; i < m_callbacks.length; i++) {
-      m_callbacks[i][1]();
+   gge["stage"].draw();
+   for (var i = 0; i < gge["callbacks"].length; i++) {
+      gge["callbacks"][i][1]();
    }
 }
 //-----------------------------------------------------------------------------
@@ -451,11 +452,11 @@ function OnRender(context) {
  * @param {number} context
  */
 function OnResize(context) {
-   m_centerX = (window.innerWidth - 350) / 2;
-   m_centerY = window.innerHeight / 2;
-   m_stage.setSize(window.innerWidth - 350, window.innerHeight);
-   for (var i = 0; i < m_resizeCallbacks.length; i++) {
-      m_resizeCallbacks[i][1]();
+   gge["centerX"] = (window.innerWidth - 350) / 2;
+   gge["centerY"] = window.innerHeight / 2;
+   gge["stage"].setSize(window.innerWidth - 350, window.innerHeight);
+   for (var i = 0; i < gge["resizeCallbacks"].length; i++) {
+      gge["resizeCallbacks"][i][1]();
    }
 }
 
