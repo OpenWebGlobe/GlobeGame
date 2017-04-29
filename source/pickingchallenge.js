@@ -68,12 +68,12 @@ function PickingChallenge(baseScore, title, pos) {
    /**
     * @description ok okay button event
     */
-   this.OnOkay = function () {
+   this.OnOkay = () => {
       that.okayBtn.SetEnabled(false);
       var cartesian = ogToCartesian(gg["scene"], that.solutionPos[0], that.solutionPos[1], that.solutionPos[2]);
       var screenPos = ogWorldToWindow(gg["scene"], cartesian[0], cartesian[1], cartesian[2]);
       var distance = ogCalcDistanceWGS84(that.solutionPos[0], that.solutionPos[1], that.pickPos[1], that.pickPos[2]);
-      distance = Math.round((distance / 1000) * Math.pow(10, 1)) / Math.pow(10, 1);
+      distance = Math.round((distance / 1000) * (10 ** 1)) / (10 ** 1);
       that.resultPin.SetPos(screenPos[0], screenPos[1]);
       gg["soundhandler"].Play("ping1");
       if (that.posPin) {
@@ -116,12 +116,12 @@ function PickingChallenge(baseScore, title, pos) {
                   score += 20;
                }
             }
-            Timeout(function () {
+            Timeout(() => {
                var coins = new Coins(gg["ui"], score);
             }, 800);
          }
       }
-      setTimeout(function () {
+      setTimeout(() => {
          that.callback();
       }, 2500);
    };
@@ -129,21 +129,21 @@ function PickingChallenge(baseScore, title, pos) {
    /**
     * @description mouse over okay button
     */
-   this.MouseOverOkBtn = function () {
+   this.MouseOverOkBtn = () => {
       that.mouseLock = true;
    };
    //-----------------------------------------------------------------------------
    /**
     * @description mouse out okay button
     */
-   this.MouseOutOkBtn = function () {
+   this.MouseOutOkBtn = () => {
       that.mouseLock = false;
    };
    //-----------------------------------------------------------------------------
    /**
     * @description mouse down on map
     */
-   this.OnMouseDown = function () {
+   this.OnMouseDown = () => {
       if (that.hint) {
          that.hint.remove();
          that.hint = null;
@@ -172,15 +172,14 @@ function PickingChallenge(baseScore, title, pos) {
    /**
     * @description mouse up on map
     */
-   this.OnMouseUp = function () {
+   this.OnMouseUp = () => {
       if (that.mouseLock == false) {
          that.zoomState = false;
          var pos = gg["stage"].getMousePosition();
          var mx = pos.x - 10;
          var my = pos.y - 10;
          that.pickPos = ogPickGlobe(gg["scene"], pos.x, pos.y);
-         var Repick = function()
-         {
+         var Repick = () => {
             if(!(that.pickPos[0] > 0))
             {
                var min = -20;
@@ -207,7 +206,7 @@ function PickingChallenge(baseScore, title, pos) {
    /**
     * @description mouse move over map
     */
-   this.OnMouseMove = function () {
+   this.OnMouseMove = () => {
       if (that.zoomState == true) {
          var pos = gg["stage"].getMousePosition();
          if (that.posPin != null)
@@ -219,7 +218,7 @@ function PickingChallenge(baseScore, title, pos) {
    /**
     * @description camera flight callback function
     */
-   this.FlightCallback = function () {
+   this.FlightCallback = () => {
       that.flystate = false;
       var pos = ogWorldToWindow(gg["scene"], that.pickPos[4], that.pickPos[5], that.pickPos[6]);
       if (that.posPin != null && that.zoomState == false) {
@@ -236,7 +235,7 @@ PickingChallenge.prototype.constructor = PickingChallenge;
  */
 PickingChallenge.prototype.Prepare = function (delay) {
    var that = this;
-   var prepFunc = function () {
+   var prepFunc = () => {
       that.screenText = new ScreenText(gg["ui"], that.text, gg["centerX"], window.innerHeight - 255, 26, "center");
       that.pickOverlay = new Kinetic.Rect({
          x: 0,
@@ -279,7 +278,7 @@ PickingChallenge.prototype.Prepare = function (delay) {
       });
    };
    if (delay > 0) {
-      setTimeout(function () {
+      setTimeout(() => {
          prepFunc();
       }, delay);
    } else {
@@ -292,8 +291,8 @@ PickingChallenge.prototype.Prepare = function (delay) {
  */
 PickingChallenge.prototype.Activate = function () {
    var that = this;
-   FadeIn(function () {
-      that.clock.onTimeoutEvent = function () {
+   FadeIn(() => {
+      that.clock.onTimeoutEvent = () => {
          that.callback()
       };
       that.clock.Start();
@@ -307,7 +306,7 @@ PickingChallenge.prototype.Activate = function () {
 PickingChallenge.prototype.Destroy = function (event) {
    if (!this.destroyed) {
       this.eventDestroyed = event;
-      ogSetInPositionFunction(gg["context"], function () {
+      ogSetInPositionFunction(gg["context"], () => {
       });
       this.clock.Pause();
       this.OnDestroy();
@@ -325,7 +324,7 @@ PickingChallenge.prototype.OnDestroy = function () {
       this.hint.remove();
    }
    if (!this.draftmode) {
-      FadeOut(function () {
+      FadeOut(() => {
          that.screenText.Destroy();
          that.resultPin.Destroy();
          if (that.posPin) {
@@ -336,7 +335,7 @@ PickingChallenge.prototype.OnDestroy = function () {
          that.okayBtn.Destroy();
 
          that.pickOverlay.remove();
-         setTimeout(function () {
+         setTimeout(() => {
             ogRemoveImageLayer(that.ogFrameLayer);
          }, 1200);
          that.eventDestroyed();

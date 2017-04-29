@@ -61,7 +61,7 @@ function FlyingText(layer, text, fontcolor) {
       that.scalefactor = 1.0 + (delta / 1800);
       if (that.alpha <= 0.0) {
          this.destroyed = true;
-         setTimeout(function () {
+         setTimeout(() => {
             that.shape.remove();
          }, 500);
       }
@@ -142,7 +142,7 @@ goog.exportSymbol('Coins', Coins);
 function FadeOut(callback) {
    var t0 = new Date();
    var t1;
-   var _fadeOut = function () {
+   var _fadeOut = () => {
       t1 = new Date();
       var delta = t1.valueOf() - t0.valueOf();
       var alpha = 1.0 - (delta / 1000);
@@ -167,7 +167,7 @@ goog.exportSymbol('FadeOut', FadeOut);
 function FadeIn(callback) {
    var t0 = new Date();
    var t1;
-   var _fadeIn = function () {
+   var _fadeIn = () => {
       t1 = new Date();
       var delta = t1.valueOf() - t0.valueOf();
       var alpha = 0.0 + (delta / 1000);
@@ -203,7 +203,7 @@ function BlackScreen(duration, callback) {
    var t0 = new Date();
    var t1;
 
-   var recurOut = function () {
+   var recurOut = () => {
       t1 = new Date();
       var delta = t1.valueOf() - t0.valueOf();
       var alpha = 2.0 - (delta / (duration / 2));
@@ -222,7 +222,7 @@ function BlackScreen(duration, callback) {
       }
    };
 
-   var recurIn = function () {
+   var recurIn = () => {
       t1 = new Date();
       var delta = t1.valueOf() - t0.valueOf();
       var alpha = 0.0 + (delta / (duration / 2));
@@ -254,16 +254,16 @@ goog.exportSymbol('FadeIn', FadeIn);
  */
 function Timeout(callback, timeout) {
    var tt0 = new Date();
-   var timeoutFunction = function (t0, t1, cback) {
+   var timeoutFunction = (t0, t1, cback) => {
       if ((t1.valueOf() - t0.valueOf()) >= timeout) {
          cback();
       } else {
-         setTimeout(function () {
+         setTimeout(() => {
             timeoutFunction(t0, new Date(), cback)
          }, 0);
       }
    };
-   setTimeout(function () {
+   setTimeout(() => {
       timeoutFunction(tt0, new Date(), callback)
    }, 0);
 }

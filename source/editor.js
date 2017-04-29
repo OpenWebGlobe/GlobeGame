@@ -194,7 +194,7 @@ function PickMouseUp() {
    var pick = ogPickGlobe(scene, pos.x, pos.y);
    gge["pick"] = pick;
    ogSetPosition(camId, 8.225578, 46.8248707, 280000.0);
-   setTimeout(function () {
+   setTimeout(() => {
       var newPos = ogWorldToWindow(scene, gge["pick"][4], gge["pick"][5], gge["pick"][6]);
       gge["pin"].SetPos(newPos[0], newPos[1]);
    }, 100);

@@ -236,15 +236,15 @@ GlobeGame.prototype.Init = function (renderCallback, renderQuality) {
     c.addEventListener("touchend", this.TouchHandler, true);
     c.addEventListener("touchcancel", this.TouchHandler, true);*/
    var loadingText = new ScreenText(gg["ui"], "Loading sounds...", gg["centerX"], gg["centerY"], 25, "center");
-   that.LoadSounds(sounds, function () {
+   that.LoadSounds(sounds, () => {
       loadingText.text = "Loading images...";
-      that.LoadImages(sources, function () {
+      that.LoadImages(sources, () => {
          loadingText.text = "Choose language";
 
-         var doInit = function () {
+         var doInit = () => {
             loadingText.text = "Loading language...";
 
-            that.LoadLanguage(function () {
+            that.LoadLanguage(() => {
                if (!gg["loaded"]) {
                   gg["loaded"] = true;
                   loadingText.Destroy();
@@ -285,10 +285,10 @@ GlobeGame.prototype.Init = function (renderCallback, renderQuality) {
                      ctx.closePath();
                      canvas.fillStroke(this);
                   }});
-                  nw_logo.on("mouseup", function () {
+                  nw_logo.on("mouseup", () => {
                      window.open("http://www.fhnw.ch/habg/ivgi");
                   });
-                  nw_logo.on("touchend", function () {
+                  nw_logo.on("touchend", () => {
                      window.open("http://www.fhnw.ch/habg/ivgi");
                   });
                   gg["static"].add(nw_logo);
@@ -308,10 +308,10 @@ GlobeGame.prototype.Init = function (renderCallback, renderQuality) {
                      ctx.closePath();
                      canvas.fillStroke(this);
                   }});
-                  owg_link.on("mouseup", function () {
+                  owg_link.on("mouseup", () => {
                      window.open("http://www.openwebglobe.org");
                   });
-                  owg_link.on("touchend", function () {
+                  owg_link.on("touchend", () => {
                      window.open("http://www.openwebglobe.org");
                   });
                   gg["static"].add(owg_link);
@@ -320,19 +320,19 @@ GlobeGame.prototype.Init = function (renderCallback, renderQuality) {
                      try
                      {
                      gg["soundhandler"].sounds["track01"].volume = 0.25;
-                     gg["soundhandler"].sounds["track01"].addEventListener("ended", function () {
+                     gg["soundhandler"].sounds["track01"].addEventListener("ended", () => {
                         gg["soundhandler"].sounds["track02"].play();
                      }, true);
                      gg["soundhandler"].sounds["track02"].volume = 0.25;
-                     gg["soundhandler"].sounds["track02"].addEventListener("ended", function () {
+                     gg["soundhandler"].sounds["track02"].addEventListener("ended", () => {
                         gg["soundhandler"].sounds["track03"].play();
                      }, true);
                      gg["soundhandler"].sounds["track03"].volume = 0.25;
-                     gg["soundhandler"].sounds["track03"].addEventListener("ended", function () {
+                     gg["soundhandler"].sounds["track03"].addEventListener("ended", () => {
                         gg["soundhandler"].sounds["track04"].play();
                      }, true);
                      gg["soundhandler"].sounds["track04"].volume = 0.25;
-                     gg["soundhandler"].sounds["track04"].addEventListener("ended", function () {
+                     gg["soundhandler"].sounds["track04"].addEventListener("ended", () => {
                         gg["soundhandler"].sounds["track01"].play();
                      }, true);
                      var index = Math.floor(Math.random() * 4 + 1);
@@ -344,7 +344,7 @@ GlobeGame.prototype.Init = function (renderCallback, renderQuality) {
                      }
                   }
                   // load gamedata
-                  gg["gameData"] = new GameData(function () {
+                  gg["gameData"] = new GameData(() => {
                      that.EnterIdle();
                   });
                }
@@ -352,21 +352,21 @@ GlobeGame.prototype.Init = function (renderCallback, renderQuality) {
          }
          if(gg["chooselang"] == true)
          {
-            var btn_de = new Button02(gg["ui"], "btn_de", (window.innerWidth / 2) - 120, 300, 76, 69, "DEU", 15, function () {
+            var btn_de = new Button02(gg["ui"], "btn_de", (window.innerWidth / 2) - 120, 300, 76, 69, "DEU", 15, () => {
                gg["lang"] = "de";
                btn_de.Destroy();
                btn_fr.Destroy();
                btn_en.Destroy();
                doInit();
             });
-            var btn_fr = new Button02(gg["ui"], "btn_fr", (window.innerWidth / 2) - 40, 300, 76, 69, "FRA", 15, function () {
+            var btn_fr = new Button02(gg["ui"], "btn_fr", (window.innerWidth / 2) - 40, 300, 76, 69, "FRA", 15, () => {
                gg["lang"] = "fr";
                btn_de.Destroy();
                btn_fr.Destroy();
                btn_en.Destroy();
                doInit();
             });
-            var btn_en = new Button02(gg["ui"], "btn_en", (window.innerWidth / 2) + 40, 300, 76, 69, "ENG", 15, function () {
+            var btn_en = new Button02(gg["ui"], "btn_en", (window.innerWidth / 2) + 40, 300, 76, 69, "ENG", 15, () => {
                gg["lang"] = "en";
                btn_de.Destroy();
                btn_fr.Destroy();
@@ -391,7 +391,7 @@ GlobeGame.prototype.EnterIdle = function () {
    var that = this;
    gg["state"] = GlobeGame.STATE.IDLE;
    var startMessage = new MessageDialog(gg["ui"], gg["locale"]["start"], window.innerWidth / 2, window.innerHeight - 200, 500, 220);
-   startMessage.RegisterCallback(function () {
+   startMessage.RegisterCallback(() => {
       that.StopFlyTo();
       gg["ui"].setOpacity(0.0);
       that.EnterChallenge();
@@ -428,12 +428,12 @@ GlobeGame.prototype.EnterHighscore = function () {
    if(gg["minimode"] == false)
    {
       var keyboard = new TouchKeyboard(gg["ui"], "keys", (window.innerWidth / 2) - 426, (window.innerHeight / 2) - 195, gg["locale"]["entername"],
-         function (name) {
+         name => {
             gg["player"].playerName = name;
             keyboard.Destroy();
             gg["soundhandler"].Play("highscores");
-            jQuery.get('hash.php', function (data1) {
-               jQuery.get('db.php?action=append&name=' + gg["player"].playerName + '&score=' + gg["player"].playerScore + "&hash=" + data1, function (data2) {
+            jQuery.get('hash.php', data1 => {
+               jQuery.get('db.php?action=append&name=' + gg["player"].playerName + '&score=' + gg["player"].playerScore + "&hash=" + data1, data2 => {
 
                   var hash = data1;
                   var list = /** @type {Array} */eval(data2);
@@ -524,7 +524,7 @@ GlobeGame.prototype.EnterHighscore = function () {
                      pointLayer.add(pointShape);
                      pointLayer.add(facebook_share);
                      pointLayer.add(twitter_share);
-                     setTimeout(function(){
+                     setTimeout(() => {
                         var dataUrl = pointLayer.toDataURL();
                         var dynamicCanvas = document.createElement("canvas");
                         var dynamicContext = dynamicCanvas.getContext("2d");
@@ -532,7 +532,7 @@ GlobeGame.prototype.EnterHighscore = function () {
                         dynamicCanvas.width="640";
                         var imageObj = new Image();
                         imageObj.src = dataUrl;
-                        imageObj.onload = function() {
+                        imageObj.onload = () => {
                            dynamicContext.drawImage(imageObj, -Math.floor((window.innerWidth-640)/2), -Math.floor((window.innerHeight-450)/2)+88);
                            jQuery.ajax({
                               "type": "POST",
@@ -541,16 +541,16 @@ GlobeGame.prototype.EnterHighscore = function () {
                               "success": function(response){ /*window.open(response);*/
                                  var linkFB = "http://www.facebook.com/sharer/sharer.php?s=100&p[title]="+encodeURIComponent(gg["player"].playerName + " reached " + gg["player"].playerScore + " points in SwissQuiz")+"&p[url]="+encodeURIComponent("http://www.swizzquiz.ch")+"&p[summary]="+encodeURIComponent("SwizzQuiz")+"&p[images][0]="+encodeURIComponent(gg["rootPath"]+response);
                                  var linkTW = "https://twitter.com/share?url="+encodeURIComponent(gg["rootPath"]+response)+"&text="+encodeURIComponent("Just played SwizzQuiz and earned "+ gg["player"].playerScore+ " points. See http://www.swizzquiz.ch for more");
-                                 facebook_share.on("mouseup", function () {
+                                 facebook_share.on("mouseup", () => {
                                     window.open(linkFB);
                                  });
-                                 facebook_share.on("touchend", function () {
+                                 facebook_share.on("touchend", () => {
                                    window.open(linkFB);
                                  });
-                                 twitter_share.on("mouseup", function () {
+                                 twitter_share.on("mouseup", () => {
                                     window.open(linkTW);
                                  });
-                                 twitter_share.on("touchend", function () {
+                                 twitter_share.on("touchend", () => {
                                     window.open(linkTW);
                                  });
                               },
@@ -558,13 +558,13 @@ GlobeGame.prototype.EnterHighscore = function () {
                            });
                         };
                      }, 10);
-                     shareDialog.RegisterCallback(function () {
+                     shareDialog.RegisterCallback(() => {
                         if (gg["score"])
                            gg["score"].Destroy();
                         pointShape.remove();
                         pointLayer.remove();
                         gg["qCount"] = 0;
-                        gg["gameData"] = new GameData(function () {
+                        gg["gameData"] = new GameData(() => {
                            that.StopFlyTo();
                            gg["ui"].setOpacity(0.0);
                            that.EnterChallenge();
@@ -574,24 +574,24 @@ GlobeGame.prototype.EnterHighscore = function () {
                   else
                   {
                      var highscore = new HighScoreDialog(gg["ui"], list, hash, 500, 650, gg["player"]);
-                     setTimeout(function(){
+                     setTimeout(() => {
                         if(gg["state"] == GlobeGame.STATE.HIGHSCORE)
                         {
                            if (gg["score"])
                               gg["score"].Destroy();
                            gg["qCount"] = 0;
                            highscore.Destroy();
-                           gg["gameData"] = new GameData(function () {
+                           gg["gameData"] = new GameData(() => {
                               that.EnterIdle();
                            });
                         }
                      },20000);
 
-                     highscore.RegisterCallback(function () {
+                     highscore.RegisterCallback(() => {
                         if (gg["score"])
                            gg["score"].Destroy();
                         gg["qCount"] = 0;
-                        gg["gameData"] = new GameData(function () {
+                        gg["gameData"] = new GameData(() => {
                            that.StopFlyTo();
                            gg["ui"].setOpacity(0.0);
                            that.EnterChallenge();
@@ -601,10 +601,10 @@ GlobeGame.prototype.EnterHighscore = function () {
                });
             });
          });
-      jQuery(document).keypress(function(e) {
+      jQuery(document).keypress(e => {
             keyboard.AppendKeyCode(e.which);
       });
-      jQuery(document).keydown(function(e) {
+      jQuery(document).keydown(e => {
          var nodeName = e.target.nodeName.toLowerCase();
 
          if (e.which === 8) {
@@ -638,24 +638,24 @@ GlobeGame.prototype.EnterHighscore = function () {
    {
       var message = gg["locale"]["yourscore"] + gg["player"].playerScore.toString() + " "+ gg["locale"]["of"] + " " + gg["qMax"].toString();
       var pointMessage = new MessageDialog(gg["ui"], message, window.innerWidth / 2, (window.innerHeight / 2)-110, 500, 220);
-      pointMessage.RegisterCallback(function () {
+      pointMessage.RegisterCallback(() => {
          if (gg["score"])
             gg["score"].Destroy();
          gg["qCount"] = 0;
-         gg["gameData"] = new GameData(function () {
+         gg["gameData"] = new GameData(() => {
             that.StopFlyTo();
             gg["ui"].setOpacity(0.0);
             that.EnterChallenge();
          });
       });
-      setTimeout(function(){
+      setTimeout(() => {
          if(gg["state"] == GlobeGame.STATE.HIGHSCORE)
          {
             if (gg["score"])
                gg["score"].Destroy();
             pointMessage.Destroy();
             gg["qCount"] = 0;
-            gg["gameData"] = new GameData(function () {
+            gg["gameData"] = new GameData(() => {
                that.EnterIdle();
             });
          }
@@ -666,7 +666,7 @@ GlobeGame.prototype.EnterHighscore = function () {
 /**
  * @description flying around the terrain
  */
-GlobeGame.prototype.FlyAround = function () {
+GlobeGame.prototype.FlyAround = () => {
    gg["flystate"] = GlobeGame.FLYSTATE.FLYAROUND;
    ogSetPosition(gg["camera"], 8.006896018981934, 46.27399444580078, 10000000);
    ogSetOrientation(gg["camera"], 0, -90, 0);
@@ -710,7 +710,7 @@ GlobeGame.prototype.FlyAround = function () {
    ];
    var pos = 0;
    ogSetFlightDuration(gg["scene"], 20000);
-   var introFlyTo = function () {
+   var introFlyTo = () => {
       var oView = views[pos];
       ogFlyTo(gg["scene"], oView["longitude"], oView["latitude"], oView["elevation"], oView["yaw"], oView["pitch"], oView["roll"]);
       if (pos >= 4) {
@@ -803,7 +803,7 @@ GlobeGame.prototype.LoadImages = function (sources, callback) {
    }
    for (var src in sources) {
       gg["images"][src] = new Image();
-      gg["images"][src].onload = function () {
+      gg["images"][src].onload = () => {
          if (++gg["loadedImages"] >= gg["numImages"]) {
             if (callback != null)
                callback();
@@ -832,7 +832,7 @@ GlobeGame.prototype.LoadSounds = function (sounds, callback) {
             gg["soundhandler"].sounds[src] = document.createElement('audio');
             gg["soundhandler"].sounds[src].setAttribute('src', sounds[src]);
             gg["soundhandler"].sounds[src].load();
-            gg["soundhandler"].sounds[src].addEventListener("canplay", function () {
+            gg["soundhandler"].sounds[src].addEventListener("canplay", () => {
                if (++gg["loadedSounds"] >= gg["numSounds"]) {
                   if (callback != null)
                      callback();
@@ -855,8 +855,8 @@ GlobeGame.prototype.LoadSounds = function (sounds, callback) {
  * @description load languages
  * @param {function()} callback
  */
-GlobeGame.prototype.LoadLanguage = function (callback) {
-   jQuery.getJSON('data/lang_' + gg["lang"] + '.json', function (data) {
+GlobeGame.prototype.LoadLanguage = callback => {
+   jQuery.getJSON('data/lang_' + gg["lang"] + '.json', data => {
       gg["locale"] = data;
       if (callback != null)
          callback();
@@ -866,7 +866,7 @@ GlobeGame.prototype.LoadLanguage = function (callback) {
 /**
  * @description ProcessChallenge
  */
-GlobeGame.prototype.ProcessChallenge = function () {
+GlobeGame.prototype.ProcessChallenge = () => {
    if (gg["globeGame"]) {
       // evaluate past challenge
       if (gg["globeGame"].currentChallenge && !gg["globeGame"].currentChallenge.destroyed) {
@@ -881,22 +881,22 @@ GlobeGame.prototype.ProcessChallenge = function () {
 /**
  * @description NextChallenge
  */
-GlobeGame.prototype.NextChallenge = function () {
+GlobeGame.prototype.NextChallenge = () => {
    gg["qCount"] += 1;
    gg["progress"].Inc();
    if (gg["qCount"] <= gg["qMax"]) {
       gg["globeGame"].currentChallenge = gg["gameData"].PickChallenge();
       gg["globeGame"].currentChallenge.RegisterCallback(gg["globeGame"].ProcessChallenge);
       gg["globeGame"].currentChallenge.Prepare(1200);
-      BlackScreen(2500, function () {
+      BlackScreen(2500, () => {
          gg["globeGame"].InitQuiz();
       });
    }
    else {
-      setTimeout(function () {
+      setTimeout(() => {
          gg["globeGame"].EnterHighscore()
       }, 1200);
-      BlackScreen(2500, function () {
+      BlackScreen(2500, () => {
       });
    }
 };
@@ -904,8 +904,8 @@ GlobeGame.prototype.NextChallenge = function () {
 /**
  * @description NextChallenge
  */
-GlobeGame.prototype.StopFlyTo = function () {
-   ogSetInPositionFunction(gg["context"], function () {
+GlobeGame.prototype.StopFlyTo = () => {
+   ogSetInPositionFunction(gg["context"], () => {
    });
    ogStopFlyTo(gg["scene"]);
    gg["flystate"] = GlobeGame.FLYSTATE.IDLE;
@@ -915,7 +915,7 @@ GlobeGame.prototype.StopFlyTo = function () {
  * @description resize context event
  * @param {number} frame
  */
-GlobeGame.prototype.OnCanvasRender = function (frame) {
+GlobeGame.prototype.OnCanvasRender = frame => {
 
 };
 //-----------------------------------------------------------------------------
@@ -923,7 +923,7 @@ GlobeGame.prototype.OnCanvasRender = function (frame) {
  * @description resize context event
  * @param {number} context
  */
-GlobeGame.prototype.OnOGRender = function (context) {
+GlobeGame.prototype.OnOGRender = context => {
    gg["globeGame"].CycleCallback();
    gg["stage"].draw();
 };
@@ -932,19 +932,17 @@ GlobeGame.prototype.OnOGRender = function (context) {
  * @description resize context event
  * @param {number} context
  */
-GlobeGame.prototype.OnOGResize = function (context) {
+GlobeGame.prototype.OnOGResize = context => {
    gg["stage"].setSize(window.innerWidth, window.innerHeight);
    gg["centerX"] = window.innerWidth / 2;
    gg["centerY"] = window.innerHeight / 2;
    gg["globeGame"].ResizeCallback();
 };
 
-GlobeGame.prototype.GenerateUniqueId = function () {
-   var s4 = function () {
-      return Math.floor((1 + Math.random()) * 0x10000)
-         .toString(16)
-         .substring(1);
-   };
+GlobeGame.prototype.GenerateUniqueId = () => {
+   var s4 = () => Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 };
 

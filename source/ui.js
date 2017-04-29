@@ -58,15 +58,15 @@ function Button01(layer, name, x, y, width, height, caption, fontsize) {
    this.enabled = true;
    this.layer = layer;
 
-   this.onClickEvent = function () {
+   this.onClickEvent = () => {
    };
-   this.onMouseOverEvent = function () {
+   this.onMouseOverEvent = () => {
    };
-   this.onMouseOutEvent = function () {
+   this.onMouseOutEvent = () => {
    };
-   this.onMouseDownEvent = function () {
+   this.onMouseDownEvent = () => {
    };
-   this.onMouseUpEvent = function () {
+   this.onMouseUpEvent = () => {
    };
    var thaat = this;
 
@@ -110,7 +110,7 @@ function Button01(layer, name, x, y, width, height, caption, fontsize) {
       canvas.fillStroke(this);
    }});
 
-   this.shape.on("mouseout", function () {
+   this.shape.on("mouseout", () => {
       if (thaat.enabled) {
          thaat.onMouseOutEvent();
          if (thaat.state < 3) {
@@ -119,7 +119,7 @@ function Button01(layer, name, x, y, width, height, caption, fontsize) {
       }
 
    });
-   this.shape.on("mouseover", function () {
+   this.shape.on("mouseover", () => {
       if (thaat.enabled) {
          thaat.onMouseOverEvent();
          if (thaat.state < 3) {
@@ -128,7 +128,7 @@ function Button01(layer, name, x, y, width, height, caption, fontsize) {
       }
 
    });
-   this.shape.on("mousedown", function () {
+   this.shape.on("mousedown", () => {
       if (thaat.enabled) {
          thaat.onMouseDownEvent();
          if (thaat.state < 3) {
@@ -137,7 +137,7 @@ function Button01(layer, name, x, y, width, height, caption, fontsize) {
       }
 
    });
-   this.shape.on("mouseup", function () {
+   this.shape.on("mouseup", () => {
       if (thaat.enabled) {
 
          thaat.onMouseUpEvent();
@@ -148,7 +148,7 @@ function Button01(layer, name, x, y, width, height, caption, fontsize) {
       }
 
    });
-   this.shape.on("touchstart", function () {
+   this.shape.on("touchstart", () => {
       if (thaat.enabled) {
          thaat.onMouseDownEvent();
          if (thaat.state < 3) {
@@ -157,7 +157,7 @@ function Button01(layer, name, x, y, width, height, caption, fontsize) {
       }
 
    });
-   this.shape.on("touchend", function () {
+   this.shape.on("touchend", () => {
       if (thaat.enabled) {
 
          thaat.onMouseUpEvent();
@@ -231,19 +231,19 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
    this.layer = layer;
 
    if (clickevent == null) {
-      this.onClickEvent = function (sender) {
+      this.onClickEvent = sender => {
       };
    }
    else {
       this.onClickEvent = clickevent;
    }
-   this.onMouseOverEvent = function () {
+   this.onMouseOverEvent = () => {
    };
-   this.onMouseOutEvent = function () {
+   this.onMouseOutEvent = () => {
    };
-   this.onMouseDownEvent = function () {
+   this.onMouseDownEvent = () => {
    };
-   this.onMouseUpEvent = function () {
+   this.onMouseUpEvent = () => {
    };
    var that = this;
 
@@ -276,7 +276,7 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
    }});
 
 
-   this.shape.on("mouseout", function () {
+   this.shape.on("mouseout", () => {
       if (that.enabled) {
          that.onMouseOutEvent();
          if (that.state < 3) {
@@ -285,7 +285,7 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
       }
 
    });
-   this.shape.on("mouseover", function () {
+   this.shape.on("mouseover", () => {
       if (that.enabled) {
          that.onMouseOverEvent();
          if (that.state < 3) {
@@ -294,7 +294,7 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
       }
 
    });
-   this.shape.on("mousedown", function () {
+   this.shape.on("mousedown", () => {
       if (that.enabled) {
          that.onMouseDownEvent();
          if (that.state < 3) {
@@ -303,7 +303,7 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
       }
 
    });
-   this.shape.on("mouseup", function () {
+   this.shape.on("mouseup", () => {
       if (that.enabled) {
          that.onMouseUpEvent();
          if (that.state < 3) {
@@ -313,7 +313,7 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
       }
 
    });
-   this.shape.on("touchstart", function () {
+   this.shape.on("touchstart", () => {
       if (that.enabled) {
          that.onMouseDownEvent();
          if (that.state < 3) {
@@ -322,7 +322,7 @@ function Button02(layer, name, x, y, width, height, caption, fontsize, clickeven
       }
 
    });
-   this.shape.on("touchend", function () {
+   this.shape.on("touchend", () => {
       if (that.enabled) {
          that.onMouseUpEvent();
          if (that.state < 3) {
@@ -370,7 +370,7 @@ function Clock(layer, x, y, seconds) {
    var unit = 2.0 / 60;
    var that = this;
    this.running = false;
-   this.onTimeoutEvent = function () {
+   this.onTimeoutEvent = () => {
    };
 
    this.shape = new Kinetic.Shape({"drawFunc": function (canvas) {
@@ -433,7 +433,7 @@ Clock.prototype.Resume = function () {
  */
 Clock.prototype.Countdown = function () {
    var that = this;
-   setTimeout(function () {
+   setTimeout(() => {
       if (that.obsolete == true) {
 
       }
@@ -561,9 +561,9 @@ function MessageDialog(layer, message, x, y, width, height) {
    var that = this;
 
    /** Inline Functions */
-   this.Callback = function () {
+   this.Callback = () => {
    };
-   this.OnOkay = function () {
+   this.OnOkay = () => {
       gg["soundhandler"].Play("ping1");
       that.Destroy();
       that.Callback();
@@ -807,9 +807,9 @@ function HighScoreDialog(layer, list, hash, width, height, player) {
    var that = this;
 
    /** Inline Functions */
-   this.Callback = function () {
+   this.Callback = () => {
    };
-   this.OnOkay = function () {
+   this.OnOkay = () => {
       that.Destroy();
       that.Callback();
    };
@@ -940,9 +940,9 @@ function ShareDialog(layer, hash, width, height, player) {
    var that = this;
 
    /** Inline Functions */
-   this.Callback = function () {
+   this.Callback = () => {
    };
-   this.OnOkay = function () {
+   this.OnOkay = () => {
       that.Destroy();
       that.Callback();
    };

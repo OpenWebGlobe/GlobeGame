@@ -60,19 +60,19 @@ function LandmarkChallenge(baseScore, options, correctOption, views, title) {
    var that = this;
 
    /* Inline functions*/
-   this.onOption1 = function () {
+   this.onOption1 = () => {
       that.PickOption(1, that.clock.GetSeconds());
    };
-   this.onOption2 = function () {
+   this.onOption2 = () => {
       that.PickOption(2, that.clock.GetSeconds());
    };
-   this.onOption3 = function () {
+   this.onOption3 = () => {
       that.PickOption(3, that.clock.GetSeconds());
    };
-   this.onOption4 = function () {
+   this.onOption4 = () => {
       that.PickOption(4, that.clock.GetSeconds());
    };
-   this.FlightCallback = function () {
+   this.FlightCallback = () => {
       if (that.stop != true && that.flystate < that.views.length) {
          var oView = that.views[that.flystate];
          that.flystate += 1;
@@ -89,7 +89,7 @@ LandmarkChallenge.prototype.constructor = LandmarkChallenge;
  */
 LandmarkChallenge.prototype.Prepare = function (delay) {
    var that = this;
-   var prepFunc = function () {
+   var prepFunc = () => {
       that.screenText = new ScreenText(gg["ui"], that.text, gg["centerX"], window.innerHeight - 255, 26, "center");
       that.clock = new Clock(gg["ui"], 50, 82, 60);
 
@@ -125,8 +125,8 @@ LandmarkChallenge.prototype.Prepare = function (delay) {
 LandmarkChallenge.prototype.Activate = function () {
    var that = this;
    if (!this.draftmode) {
-   FadeIn(function () {
-      that.clock.onTimeoutEvent = function () {
+   FadeIn(() => {
+      that.clock.onTimeoutEvent = () => {
          that.callback()
       };
       that.clock.Start();
@@ -135,7 +135,7 @@ LandmarkChallenge.prototype.Activate = function () {
    }
    else
    {
-      that.clock.onTimeoutEvent = function () {
+      that.clock.onTimeoutEvent = () => {
          that.callback()
       };
       that.clock.Start();
@@ -150,7 +150,7 @@ LandmarkChallenge.prototype.Destroy = function (event) {
    if (!this.destroyed) {
       this.eventDestroyed = event;
       this.clock.Pause();
-      ogSetInPositionFunction(gg["context"], function () {
+      ogSetInPositionFunction(gg["context"], () => {
       });
       this.stop = true;
       ogStopFlyTo(gg["scene"]);
@@ -166,7 +166,7 @@ LandmarkChallenge.prototype.OnDestroy = function () {
    this.clock.Destroy();
    var that = this;
    if (!this.draftmode) {
-      FadeOut(function () {
+      FadeOut(() => {
          that.buttonArray[0].Destroy();
          that.buttonArray[1].Destroy();
          that.buttonArray[2].Destroy();
@@ -215,13 +215,13 @@ LandmarkChallenge.prototype.PickOption = function (option, timeleft) {
                score += 20;
             }
          }
-         Timeout(function () {
+         Timeout(() => {
             var coins = new Coins(gg["ui"], score);
          }, 800);
       }
       this.buttonArray[option - 1].SetEnabled(true);
       this.buttonArray[option - 1].SetState(3);
-      setTimeout(function () {
+      setTimeout(() => {
          that.callback();
       }, 2000);
    } else {
@@ -230,7 +230,7 @@ LandmarkChallenge.prototype.PickOption = function (option, timeleft) {
       this.buttonArray[this.correctOption - 1].SetEnabled(true);
       this.buttonArray[option - 1].SetState(4);
       this.buttonArray[this.correctOption - 1].SetState(5);
-      setTimeout(function () {
+      setTimeout(() => {
          that.callback();
       }, 2000);
    }

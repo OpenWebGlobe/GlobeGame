@@ -2,73 +2,73 @@
  * @externs OpenWebGlobe
  */
 
-var ogFlyToLookAtPosition = function (a, b, c, d, e, f, g, h) {
+var ogFlyToLookAtPosition = (a, b, c, d, e, f, g, h) => {
 };
-var ogRemoveImageLayer = function (a) {
+var ogRemoveImageLayer = a => {
 };
-var ogAddImageLayer = function (a, b) {
+var ogAddImageLayer = (a, b) => {
 };
-var ogCreatePOILayer = function (a, b) {
+var ogCreatePOILayer = (a, b) => {
 };
-var ogCreatePOI = function (a, b) {
+var ogCreatePOI = (a, b) => {
 };
-var ogDestroyPOI = function (a) {
+var ogDestroyPOI = a => {
 };
-var ogPickGlobe = function (a, b, c) {
+var ogPickGlobe = (a, b, c) => {
 };
-var ogGetOrientation = function (a) {
+var ogGetOrientation = a => {
 };
-var ogCalcDistanceWGS84 = function (a, b, c, d) {
+var ogCalcDistanceWGS84 = (a, b, c, d) => {
 };
-var ogWorldToWindow = function (a, b, c, d) {
+var ogWorldToWindow = (a, b, c, d) => {
 };
-var ogToCartesian = function (a, b, c, d) {
+var ogToCartesian = (a, b, c, d) => {
 };
-var ogStopFlyTo = function (a) {
+var ogStopFlyTo = a => {
 };
-var ogSetInPositionFunction = function (a, b) {
+var ogSetInPositionFunction = (a, b) => {
 };
-var ogSetOrientation = function (a, b, c, d) {
+var ogSetOrientation = (a, b, c, d) => {
 };
-var ogSetPosition = function (a, b, c, d) {
+var ogSetPosition = (a, b, c, d) => {
 };
-var ogGetPosition = function (a) {
+var ogGetPosition = a => {
 };
-var ogGetActiveCamera = function (a) {
+var ogGetActiveCamera = a => {
 };
-var ogSetFlightDuration = function (a, b) {
+var ogSetFlightDuration = (a, b) => {
 };
-var ogGetScene = function (a) {
+var ogGetScene = a => {
 };
-var ogSetResizeFunction = function (a, b) {
+var ogSetResizeFunction = (a, b) => {
 };
-var ogSetRenderFunction = function (a, b) {
+var ogSetRenderFunction = (a, b) => {
 };
-var ogAddElevationLayer = function (a, b) {
+var ogAddElevationLayer = (a, b) => {
 };
-var ogCreateGlobe = function (a) {
+var ogCreateGlobe = a => {
 };
-var ogCreateContextFromCanvas = function (a, b) {
+var ogCreateContextFromCanvas = (a, b) => {
 };
-var ogFlyTo = function (a, b, c, d, e, f, g) {
+var ogFlyTo = (a, b, c, d, e, f, g) => {
 };
-var ogSetMouseMoveFunction = function (a, b) {
+var ogSetMouseMoveFunction = (a, b) => {
 };
-var ogSetMouseUpFunction = function (a, b) {
+var ogSetMouseUpFunction = (a, b) => {
 };
-var ogSetMouseDownFunction = function (a, b) {
+var ogSetMouseDownFunction = (a, b) => {
 };
-var ogSetCanvasSizeOffset = function (a, b, c) {
+var ogSetCanvasSizeOffset = (a, b, c) => {
 };
-var ogSetRenderQuality = function (a, b) {
+var ogSetRenderQuality = (a, b) => {
 };
-var ogSetArtworkDirectory = function (a) {
+var ogSetArtworkDirectory = a => {
 };
-var ogCreateContext = function (a) {
+var ogCreateContext = a => {
 };
-var ogCreateScene = function (a, b, c) {
+var ogCreateScene = (a, b, c) => {
 };
-var ogCreateWorld = function (a) {
+var ogCreateWorld = a => {
 };
 
 //------------------------------------------------------------------------------
