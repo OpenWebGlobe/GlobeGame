@@ -42,19 +42,19 @@ function Challenge(type) {
    this.destroyed = false;
    this.draftmode = false;
    var that = this;
-   this.eventDestroyed = function () {
+   this.eventDestroyed = () => {
    };
-   this.callback = function () {
+   this.callback = () => {
    };
-   this.Prepare = function () {
+   this.Prepare = () => {
    };
-   this.Activate = function () {
+   this.Activate = () => {
    };
-   this.Destroy = function (event) {
+   this.Destroy = event => {
    };
-   this.OnDestroy = function () {
+   this.OnDestroy = () => {
    };
-   this.RegisterCallback = function (func) {
+   this.RegisterCallback = func => {
       that.callback = func;
    };
 }

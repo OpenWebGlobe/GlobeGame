@@ -76,21 +76,20 @@ function TouchKeyboard(layer, name, x, y, caption, callback) {
       canvas.fillStroke(this);
    }});
    layer.add(this.shape);
-   this.Append = function (sender) {
+   this.Append = sender => {
       that.input = that.input + sender.caption;
    };
-   this.OnOkay = function (sender) {
+   this.OnOkay = sender => {
       if (that.callback)
          that.callback(that.input);
    };
-   this.Backspace = function () {
+   this.Backspace = () => {
       that.input = that.input.substring(0, that.input.length - 1);
    };
-   this.Space = function () {
+   this.Space = () => {
       that.input = that.input + " ";
    };
-   this.AppendKeyCode = function(key)
-   {
+   this.AppendKeyCode = key => {
       that.input = that.input + String.fromCharCode(key).toUpperCase();
    }
    /* buttons */

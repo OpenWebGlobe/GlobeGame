@@ -41,14 +41,14 @@ function GameData(callback) {
    this.questions = [];
    this.baseData = {};
    var that = this
-   jQuery.get('getData.php', function (data) {
+   jQuery.get('getData.php', data => {
       that.baseData = jQuery.parseJSON(data);
 
-      jQuery.get('getChallenges.php?lang=' + gg["lang"], function (data) {
+      jQuery.get('getChallenges.php?lang=' + gg["lang"], data => {
          var jsonData = jQuery.parseJSON(data);
          var items = [];
          /** @type {{Type:number}} */
-         jQuery.each(jsonData, function (key, val) {
+         jQuery.each(jsonData, (key, val) => {
             if (val["Type"] == 0) {
                var baseScore = /** @type {number} */val["BaseScore"];
                var options = /** @type {Array} */val["Options"];

@@ -71,7 +71,7 @@ DistrictChallenge.prototype.constructor = DistrictChallenge;
 DistrictChallenge.prototype.Prepare = function (delay) {
 
    var that = this;
-   var prepFunc = function () {
+   var prepFunc = () => {
       for (var i = 0; i < that.data.length; i++) {
          that.CreateInteractiveSurface(that.data[i]);
       }
@@ -92,8 +92,8 @@ DistrictChallenge.prototype.Prepare = function (delay) {
  */
 DistrictChallenge.prototype.Activate = function () {
    var that = this;
-   FadeIn(function () {
-      that.clock.onTimeoutEvent = function () {
+   FadeIn(() => {
+      that.clock.onTimeoutEvent = () => {
          that.callback()
       };
       that.clock.Start();
@@ -106,7 +106,7 @@ DistrictChallenge.prototype.Activate = function () {
 DistrictChallenge.prototype.Destroy = function (event) {
    if (!this.destroyed) {
       this.eventDestroyed = event;
-      ogSetInPositionFunction(gg["context"], function () {
+      ogSetInPositionFunction(gg["context"], () => {
       });
       this.clock.Pause();
       this.OnDestroy();
@@ -125,7 +125,7 @@ DistrictChallenge.prototype.OnDestroy = function () {
       this.hint.remove();
    }
    if (!this.draftmode) {
-      FadeOut(function () {
+      FadeOut(() => {
          that.RemoveAllSurfaces();
          that.screenText.Destroy();
          that.eventDestroyed();
@@ -161,11 +161,11 @@ DistrictChallenge.prototype.Score = function (timeleft) {
             score += 20;
          }
       }
-      Timeout(function () {
+      Timeout(() => {
          var coins = new Coins(gg["ui"], score);
       }, 800);
    }
-   setTimeout(function () {
+   setTimeout(() => {
       that.callback();
    }, 2000);
 };
@@ -183,12 +183,12 @@ DistrictChallenge.prototype.CreateInteractiveSurface = function (fieldData) {
       scale: (window.innerHeight / that.extent[1])
    });
 
-   var updateShape = function () {
+   var updateShape = () => {
       shape.setPosition(((window.innerWidth - (that.extent[0] * (window.innerHeight / that.extent[1]))) / 2)+that.offset[0], (that.offset[1]* (window.innerHeight / that.extent[1])));
       shape.setScale((window.innerHeight / that.extent[1]));
    };
 
-   var onClickEvent = function () {
+   var onClickEvent = () => {
       if(that.locked == false && shape.getFill() == "#FFFFFF")
       {
          that.trials += 1;
@@ -206,7 +206,7 @@ DistrictChallenge.prototype.CreateInteractiveSurface = function (fieldData) {
                   break;
                }
             }
-            setTimeout(function () {
+            setTimeout(() => {
                that.callback();
             }, 2500);
          }
@@ -216,50 +216,50 @@ DistrictChallenge.prototype.CreateInteractiveSurface = function (fieldData) {
          }
       }
    };
-   var onMouseOverEvent = function () {
+   var onMouseOverEvent = () => {
    };
-   var onMouseOutEvent = function () {
+   var onMouseOutEvent = () => {
    };
-   var onMouseDownEvent = function () {
+   var onMouseDownEvent = () => {
    };
-   var onMouseUpEvent = function () {
+   var onMouseUpEvent = () => {
    };
 
    gg["globeGame"].RegisterResizeCallback(fieldData["label"]["text"], updateShape);
 
-   shape.on("mouseout", function () {
+   shape.on("mouseout", () => {
       onMouseOutEvent();
       if (that.clickState < 3) {
          that.clickState = 0;
       }
    });
-   shape.on("mouseover", function () {
+   shape.on("mouseover", () => {
       onMouseOverEvent();
       if (that.clickState < 3) {
          that.clickState = 1;
       }
    });
-   shape.on("mousedown", function () {
+   shape.on("mousedown", () => {
       onMouseDownEvent();
       if (that.clickState < 3) {
          that.clickState = 2;
       }
 
    });
-   shape.on("mouseup", function () {
+   shape.on("mouseup", () => {
       onMouseUpEvent();
       if (that.clickState < 3) {
          that.clickState = 1;
          onClickEvent();
       }
    });
-   shape.on("touchstart", function () {
+   shape.on("touchstart", () => {
       onMouseDownEvent();
       if (that.clickState < 3) {
          that.clickState = 2;
       }
    });
-   shape.on("touchend", function () {
+   shape.on("touchend", () => {
       onMouseUpEvent();
       if (that.clickState < 3) {
          that.clickState = 1;
